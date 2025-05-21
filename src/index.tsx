@@ -1,11 +1,19 @@
 import './main.css'
-import { FormControl, Modal, Button, Form } from 'react-bootstrap';
+import { FormControl, Modal, Button, Form ,ToggleButton, ToggleButtonGroup, Badge} from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 
 function Index() {
+    if (localStorage.getItem("auth_token") == null){
+        fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
+            .then(res=>res.json())
+            .then(data => {
+                localStorage.setItem("auth_token",data.data);
+            })
+    }
+
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -70,13 +78,22 @@ function Index() {
 
     const [ModalContentEditIsVaild, setModalContentEditIsVaild] = useState(false);
 
+    const [category, setCategory] = useState(1);
+
+    const categoryOnChange = (val: any) => setCategory(val);
+
+    const [categoryEdit, setCategoryEdit] = useState(1);
+
+    const categoryEditOnChange = (val: any) => setCategoryEdit(val);
+
+
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback")
             .then(res => res.json())
             .then(data => setFeedback(data.data))
     },[])
 
-    function formOnClick(title:string,content:string,password:string){
+    function formOnClick(title:string,content:string,category: number, password:string){
         const titleValid = title.trim().length > 0;
         const contentValid = content.trim().length > 0;
         const passwordValid = password.trim().length > 0;
@@ -91,20 +108,32 @@ function Index() {
         fetch("https://babe-api.fastwrtn.com/feedback",{method:"POST",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
             title:title,
             content:content,
+            category:category,
             password:password
         })})
         alert("건의사항 제출 성공!");
         window.location.reload();
     }
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number){
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[]){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount)}>
-                <img id="icon" alt="logo" src="https://www.babechat.ai/assets/svgs/babechat.svg" />
+                { category == 1 &&
+                    <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
+                }
+                { category == 2 &&
+                    <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/4156-blurple-flame.png" />
+                }
+                { category == 3 &&
+                    <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/7100-blurple-heart.png" />
+                }
                 <div className="ms-2 me-auto overflow-hidden">
-                    <div className="fw-bold">{title}</div>
-                    {content}
+                    <div className="fw-bold">{title} {badge.map((data)=>(
+                        <Badge className="ms-1" text="white" bg="secondary">{data}</Badge>
+                    ))}
                     </div>
+                    {content}
+                </div>
                 <div className="badge border">{likeCount - dislikeCount}</div>
             </li>
         </>)
@@ -116,7 +145,7 @@ function Index() {
         <ul className="list-group mt-3">
             {feedback.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount)).map((data: any)=>{
                 if (data.isProgress){
-                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount))
+                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge))
                 }
             })}
         </ul>
@@ -129,7 +158,7 @@ function Index() {
                 if (data.isDeleted){
                     return
                 }
-                return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount)
+                return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge)
             })}
         </ul>
         </>)
@@ -142,9 +171,20 @@ function Index() {
                 <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
                 <Form.Label>내용</Form.Label>
                 <FormControl type="text" className='mb-2' placeholder="건의사항을 구체적으로 적어주세요." as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
-                <Form.Label>비밀번호 </Form.Label>
+                <Form.Label>비밀번호</Form.Label>
                 <FormControl type="text" className='mb-3' placeholder="비밀번호는 수정 및 삭제에 사용됩니다." value={password} onChange={passwordOnChange} isInvalid={passwordIsVaild}/>
-                <Button className="sumbit-btn" variant="outline-success" id="button-addon1" onClick={()=>formOnClick(title,content,password)}>제출</Button>
+                <ToggleButtonGroup className="d-inline-flex" type="radio" name="options" defaultValue={1} value={category} onChange={categoryOnChange}>
+                    <ToggleButton id="tbg-btn-1" variant='outline-secondary' value={1}>
+                        개선
+                    </ToggleButton>
+                    <ToggleButton id="tbg-btn-2" variant='outline-secondary' value={2}>
+                        버그
+                    </ToggleButton>
+                    <ToggleButton id="tbg-btn-3" variant='outline-secondary' value={3}>
+                        기타
+                    </ToggleButton>
+                </ToggleButtonGroup>
+                <Button className="sumbit-btn" variant="outline-success" id="button-addon1" onClick={()=>formOnClick(title,content,category,password)}>제출</Button>
             </Form.Group>
         </div>
         <div id="feed">
@@ -165,22 +205,34 @@ function Index() {
                     </div>
                     <div className='b-footer'>
                         <Button className="me-1" variant="outline-danger" onClick={()=>{
-                            fetch(`https://babe-api.fastwrtn.com/dislike?id=${modalId}`);
+                            fetch(`https://babe-api.fastwrtn.com/dislike?id=${modalId}`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.result == "FAIL" && data.data == "already"){
+                                        return alert("한번만 가능합니다.");
+                                    } 
+                                    setModalDislikeCount(modalDislikeCount+1);
+                                    alert("비추천되었습니다.");
+                                })
                             fetch("https://babe-api.fastwrtn.com/feedback")
                                 .then(res => res.json())
-                                .then(data => setFeedback(data.data))
-                            setModalDislikeCount(modalDislikeCount+1);
-                            alert("비추천되었습니다.");
+                                .then(data =>setFeedback(data.data))
                         }}>
                             비추천 : {modalDislikeCount}
                         </Button>
                         <Button className="ms-1" variant="outline-success" onClick={()=>{
-                            fetch(`https://babe-api.fastwrtn.com/like?id=${modalId}`);
+                            fetch(`https://babe-api.fastwrtn.com/like?id=${modalId}`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.result == "FAIL" && data.data == "already"){
+                                        return alert("한번만 가능합니다.");
+                                    } 
+                                    setModalLikeCount(modalLikeCount+1);
+                                    alert("추천되었습니다.");
+                                })
                             fetch("https://babe-api.fastwrtn.com/feedback")
                                 .then(res => res.json())
-                                .then(data => setFeedback(data.data))
-                            setModalLikeCount(modalLikeCount+1);
-                            alert("추천되었습니다.");
+                                .then(data =>setFeedback(data.data))
                         }}>
                             추천 : {modalLikeCount}
                         </Button>
@@ -197,6 +249,17 @@ function Index() {
                         <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={modalTitleEdit} onChange={modalTitleEditOnChange} isInvalid={modalTitleEditIsVaild}/>
                         <Form.Label>내용</Form.Label>
                         <FormControl type="text" className='mb-2' placeholder="건의사항을 구체적으로 적어주세요." as="textarea" rows={5} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
+                        <ToggleButtonGroup className="d-inline-flex" type="radio" name="options2" defaultValue={1} value={categoryEdit} onChange={categoryEditOnChange}>
+                            <ToggleButton id="tbg-btn2-1" variant='outline-secondary' value={1}>
+                                개선
+                            </ToggleButton>
+                            <ToggleButton id="tbg-btn2-2" variant='outline-secondary' value={2}>
+                                버그
+                            </ToggleButton>
+                            <ToggleButton id="tbg-btn2-3" variant='outline-secondary' value={3}>
+                                기타
+                            </ToggleButton>
+                        </ToggleButtonGroup>
                     </Form.Group>
                 }
             </Modal.Body>
@@ -227,6 +290,7 @@ function Index() {
                     fetch(`https://babe-api.fastwrtn.com/feedback?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
                         title:modalTitleEdit,
                         content:modalContentEdit,
+                        category:categoryEdit,
                         password:modalPassword
                     })})
                         .then(res => res.json())
