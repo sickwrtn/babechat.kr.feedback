@@ -86,6 +86,10 @@ function Index() {
 
     const categoryEditOnChange = (val: any) => setCategoryEdit(val);
 
+    const [selectFilter, setSelectFilter] = useState("likeCount");
+
+    const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
+
 
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback")
@@ -139,29 +143,19 @@ function Index() {
         </>)
     }
 
-    function Feed(){
-        return (<>
-            <h4>진행중</h4>
-        <ul className="list-group mt-3">
-            {feedback.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount)).map((data: any)=>{
-                if (data.isProgress){
-                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge))
-                }
-            })}
-        </ul>
-        <h4 className="mt-4">대기중</h4>
-        <ul className="list-group mt-3">
-            {feedback.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount)).map((data: any)=>{
-                if (data.isProgress){
-                    return
-                }
-                if (data.isDeleted){
-                    return
-                }
-                return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge)
-            })}
-        </ul>
-        </>)
+    function feedbackFilter(data:any, standard:string){
+        if(standard == "likeCount"){
+            return data.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount));
+        }
+        else if (standard == "latest"){
+            return data.sort((a: any,b: any) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
+        }
+        else if (standard == "oldest"){
+            return data.sort((a: any,b: any) => Number(new Date(a.createdAt)) - Number(new Date(b.createdAt)));
+        }
+        else{
+            return data;
+        }
     }
 
     return (<>
@@ -188,7 +182,31 @@ function Index() {
             </Form.Group>
         </div>
         <div id="feed">
-            <Feed />
+            <h3>진행중</h3>
+            <ul className="list-group mt-3">
+                {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                    if (data.isProgress){
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge))
+                    }
+                })}
+            </ul>
+            <h3 className="mt-4 d-inline-flex">대기중</h3>
+            <Form.Select className="asd" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
+                <option value="likeCount">추천순</option>
+                <option value="latest">최신순</option>
+                <option value="oldest">오래된순</option>
+            </Form.Select>
+            <ul className="list-group mt-3">
+                {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                    if (data.isProgress){
+                        return
+                    }
+                    if (data.isDeleted){
+                        return
+                    }
+                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge)
+                })}
+            </ul>
         </div>
         <div id="footer"></div>
         <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
