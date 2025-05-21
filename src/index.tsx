@@ -16,7 +16,8 @@ function Index() {
         setModalId(id);
         setModalLikeCount(likeCount);
         setModalDislikeCount(dislikeCount);
-        setShow(true)
+        setShow(true);
+        setIsEdit(false);
     };
 
     const [title,setTitle] = useState("");
@@ -25,11 +26,15 @@ function Index() {
     
     const [password,setPassword] = useState("");
     
+    const [modalPassword,setModalPassword] = useState("");
+
     const titleOnChange = (e: any) => setTitle(e.target.value);
 
     const contentOnChange = (e: any) => setContent(e.target.value);
 
     const passwordOnChange = (e: any) => setPassword(e.target.value);
+
+    const modalPasswordOnChange = (e: any) => setModalPassword(e.target.value);
 
     const [feedback, setFeedback] = useState([] as any[]);
 
@@ -48,6 +53,22 @@ function Index() {
     const [contentIsVaild,setContentVaild] = useState(false);
 
     const [passwordIsVaild,setPasswordVaild] = useState(false);
+
+    const [modalPasswordIsVaild,setModalPasswordIsVaild] = useState(false);
+
+    const [isEdit,setIsEdit] = useState(false);
+
+    const [modalTitleEdit, setModalTitleEdit] = useState("");
+
+    const [modalContentEdit, setModalContentEdit] = useState("");
+
+    const modalTitleEditOnChange = (e:any) => setModalTitleEdit(e.target.value);
+
+    const modalContentEditOnChange = (e:any) => setModalContentEdit(e.target.value);
+
+    const [modalTitleEditIsVaild, setModalTitleEditIsVaild] = useState(false);
+
+    const [ModalContentEditIsVaild, setModalContentEditIsVaild] = useState(false);
 
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback")
@@ -101,9 +122,15 @@ function Index() {
         </ul>
         <h4 className="mt-4">대기중</h4>
         <ul className="list-group mt-3">
-            {feedback.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount)).map((data: any)=>(
-                accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount)
-            ))}
+            {feedback.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount)).map((data: any)=>{
+                if (data.isProgress){
+                    return
+                }
+                if (data.isDeleted){
+                    return
+                }
+                return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount)
+            })}
         </ul>
         </>)
     }
@@ -125,37 +152,119 @@ function Index() {
         </div>
         <div id="footer"></div>
         <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
-            {/* Modal.Header: 모달의 상단 (제목 및 닫기 버튼) */}
             <Modal.Header closeButton>
-            <Modal.Title>{modalTitle}</Modal.Title>
+            <Modal.Title>{!isEdit && modalTitle}{isEdit && "편집기"}</Modal.Title>
             </Modal.Header>
-
-            {/* Modal.Body: 모달의 본문 내용 */}
-            <Modal.Body className='modalBody'>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {modalContent.replace(/\n/gi,"\n\n")}
-            </ReactMarkdown>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                <Form.Label>댓글</Form.Label>
-                <Form.Control as="textarea" rows={3} /> {/* 기본 3줄 높이 */}
-            </Form.Group>
+            <Modal.Body>
+                { !isEdit &&
+                <>
+                    <div className='b-content mt-2'>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {modalContent.replace(/\n/gi,"\n\n")}
+                        </ReactMarkdown>
+                    </div>
+                    <div className='b-footer'>
+                        <Button className="me-1" variant="outline-danger" onClick={()=>{
+                            fetch(`https://babe-api.fastwrtn.com/dislike?id=${modalId}`);
+                            alert("비추천되었습니다.");
+                        }}>
+                            비추천 : {modalDislikeCount}
+                        </Button>
+                        <Button className="ms-1" variant="outline-success" onClick={()=>{
+                            fetch(`https://babe-api.fastwrtn.com/like?id=${modalId}`);
+                            alert("추천되었습니다.");
+                        }}>
+                            추천 : {modalLikeCount}
+                        </Button>
+                    </div>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Form.Label>댓글</Form.Label>
+                        <Form.Control as="textarea" rows={3} /> 
+                    </Form.Group>
+                </>
+                }
+                { isEdit &&
+                    <Form.Group className="m-4">
+                        <Form.Label>제목</Form.Label>
+                        <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={modalTitleEdit} onChange={modalTitleEditOnChange} isInvalid={modalTitleEditIsVaild}/>
+                        <Form.Label>내용</Form.Label>
+                        <FormControl type="text" className='mb-2' placeholder="건의사항을 구체적으로 적어주세요." as="textarea" rows={5} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
+                    </Form.Group>
+                }
             </Modal.Body>
-            {/* Modal.Footer: 모달의 하단 (액션 버튼) */}
             <Modal.Footer>
-                <div className='b-footer'>
-                    <Button className="me-1" variant="danger" onClick={()=>{
-                        fetch(`https://babe-api.fastwrtn.com/dislike?id=${modalId}`);
-                        alert("비추천되었습니다.");
+                <Form.Group controlId="formPlaintextPassword">
+                    <Form.Control type="password" placeholder="비밀번호" value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
+                </Form.Group>
+                { !isEdit &&
+                <Button className="me-1" variant="outline-secondary" onClick={()=>{
+                        setIsEdit(true);
+                        setModalTitleEdit(modalTitle);
+                        setModalContentEdit(modalContent);
                     }}>
-                        비추천 : {modalDislikeCount}
-                    </Button>
-                    <Button className="ms-1" variant="success" onClick={()=>{
-                        fetch(`https://babe-api.fastwrtn.com/like?id=${modalId}`);
-                        alert("추천되었습니다.");
+                    편집
+                </Button>
+                }
+                { isEdit &&
+                <Button className="me-1" variant="outline-success" onClick={()=>{
+                    const modalPasswordValid = modalPassword.trim().length > 0;
+                    const modalTitleEditValid = modalTitleEdit.trim().length > 0;
+                    const modalContentEditValid = modalContentEdit.trim().length > 0;
+                    setModalPasswordIsVaild(!modalPasswordValid);
+                    setModalTitleEditIsVaild(!modalTitleEditValid);
+                    setModalContentEditIsVaild(!modalContentEditValid);
+                    if (!modalPasswordValid){
+                        return alert("잘못된 양식입니다.");
+                    }
+                    fetch(`https://babe-api.fastwrtn.com/feedback?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
+                        title:modalTitleEdit,
+                        content:modalContentEdit,
+                        password:modalPassword
+                    })})
+                        .then(res => res.json())
+                        .then((data:any) => {
+                            if (data.result == "SUCCESS"){
+                                alert("편집되었습니다.");
+                                window.location.reload();
+                            }
+                            else if (data.result == "FAIL" && data.data == "wrong password"){
+                                return alert("잘못된 비밀번호 입니다.");
+                            }
+                            else {
+                                return alert(`오류 ${data.data}`);
+                            }
+                        })
+                }}>
+                    제출
+                </Button>
+                }
+                {!isEdit &&
+                    <Button className="ms-1" variant="outline-danger" onClick={()=>{
+                        const modalPasswordValid = modalPassword.trim().length > 0;
+                        setModalPasswordIsVaild(!modalPasswordValid);
+                        if (!modalPasswordValid){
+                            return alert("잘못된 양식입니다.");
+                        }
+                        fetch(`https://babe-api.fastwrtn.com/feedback?id=${modalId}`,{method:"DELETE",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
+                            password:modalPassword
+                        })})
+                            .then(res => res.json())
+                            .then((data:any) => {
+                                if (data.result == "SUCCESS"){
+                                    alert("삭제되었습니다.");
+                                    window.location.reload();
+                                }
+                                else if (data.result == "FAIL" && data.data == "wrong password"){
+                                    return alert("잘못된 비밀번호 입니다.");
+                                }
+                                else {
+                                    return alert(`오류 ${data.data}`);
+                                }
+                            })
                     }}>
-                        추천 : {modalLikeCount}
-                    </Button>
-                </div>
+                        삭제
+                    </Button> 
+                }
             </Modal.Footer>
         </Modal>
     </>)
