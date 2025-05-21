@@ -166,12 +166,20 @@ function Index() {
                     <div className='b-footer'>
                         <Button className="me-1" variant="outline-danger" onClick={()=>{
                             fetch(`https://babe-api.fastwrtn.com/dislike?id=${modalId}`);
+                            fetch("https://babe-api.fastwrtn.com/feedback")
+                                .then(res => res.json())
+                                .then(data => setFeedback(data.data))
+                            setModalDislikeCount(modalDislikeCount+1);
                             alert("비추천되었습니다.");
                         }}>
                             비추천 : {modalDislikeCount}
                         </Button>
                         <Button className="ms-1" variant="outline-success" onClick={()=>{
                             fetch(`https://babe-api.fastwrtn.com/like?id=${modalId}`);
+                            fetch("https://babe-api.fastwrtn.com/feedback")
+                                .then(res => res.json())
+                                .then(data => setFeedback(data.data))
+                            setModalLikeCount(modalLikeCount+1);
                             alert("추천되었습니다.");
                         }}>
                             추천 : {modalLikeCount}
