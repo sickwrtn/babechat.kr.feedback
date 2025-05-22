@@ -298,11 +298,11 @@ function Admin() {
                     if (data.isProgress){
                         return
                     }
-                    if (data.isDeleted){
-                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
-                    }
                     if (data.isCompleted){
                         return
+                    }
+                    if (data.isDeleted){
+                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
                     }
                     return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
                 })}
