@@ -43,13 +43,14 @@ function Admin() {
 
     const handleClose = () => setShow(false);
 
-    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, isDeleted: boolean) => {
+    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, Badge: string[], isDeleted: boolean) => {
         setModalTitle(title);
         setModalContent(content);
         setModalId(id);
         setModalLikeCount(likeCount);
         setModalDislikeCount(dislikeCount);
         setModalIsDeleted(isDeleted);
+        setModalBadge(Badge);
         setShow(true);
         setIsEdit(false);
     };
@@ -118,6 +119,8 @@ function Admin() {
 
     const recaptchaRef = useRef(null as any);
 
+    const [modalBadge, setModalBadge] = useState([] as string[]);
+
     const resetRecaptcha = () => {
         if (recaptchaRef.current) {
         recaptchaRef.current.reset(); // reCAPTCHA 체크박스 초기화
@@ -165,7 +168,7 @@ function Admin() {
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,isDeleted)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted)}>
                 { category == 1 &&
                     <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
                 }
@@ -197,7 +200,7 @@ function Admin() {
 
     function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[],isDeleted: boolean){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,isDeleted)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted)}>
                 { category == 1 &&
                     <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
                 }
@@ -313,9 +316,13 @@ function Admin() {
         <div id="footer"></div>
         <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
             <Modal.Header closeButton>
-            <Modal.Title>{!isEdit && modalTitle}{isEdit && "편집기"}</Modal.Title>
+            <Modal.Title className='fw-bold'>
+            {!isEdit && modalTitle}
+            {isEdit && "편집기"}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body>{modalBadge.map((data)=>(
+                        <Badge pill={true} className="badge" text="white" bg="secondary">{data}</Badge>
+                    ))}
                 { !isEdit &&
                 <>
                     <div className='b-content mt-2'>

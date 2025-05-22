@@ -20,12 +20,13 @@ function Index() {
 
     const handleClose = () => setShow(false);
 
-    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number) => {
+    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, Badge: string[]) => {
         setModalTitle(title);
         setModalContent(content);
         setModalId(id);
         setModalLikeCount(likeCount);
         setModalDislikeCount(dislikeCount);
+        setModalBadge(Badge);
         setShow(true);
         setIsEdit(false);
     };
@@ -98,6 +99,8 @@ function Index() {
 
     const recaptchaRef = useRef(null as any);
 
+    const [modalBadge, setModalBadge] = useState([] as string[]);
+
     const resetRecaptcha = () => {
         if (recaptchaRef.current) {
         recaptchaRef.current.reset(); // reCAPTCHA 체크박스 초기화
@@ -145,7 +148,7 @@ function Index() {
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[]){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge)}>
                 { category == 1 &&
                     <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
                 }
@@ -195,7 +198,7 @@ function Index() {
                 <Form.Label>제목</Form.Label>
                 <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
                 <Form.Label>내용</Form.Label>
-                <FormControl type="text" className='mb-3' placeholder="건의사항을 구체적으로 적어주세요." as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
+                <FormControl type="text" className='mb-3' placeholder="건의사항을 구체적으로 적어주세요. (마크다운 사용 가능)" as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
                 <Form.Label>비밀번호</Form.Label>
                 <FormControl type="text" className='mb-3' placeholder="비밀번호는 수정 및 삭제에 사용됩니다." value={password} onChange={passwordOnChange} isInvalid={passwordIsVaild}/>
                 <ReCAPTCHA
@@ -259,9 +262,11 @@ function Index() {
         <div id="footer"></div>
         <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
             <Modal.Header closeButton>
-            <Modal.Title>{!isEdit && modalTitle}{isEdit && "편집기"}</Modal.Title>
+            <Modal.Title className='fw-bold'>{!isEdit && modalTitle}{isEdit && "편집기"}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body>{modalBadge.map((data)=>(
+                        <Badge pill={true} className="badge" text="white" bg="secondary">{data}</Badge>
+                    ))}
                 { !isEdit &&
                 <>
                     <div className='b-content mt-2'>
@@ -303,10 +308,6 @@ function Index() {
                             추천 : {modalLikeCount}
                         </Button>
                     </div>
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                        <Form.Label>댓글</Form.Label>
-                        <Form.Control as="textarea" rows={3} /> 
-                    </Form.Group>
                 </>
                 }
                 { isEdit &&
@@ -314,7 +315,7 @@ function Index() {
                         <Form.Label>제목</Form.Label>
                         <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={modalTitleEdit} onChange={modalTitleEditOnChange} isInvalid={modalTitleEditIsVaild}/>
                         <Form.Label>내용</Form.Label>
-                        <FormControl type="text" className='mb-2' placeholder="건의사항을 구체적으로 적어주세요." as="textarea" rows={5} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
+                        <FormControl type="text" className='mb-2' placeholder="건의사항을 구체적으로 적어주세요. (마크다운 사용 가능)" as="textarea" rows={5} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
                         <ToggleButtonGroup className="d-inline-flex" type="radio" name="options2" defaultValue={1} value={categoryEdit} onChange={categoryEditOnChange}>
                             <ToggleButton id="tbg-btn2-1" variant='outline-secondary' value={1}>
                                 개선
