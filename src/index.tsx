@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha'
 
 function Index() {
     if (localStorage.getItem("auth_token") == null){
@@ -89,6 +90,8 @@ function Index() {
     const [selectFilter, setSelectFilter] = useState("likeCount");
 
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
+
+    const testOnChange = (val: any) => console.log("Captcha value : ", val);
 
 
     useEffect(()=>{
@@ -179,6 +182,10 @@ function Index() {
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <Button className="sumbit-btn" variant="outline-success" id="button-addon1" onClick={()=>formOnClick(title,content,category,password)}>제출</Button>
+                <ReCAPTCHA
+                    sitekey="6LfSn0QrAAAAACdY7G25tmGF04wwyDM9xQBxnw1n"
+                    onChange={testOnChange}
+                />
             </Form.Group>
         </div>
         <div id="feed">
