@@ -1,5 +1,7 @@
 import { BrowserRouter as Router,Routes,Route } from 'react-router-dom';
 import Index from '.';
+import Error from './error';
+import Admin from './admin';
 import './main.css'
 
 /*
@@ -12,12 +14,13 @@ import './main.css'
 서버 비용이 존나 나가질 않나...
 Cafe24호스팅만 믿고있다. 제발!!
 */
-
 export function App() {
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<Index/>} />
+                <Route path="/sick/admin" element={<Admin />}/>
+                <Route path="/*" element={<Error />} />
             </Routes>
         </Router>
     )

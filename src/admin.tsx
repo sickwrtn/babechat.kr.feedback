@@ -6,8 +6,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
+const parseJwt = (token: string) => {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
 
-function Index() {
+    return JSON.parse(jsonPayload);
+};
+
+function Admin() {
     if (localStorage.getItem("auth_token") == null){
         fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
             .then(res=>res.json())
@@ -15,17 +24,39 @@ function Index() {
                 localStorage.setItem("auth_token",data.data);
             })
     }
+    if (!parseJwt(localStorage.getItem("auth_token") as string).admin){
+        const [adminPassword,setAdminPassword] = useState("");
+        const adminPasswordOnChange = (e: any) => setAdminPassword(e.target.value)
+        const adminFormOnClick = (adminPassword: string) => {
+            fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+                password:adminPassword
+            })})
+            .then(res=>res.json())
+            .then(data => {
+                localStorage.setItem("auth_token",data.data);
+                window.location.reload();
+            })
+        }
+        return(<>
+        <Form.Group style={{marginLeft:"5%",marginTop:"1%"}}>
+            <Form.Label>비밀번호</Form.Label>
+            <FormControl type="text" className='mb-3' style={{width:"40%"}} placeholder="관리자 비밀키를 입력해주세요." value={adminPassword} onChange={adminPasswordOnChange}/>
+            <Button variant="success" id="button-addon1" onClick={()=>adminFormOnClick(adminPassword)}>제출</Button>
+        </Form.Group>
+        </>)
+    }
 
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
 
-    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number) => {
+    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, isDeleted: boolean) => {
         setModalTitle(title);
         setModalContent(content);
         setModalId(id);
         setModalLikeCount(likeCount);
         setModalDislikeCount(dislikeCount);
+        setModalIsDeleted(isDeleted);
         setShow(true);
         setIsEdit(false);
     };
@@ -35,16 +66,12 @@ function Index() {
     const [content,setContent] = useState("");
     
     const [password,setPassword] = useState("");
-    
-    const [modalPassword,setModalPassword] = useState("");
 
     const titleOnChange = (e: any) => setTitle(e.target.value);
 
     const contentOnChange = (e: any) => setContent(e.target.value);
 
     const passwordOnChange = (e: any) => setPassword(e.target.value);
-
-    const modalPasswordOnChange = (e: any) => setModalPassword(e.target.value);
 
     const [feedback, setFeedback] = useState([] as any[]);
 
@@ -58,13 +85,13 @@ function Index() {
     
     const [modalDislikeCount, setModalDislikeCount] = useState(0);
 
+    const [modalIsDeleted, setModalIsDeleted] = useState(false);
+
     const [titleIsVaild,setTitleVaild] = useState(false);
 
     const [contentIsVaild,setContentVaild] = useState(false);
 
     const [passwordIsVaild,setPasswordVaild] = useState(false);
-
-    const [modalPasswordIsVaild,setModalPasswordIsVaild] = useState(false);
 
     const [isEdit,setIsEdit] = useState(false);
 
@@ -143,9 +170,9 @@ function Index() {
         window.location.reload();
     }
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[]){
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,isDeleted)}>
                 { category == 1 &&
                     <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
                 }
@@ -159,6 +186,33 @@ function Index() {
                     <div className="fw-bold">{title} {badge.map((data)=>(
                         <Badge className="ms-1" text="white" bg="secondary">{data}</Badge>
                     ))}
+                    <Badge className="ms-1" text="white" bg="primary" pill={true}>ID : {id}</Badge>
+                    </div>
+                    {content}
+                </div>
+                <div className="badge border">{likeCount - dislikeCount}</div>
+            </li>
+        </>)
+    }
+
+    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[],isDeleted: boolean){
+        return (<>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,isDeleted)}>
+                { category == 1 &&
+                    <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
+                }
+                { category == 2 &&
+                    <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/4156-blurple-flame.png" />
+                }
+                { category == 3 &&
+                    <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/7100-blurple-heart.png" />
+                }
+                <div className="ms-2 me-auto overflow-hidden">
+                    <div className="fw-bold">{title} {badge.map((data)=>(
+                        <Badge className="ms-1" text="white" bg="secondary">{data}</Badge>
+                    ))}
+                    <Badge className="ms-1" text="white" bg="danger" pill={true}>삭제됨</Badge>
+                    <Badge className="ms-1" text="white" bg="primary" pill={true}>ID : {id}</Badge>
                     </div>
                     {content}
                 </div>
@@ -216,7 +270,7 @@ function Index() {
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,"likeCount").map((data: any)=>{
                     if (data.isProgress){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge))
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted))
                     }
                 })}
             </ul>
@@ -232,9 +286,9 @@ function Index() {
                         return
                     }
                     if (data.isDeleted){
-                        return
+                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
                     }
-                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge)
+                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
                 })}
             </ul>
         </div>
@@ -312,34 +366,115 @@ function Index() {
                 }
             </Modal.Body>
             <Modal.Footer>
-                <Form.Group controlId="formPlaintextPassword">
-                    <Form.Control type="password" placeholder="비밀번호" value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
-                </Form.Group>
                 { !isEdit &&
-                <Button className="me-1" variant="outline-secondary" onClick={()=>{
-                        setIsEdit(true);
-                        setModalTitleEdit(modalTitle);
-                        setModalContentEdit(modalContent);
-                    }}>
-                    편집
-                </Button>
+                <>
+                    <Button className="me-1" variant="outline-primary" onClick={()=>{
+                        fetch(`https://babe-api.fastwrtn.com/admin/progress?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
+                            .then(res => res.json())
+                            .then((data:any) => {
+                                if (data.result == "SUCCESS"){
+                                    alert("진행중 탭으로 이동되었습니다.");
+                                    window.location.reload();
+                                }
+                                else if (data.result == "FAIL" && data.data == "auth"){
+                                    return alert("권한이 없습니다.");
+                                }
+                                else {
+                                    return alert(`오류 ${data.data}`);
+                                }
+                            })
+                    }}>진행중 탭으로 이동</Button>
+                    <Button className="me-1" variant="outline-primary" onClick={()=>{
+                        fetch(`https://babe-api.fastwrtn.com/admin/compeleted?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
+                            .then(res => res.json())
+                            .then((data:any) => {
+                                if (data.result == "SUCCESS"){
+                                    alert("완료 탭으로 이동되었습니다.");
+                                    window.location.reload();
+                                }
+                                else if (data.result == "FAIL" && data.data == "auth"){
+                                    return alert("권한이 없습니다.");
+                                }
+                                else {
+                                    return alert(`오류 ${data.data}`);
+                                }
+                            })
+                    }}>완료 탭으로 이동</Button>
+                    <Button className="me-1" variant="outline-primary" onClick={()=>{
+                        fetch(`https://babe-api.fastwrtn.com/admin/clear?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
+                            .then(res => res.json())
+                            .then((data:any) => {
+                                if (data.result == "SUCCESS"){
+                                    alert("대기중 탭으로 이동되었습니다.");
+                                    window.location.reload();
+                                }
+                                else if (data.result == "FAIL" && data.data == "auth"){
+                                    return alert("권한이 없습니다.");
+                                }
+                                else {
+                                    return alert(`오류 ${data.data}`);
+                                }
+                            })
+                    }}>대기중 탭으로 이동</Button>
+                    <Button className="me-1" variant="outline-secondary" onClick={()=>{
+                            setIsEdit(true);
+                            setModalTitleEdit(modalTitle);
+                            setModalContentEdit(modalContent);
+                        }}>
+                        편집
+                    </Button>
+                    {modalIsDeleted &&
+                        <Button className="ms-1" variant="outline-danger" onClick={()=>{
+                            fetch(`https://babe-api.fastwrtn.com/admin/undeleted?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
+                                .then(res => res.json())
+                                .then((data:any) => {
+                                    if (data.result == "SUCCESS"){
+                                        alert("복구되었습니다.");
+                                        window.location.reload();
+                                    }
+                                    else if (data.result == "FAIL" && data.data == "auth"){
+                                        return alert("권한이 없습니다.");
+                                    }
+                                    else {
+                                        return alert(`오류 ${data.data}`);
+                                    }
+                                })
+                        }}>
+                            복구
+                        </Button> 
+                    }
+                    {!modalIsDeleted &&
+                        <Button className="ms-1" variant="outline-danger" onClick={()=>{
+                            fetch(`https://babe-api.fastwrtn.com/admin/feedback?id=${modalId}`,{method:"DELETE",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
+                                .then(res => res.json())
+                                .then((data:any) => {
+                                    if (data.result == "SUCCESS"){
+                                        alert("삭제되었습니다.");
+                                        window.location.reload();
+                                    }
+                                    else if (data.result == "FAIL" && data.data == "auth"){
+                                        return alert("권한이 없습니다.");
+                                    }
+                                    else {
+                                        return alert(`오류 ${data.data}`);
+                                    }
+                                })
+                        }}>
+                            삭제
+                        </Button> 
+                    }
+                </>
                 }
                 { isEdit &&
                 <Button className="me-1" variant="outline-success" onClick={()=>{
-                    const modalPasswordValid = modalPassword.trim().length > 0;
                     const modalTitleEditValid = modalTitleEdit.trim().length > 0;
                     const modalContentEditValid = modalContentEdit.trim().length > 0;
-                    setModalPasswordIsVaild(!modalPasswordValid);
                     setModalTitleEditIsVaild(!modalTitleEditValid);
                     setModalContentEditIsVaild(!modalContentEditValid);
-                    if (!modalPasswordValid){
-                        return alert("잘못된 양식입니다.");
-                    }
-                    fetch(`https://babe-api.fastwrtn.com/feedback?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
+                    fetch(`https://babe-api.fastwrtn.com/admin/feedback?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
                         title:modalTitleEdit,
                         content:modalContentEdit,
-                        category:categoryEdit,
-                        password:modalPassword
+                        category:categoryEdit
                     })})
                         .then(res => res.json())
                         .then((data:any) => {
@@ -347,8 +482,8 @@ function Index() {
                                 alert("편집되었습니다.");
                                 window.location.reload();
                             }
-                            else if (data.result == "FAIL" && data.data == "wrong password"){
-                                return alert("잘못된 비밀번호 입니다.");
+                            else if (data.result == "FAIL" && data.data == "auth"){
+                                return alert("권한이 없습니다.");
                             }
                             else {
                                 return alert(`오류 ${data.data}`);
@@ -358,36 +493,9 @@ function Index() {
                     제출
                 </Button>
                 }
-                {!isEdit &&
-                    <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                        const modalPasswordValid = modalPassword.trim().length > 0;
-                        setModalPasswordIsVaild(!modalPasswordValid);
-                        if (!modalPasswordValid){
-                            return alert("잘못된 양식입니다.");
-                        }
-                        fetch(`https://babe-api.fastwrtn.com/feedback?id=${modalId}`,{method:"DELETE",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
-                            password:modalPassword
-                        })})
-                            .then(res => res.json())
-                            .then((data:any) => {
-                                if (data.result == "SUCCESS"){
-                                    alert("삭제되었습니다.");
-                                    window.location.reload();
-                                }
-                                else if (data.result == "FAIL" && data.data == "wrong password"){
-                                    return alert("잘못된 비밀번호 입니다.");
-                                }
-                                else {
-                                    return alert(`오류 ${data.data}`);
-                                }
-                            })
-                    }}>
-                        삭제
-                    </Button> 
-                }
             </Modal.Footer>
         </Modal>
     </>)
 }
 
-export default Index
+export default Admin
