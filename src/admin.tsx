@@ -17,14 +17,7 @@ const parseJwt = (token: string) => {
 };
 
 function Admin() {
-    if (localStorage.getItem("auth_token") == null){
-        fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
-            .then(res=>res.json())
-            .then(data => {
-                localStorage.setItem("auth_token",data.data);
-            })
-    }
-    if (!parseJwt(localStorage.getItem("auth_token") as string).admin){
+    if (localStorage.getItem("auth_token") == null || !parseJwt(localStorage.getItem("auth_token") as string).admin){
         const [adminPassword,setAdminPassword] = useState("");
         const adminPasswordOnChange = (e: any) => setAdminPassword(e.target.value)
         const adminFormOnClick = (adminPassword: string) => {
