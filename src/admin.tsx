@@ -18,7 +18,7 @@ const parseJwt = (token: string) => {
 
 function Admin() {
     if (localStorage.getItem("auth_token") == null || !parseJwt(localStorage.getItem("auth_token") as string).admin){
-        const [adminPassword,setAdminPassword] = useState("");
+        const [adminPassword,setAdminPassword] = useState<string>("");
         const adminPasswordOnChange = (e: any) => setAdminPassword(e.target.value)
         const adminFormOnClick = (adminPassword: string) => {
             fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
@@ -39,7 +39,7 @@ function Admin() {
         </>)
     }
 
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState<boolean>(false);
 
     const handleClose = () => setShow(false);
 
@@ -55,11 +55,11 @@ function Admin() {
         setIsEdit(false);
     };
 
-    const [title,setTitle] = useState("");
+    const [title,setTitle] = useState<string>("");
 
-    const [content,setContent] = useState("");
+    const [content,setContent] = useState<string>("");
     
-    const [password,setPassword] = useState("");
+    const [password,setPassword] = useState<string>("");
 
     const titleOnChange = (e: any) => setTitle(e.target.value);
 
@@ -67,59 +67,59 @@ function Admin() {
 
     const passwordOnChange = (e: any) => setPassword(e.target.value);
 
-    const [feedback, setFeedback] = useState([] as any[]);
+    const [feedback, setFeedback] = useState<any[]>([]);
 
-    const [modalTitle, setModalTitle] = useState("");
+    const [modalTitle, setModalTitle] = useState<string>("");
 
-    const [modalContent,setModalContent] = useState("");
+    const [modalContent,setModalContent] = useState<string>("");
 
-    const [modalId, setModalId] = useState(0);
+    const [modalId, setModalId] = useState<number>(0);
 
-    const [modalLikeCount, setModalLikeCount] = useState(0);
+    const [modalLikeCount, setModalLikeCount] = useState<number>(0);
     
-    const [modalDislikeCount, setModalDislikeCount] = useState(0);
+    const [modalDislikeCount, setModalDislikeCount] = useState<number>(0);
 
-    const [modalIsDeleted, setModalIsDeleted] = useState(false);
+    const [modalIsDeleted, setModalIsDeleted] = useState<boolean>(false);
 
-    const [titleIsVaild,setTitleVaild] = useState(false);
+    const [titleIsVaild,setTitleVaild] = useState<boolean>(false);
 
-    const [contentIsVaild,setContentVaild] = useState(false);
+    const [contentIsVaild,setContentVaild] = useState<boolean>(false);
 
-    const [passwordIsVaild,setPasswordVaild] = useState(false);
+    const [passwordIsVaild,setPasswordVaild] = useState<boolean>(false);
 
-    const [isEdit,setIsEdit] = useState(false);
+    const [isEdit,setIsEdit] = useState<boolean>(false);
 
-    const [modalTitleEdit, setModalTitleEdit] = useState("");
+    const [modalTitleEdit, setModalTitleEdit] = useState<string>("");
 
-    const [modalContentEdit, setModalContentEdit] = useState("");
+    const [modalContentEdit, setModalContentEdit] = useState<string>("");
 
     const modalTitleEditOnChange = (e:any) => setModalTitleEdit(e.target.value);
 
     const modalContentEditOnChange = (e:any) => setModalContentEdit(e.target.value);
 
-    const [modalTitleEditIsVaild, setModalTitleEditIsVaild] = useState(false);
+    const [modalTitleEditIsVaild, setModalTitleEditIsVaild] = useState<boolean>(false);
 
-    const [ModalContentEditIsVaild, setModalContentEditIsVaild] = useState(false);
+    const [ModalContentEditIsVaild, setModalContentEditIsVaild] = useState<boolean>(false);
 
-    const [category, setCategory] = useState(1);
+    const [category, setCategory] = useState<1|2|3>(1);
 
     const categoryOnChange = (val: any) => setCategory(val);
 
-    const [categoryEdit, setCategoryEdit] = useState(1);
+    const [categoryEdit, setCategoryEdit] = useState<1|2|3>(1);
 
     const categoryEditOnChange = (val: any) => setCategoryEdit(val);
 
-    const [selectFilter, setSelectFilter] = useState("likeCount");
+    const [selectFilter, setSelectFilter] = useState<string>("likeCount");
 
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
-    const [recaptchaToken, setRecaptchaToken] = useState(null);
+    const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
     const recaptchaOnChange = (val: any) => setRecaptchaToken(val);
 
-    const recaptchaRef = useRef(null as any);
+    const recaptchaRef = useRef<any>(null);
 
-    const [modalBadge, setModalBadge] = useState([] as string[]);
+    const [modalBadge, setModalBadge] = useState<string[]>();
 
     const resetRecaptcha = () => {
         if (recaptchaRef.current) {
@@ -127,6 +127,18 @@ function Admin() {
         setRecaptchaToken(null); // 저장된 토큰도 초기화
         }
     };
+
+    const resetFeedback = () => {
+        fetch("https://babe-api.fastwrtn.com/feedback")
+            .then(res => res.json())
+            .then(data => setFeedback(data.data))
+    }
+
+    const [isBageEditShow, setIsBageEditShow] = useState<boolean>(false);
+
+    const [bageEdit,setBageEdit] = useState<string>("");
+    
+    const bageEditOnChange = (e:any) => setBageEdit(e.target.value); 
 
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback")
@@ -163,7 +175,9 @@ function Admin() {
         })})
         alert("건의사항 제출 성공!");
         resetRecaptcha();
-        window.location.reload();
+        resetFeedback();
+        setTitle("");
+        setContent("");
     }
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean){
@@ -180,9 +194,9 @@ function Admin() {
                 }
                 <div className="ms-2 me-auto overflow-hidden">
                     <div className="fw-bold">{title} {badge.map((data)=>(
-                        <Badge className="ms-1 badge" text="white" bg="secondary" pill={true}>{data}</Badge>
+                        <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
-                    <Badge className="ms-1 badge" text="white" bg="primary" pill={true}>ID : {id}</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="primary">ID : {id}</Badge>
                     </div>
                     {content}
                 </div>
@@ -212,13 +226,13 @@ function Admin() {
                 }
                 <div className="ms-2 me-auto overflow-hidden">
                     <div className="fw-bold">{title} {badge.map((data)=>(
-                        <Badge className="ms-1 badge" text="white" bg="secondary" pill={true}>{data}</Badge>
+                        <Badge className="ms-1 badge" text="white" bg="secondary" >{data}</Badge>
                     ))}
-                    <Badge className="ms-1 badge" text="white" bg="danger" pill={true}>삭제됨</Badge>
-                    {isProgress && <Badge className="ms-1 badge" text="white" bg="secondary" pill={true}>진행중 탭</Badge>}
-                    {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" pill={true}>완료됨 탭</Badge>}
-                    {(!isProgress && !isCompleted) && <Badge className="ms-1 badge" text="white" bg="secondary" pill={true}>대기중 탭</Badge>}
-                    <Badge className="ms-1 badge" text="white" bg="primary" pill={true}>ID : {id}</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="danger" >삭제됨</Badge>
+                    {isProgress && <Badge className="ms-1 badge" text="white" bg="secondary" >진행중 탭</Badge>}
+                    {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" >완료됨 탭</Badge>}
+                    {(!isProgress && !isCompleted) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
+                    <Badge className="ms-1 badge" text="white" bg="primary" >ID : {id}</Badge>
                     </div>
                     {content}
                 </div>
@@ -337,9 +351,40 @@ function Admin() {
             {!isEdit && modalTitle}
             {isEdit && "편집기"}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>{modalBadge.map((data)=>(
-                        <Badge pill={true} className="badge" text="white" bg="secondary">{data}</Badge>
-                    ))}
+            <Modal.Body>{!isBageEditShow && 
+                    <>
+                        {modalBadge?.map((data)=>(
+                            <Badge className="badge me-1" style={{cursor:"default"}} text="white" bg="secondary">{data}</Badge>
+                        ))}
+                        <Badge className="badge" style={{cursor:"pointer"}} text="white" bg="primary" onClick={()=>{
+                                setIsBageEditShow(true);
+                                setBageEdit((modalBadge as string[]).join(","));
+                            }}>배지 수정</Badge>
+                    </>
+                    }
+                    {isBageEditShow && 
+                        <>
+                            <FormControl type="text" placeholder="수정" as="textarea" rows={1} value={bageEdit} onChange={bageEditOnChange}/>
+                            <Button className="mt-2" size='sm' variant="success" onClick={()=>{
+                                fetch(`https://babe-api.fastwrtn.com/admin/badge?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
+                                    badge:bageEdit.split(",")
+                                })})
+                                    .then(res => res.json())
+                                    .then((data:any) => {
+                                        if (data.result == "SUCCESS"){
+                                            alert("수정되었습니다.");
+                                            resetFeedback();
+                                            handleClose();
+                                        }
+                                        else {
+                                            return alert(`오류 ${data.data}`);
+                                        }
+                                    })
+                                setIsBageEditShow(false)
+                            }}>등록</Button>
+                        </>
+                    }
+
                 { !isEdit &&
                 <>
                     <div className='b-content mt-2'>
@@ -357,10 +402,8 @@ function Admin() {
                                     } 
                                     setModalDislikeCount(modalDislikeCount+1);
                                     alert("비추천되었습니다.");
+                                    resetFeedback();
                                 })
-                            fetch("https://babe-api.fastwrtn.com/feedback")
-                                .then(res => res.json())
-                                .then(data =>setFeedback(data.data))
                         }}>
                             비추천 : {modalDislikeCount}
                         </Button>
@@ -373,10 +416,8 @@ function Admin() {
                                     } 
                                     setModalLikeCount(modalLikeCount+1);
                                     alert("추천되었습니다.");
+                                    resetFeedback();
                                 })
-                            fetch("https://babe-api.fastwrtn.com/feedback")
-                                .then(res => res.json())
-                                .then(data =>setFeedback(data.data))
                         }}>
                             추천 : {modalLikeCount}
                         </Button>
@@ -416,7 +457,8 @@ function Admin() {
                             .then((data:any) => {
                                 if (data.result == "SUCCESS"){
                                     alert("진행중 탭으로 이동되었습니다.");
-                                    window.location.reload();
+                                    resetFeedback();
+                                    handleClose();
                                 }
                                 else if (data.result == "FAIL" && data.data == "auth"){
                                     return alert("권한이 없습니다.");
@@ -432,7 +474,8 @@ function Admin() {
                             .then((data:any) => {
                                 if (data.result == "SUCCESS"){
                                     alert("완료 탭으로 이동되었습니다.");
-                                    window.location.reload();
+                                    resetFeedback();
+                                    handleClose();
                                 }
                                 else if (data.result == "FAIL" && data.data == "auth"){
                                     return alert("권한이 없습니다.");
@@ -448,7 +491,8 @@ function Admin() {
                             .then((data:any) => {
                                 if (data.result == "SUCCESS"){
                                     alert("대기중 탭으로 이동되었습니다.");
-                                    window.location.reload();
+                                    resetFeedback();
+                                    handleClose();
                                 }
                                 else if (data.result == "FAIL" && data.data == "auth"){
                                     return alert("권한이 없습니다.");
@@ -472,7 +516,8 @@ function Admin() {
                                 .then((data:any) => {
                                     if (data.result == "SUCCESS"){
                                         alert("복구되었습니다.");
-                                        window.location.reload();
+                                        resetFeedback();
+                                        handleClose();
                                     }
                                     else if (data.result == "FAIL" && data.data == "auth"){
                                         return alert("권한이 없습니다.");
@@ -492,7 +537,8 @@ function Admin() {
                                 .then((data:any) => {
                                     if (data.result == "SUCCESS"){
                                         alert("삭제되었습니다.");
-                                        window.location.reload();
+                                        resetFeedback();
+                                        handleClose();
                                     }
                                     else if (data.result == "FAIL" && data.data == "auth"){
                                         return alert("권한이 없습니다.");
@@ -522,7 +568,8 @@ function Admin() {
                         .then((data:any) => {
                             if (data.result == "SUCCESS"){
                                 alert("편집되었습니다.");
-                                window.location.reload();
+                                resetFeedback();
+                                handleClose();
                             }
                             else if (data.result == "FAIL" && data.data == "auth"){
                                 return alert("권한이 없습니다.");

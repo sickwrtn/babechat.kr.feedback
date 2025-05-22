@@ -101,6 +101,12 @@ function Index() {
 
     const [modalBadge, setModalBadge] = useState([] as string[]);
 
+    const resetFeedback = () => {
+        fetch("https://babe-api.fastwrtn.com/feedback")
+            .then(res => res.json())
+            .then(data => setFeedback(data.data))
+    }
+
     const resetRecaptcha = () => {
         if (recaptchaRef.current) {
         recaptchaRef.current.reset(); // reCAPTCHA 체크박스 초기화
@@ -143,7 +149,9 @@ function Index() {
         })})
         alert("건의사항 제출 성공!");
         resetRecaptcha();
-        window.location.reload();
+        resetFeedback();
+        setTitle("");
+        setContent("");
     }
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[]){
@@ -160,7 +168,7 @@ function Index() {
                 }
                 <div className="ms-2 me-auto overflow-hidden">
                     <div className="fw-bold">{title} {badge.map((data)=>(
-                        <Badge pill={true} className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
+                        <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
                     </div>
                     {content}
@@ -271,7 +279,7 @@ function Index() {
             <Modal.Title className='fw-bold'>{!isEdit && modalTitle}{isEdit && "편집기"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>{modalBadge.map((data)=>(
-                        <Badge pill={true} className="badge" text="white" bg="secondary">{data}</Badge>
+                        <Badge className="badge me-1" text="white" bg="secondary">{data}</Badge>
                     ))}
                 { !isEdit &&
                 <>
@@ -290,10 +298,9 @@ function Index() {
                                     } 
                                     setModalDislikeCount(modalDislikeCount+1);
                                     alert("비추천되었습니다.");
+                                    resetFeedback();
                                 })
-                            fetch("https://babe-api.fastwrtn.com/feedback")
-                                .then(res => res.json())
-                                .then(data =>setFeedback(data.data))
+                            resetFeedback();
                         }}>
                             비추천 : {modalDislikeCount}
                         </Button>
@@ -306,10 +313,8 @@ function Index() {
                                     } 
                                     setModalLikeCount(modalLikeCount+1);
                                     alert("추천되었습니다.");
+                                    resetFeedback();
                                 })
-                            fetch("https://babe-api.fastwrtn.com/feedback")
-                                .then(res => res.json())
-                                .then(data =>setFeedback(data.data))
                         }}>
                             추천 : {modalLikeCount}
                         </Button>
@@ -370,7 +375,8 @@ function Index() {
                         .then((data:any) => {
                             if (data.result == "SUCCESS"){
                                 alert("편집되었습니다.");
-                                window.location.reload();
+                                resetFeedback();
+                                handleClose();
                             }
                             else if (data.result == "FAIL" && data.data == "wrong password"){
                                 return alert("잘못된 비밀번호 입니다.");
@@ -397,7 +403,8 @@ function Index() {
                             .then((data:any) => {
                                 if (data.result == "SUCCESS"){
                                     alert("삭제되었습니다.");
-                                    window.location.reload();
+                                    resetFeedback();
+                                    handleClose();
                                 }
                                 else if (data.result == "FAIL" && data.data == "wrong password"){
                                     return alert("잘못된 비밀번호 입니다.");
