@@ -183,7 +183,14 @@ function Admin() {
                     </div>
                     {content}
                 </div>
-                <div className="badge border">{likeCount - dislikeCount}</div>
+                <div className="badge border">
+                    {(likeCount - dislikeCount) >= 0 && 
+                    <div style={{color:"green"}}>{likeCount - dislikeCount}</div>
+                    }
+                    {(likeCount - dislikeCount) < 0 && 
+                    <div style={{color:"red"}}>{likeCount - dislikeCount}</div>
+                    }
+                </div>
             </li>
         </>)
     }
@@ -209,7 +216,14 @@ function Admin() {
                     </div>
                     {content}
                 </div>
-                <div className="badge border">{likeCount - dislikeCount}</div>
+                <div className="badge border">
+                    {(likeCount - dislikeCount) >= 0 && 
+                    <div style={{color:"green"}}>{likeCount - dislikeCount}</div>
+                    }
+                    {(likeCount - dislikeCount) < 0 && 
+                    <div style={{color:"red"}}>{likeCount - dislikeCount}</div>
+                    }
+                </div>
             </li>
         </>)
     }
@@ -281,7 +295,18 @@ function Admin() {
                     if (data.isDeleted){
                         return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
                     }
+                    if (data.isCompleted){
+                        return
+                    }
                     return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
+                })}
+            </ul>
+            <h3 className="mt-4 d-inline-flex">완료됨</h3>
+            <ul className="list-group mt-3">
+                {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                    if (data.isCompleted){
+                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)
+                    }
                 })}
             </ul>
         </div>
