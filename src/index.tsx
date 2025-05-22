@@ -225,6 +225,9 @@ function Index() {
             <h3>진행중</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                    if (data.isDeleted){
+                        return
+                    }
                     if (data.isProgress){
                         return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge))
                     }
@@ -253,6 +256,9 @@ function Index() {
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                    if (data.isDeleted){
+                        return
+                    }
                     if (data.isCompleted){
                         return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge)
                     }
