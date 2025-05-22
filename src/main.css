@@ -26,9 +26,7 @@ body {
 }
 
 .badge {
-    color: gray !important;
-    font-size: 15px !important;
-    margin-top: 9px;
+    font-size: 12px !important;
 }
 
 .sumbit-btn {

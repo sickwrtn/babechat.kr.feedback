@@ -157,7 +157,7 @@ function Index() {
                 }
                 <div className="ms-2 me-auto overflow-hidden">
                     <div className="fw-bold">{title} {badge.map((data)=>(
-                        <Badge className="ms-1" text="white" bg="secondary">{data}</Badge>
+                        <Badge pill={true} className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
                     </div>
                     {content}

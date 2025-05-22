@@ -177,9 +177,9 @@ function Admin() {
                 }
                 <div className="ms-2 me-auto overflow-hidden">
                     <div className="fw-bold">{title} {badge.map((data)=>(
-                        <Badge className="ms-1" text="white" bg="secondary">{data}</Badge>
+                        <Badge className="ms-1 badge" text="white" bg="secondary" pill={true}>{data}</Badge>
                     ))}
-                    <Badge className="ms-1" text="white" bg="primary" pill={true}>ID : {id}</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="primary" pill={true}>ID : {id}</Badge>
                     </div>
                     {content}
                 </div>
@@ -202,10 +202,10 @@ function Admin() {
                 }
                 <div className="ms-2 me-auto overflow-hidden">
                     <div className="fw-bold">{title} {badge.map((data)=>(
-                        <Badge className="ms-1" text="white" bg="secondary">{data}</Badge>
+                        <Badge className="ms-1 badge" text="white" bg="secondary" pill={true}>{data}</Badge>
                     ))}
-                    <Badge className="ms-1" text="white" bg="danger" pill={true}>삭제됨</Badge>
-                    <Badge className="ms-1" text="white" bg="primary" pill={true}>ID : {id}</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="danger" pill={true}>삭제됨</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="primary" pill={true}>ID : {id}</Badge>
                     </div>
                     {content}
                 </div>
