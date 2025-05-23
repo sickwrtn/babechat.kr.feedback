@@ -230,15 +230,13 @@ function Index() {
     return (<>
         <div id="sumbit" className='border rounded'>
             <Form.Group className="m-4">
-                <Form>
-                    <Form.Check // prettier-ignore
-                        type="switch"
-                        className='mb-3'
-                        label="다크 모드"
-                        checked={isDarkmode}
-                        onChange={isDarkmodeOnChange}
-                    /> 
-                </Form>
+                <Form.Check // prettier-ignore
+                    type="switch"
+                    className='mb-3'
+                    label="다크 모드"
+                    checked={isDarkmode}
+                    onChange={isDarkmodeOnChange}
+                />
                 <Form.Label>제목</Form.Label>
                 <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
                 <Form.Label>내용</Form.Label>

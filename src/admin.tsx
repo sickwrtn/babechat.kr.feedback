@@ -121,6 +121,22 @@ function Admin() {
 
     const [modalBadge, setModalBadge] = useState<string[]>();
 
+    const [isDarkmode,setIsDarkmode] = useState<boolean>((():boolean =>{
+        if (localStorage.getItem("them") == null){
+            localStorage.setItem("them","light");
+            return false
+        }
+        else if (localStorage.getItem("them") == "light"){
+            return false;
+        }
+        else if (localStorage.getItem("them") == "dark"){
+            return true;
+        }
+        return false
+    })());
+
+    const isDarkmodeOnChange = (e: any) => setIsDarkmode(e.target.checked);
+
     const resetRecaptcha = () => {
         if (recaptchaRef.current) {
         recaptchaRef.current.reset(); // reCAPTCHA 체크박스 초기화
@@ -139,6 +155,17 @@ function Admin() {
     const [bageEdit,setBageEdit] = useState<string>("");
     
     const bageEditOnChange = (e:any) => setBageEdit(e.target.value); 
+
+    useEffect(() => {
+        if (isDarkmode){
+            localStorage.setItem("them","dark");
+            document.documentElement.setAttribute('data-bs-theme', "dark");
+        }
+        else {
+            localStorage.setItem("them","light");
+            document.documentElement.setAttribute('data-bs-theme', "light");
+        }
+    }, [isDarkmode]);
 
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback")
@@ -266,6 +293,13 @@ function Admin() {
     return (<>
         <div id="sumbit" className='border rounded'>
             <Form.Group className="m-4">
+                <Form.Check // prettier-ignore
+                            type="switch"
+                            className='mb-3'
+                            label="다크 모드"
+                            checked={isDarkmode}
+                            onChange={isDarkmodeOnChange}
+                        /> 
                 <Form.Label>제목</Form.Label>
                 <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
                 <Form.Label>내용</Form.Label>
