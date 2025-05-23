@@ -13,6 +13,7 @@ body {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    cursor: default;
 }
 
 .list-group-item img {
@@ -21,8 +22,7 @@ body {
 }
 
 .list-group-item:hover {
-    --tw-bg-opacity: 1;
-    background-color: rgb(250 250 250/var(--tw-bg-opacity));
+    filter: brightness(95%);
 }
 
 .badge {

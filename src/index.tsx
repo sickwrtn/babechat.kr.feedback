@@ -101,6 +101,22 @@ function Index() {
 
     const [modalBadge, setModalBadge] = useState([] as string[]);
 
+    const [isDarkmode,setIsDarkmode] = useState<boolean>((():boolean =>{
+        if (localStorage.getItem("them") == null){
+            localStorage.setItem("them","light");
+            return false
+        }
+        else if (localStorage.getItem("them") == "light"){
+            return false;
+        }
+        else if (localStorage.getItem("them") == "dark"){
+            return true;
+        }
+        return false
+    })());
+
+    const isDarkmodeOnChange = (e: any) => setIsDarkmode(e.target.checked);
+
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/feedback")
             .then(res => res.json())
@@ -113,6 +129,17 @@ function Index() {
         setRecaptchaToken(null); // 저장된 토큰도 초기화
         }
     };
+
+    useEffect(() => {
+        if (isDarkmode){
+            localStorage.setItem("them","dark");
+            document.documentElement.setAttribute('data-bs-theme', "dark");
+        }
+        else {
+            localStorage.setItem("them","light");
+            document.documentElement.setAttribute('data-bs-theme', "light");
+        }
+    }, [isDarkmode]);
 
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback")
@@ -203,6 +230,15 @@ function Index() {
     return (<>
         <div id="sumbit" className='border rounded'>
             <Form.Group className="m-4">
+                <Form>
+                    <Form.Check // prettier-ignore
+                        type="switch"
+                        className='mb-3'
+                        label="다크 모드"
+                        checked={isDarkmode}
+                        onChange={isDarkmodeOnChange}
+                    /> 
+                </Form>
                 <Form.Label>제목</Form.Label>
                 <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
                 <Form.Label>내용</Form.Label>
@@ -279,7 +315,7 @@ function Index() {
             <Modal.Title className='fw-bold'>{!isEdit && modalTitle}{isEdit && "편집기"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>{modalBadge.map((data)=>(
-                        <Badge className="badge me-1" text="white" bg="secondary">{data}</Badge>
+                        <Badge className="badge me-1" style={{cursor:"default"}} text="white" bg="secondary">{data}</Badge>
                     ))}
                 { !isEdit &&
                 <>
