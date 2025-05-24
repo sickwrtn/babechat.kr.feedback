@@ -182,6 +182,9 @@ function Admin() {
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                    if (data.isDeleted){
+                        return
+                    }
                     if (data.isNotification){
                         return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.userId))
                     }
