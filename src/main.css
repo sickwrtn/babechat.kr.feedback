@@ -16,6 +16,10 @@ body {
     cursor: default;
 }
 
+.badge-group {
+    display: inline !important;
+}
+
 .list-group-item img {
     height: 32px;
     width: 32px;
@@ -73,9 +77,20 @@ body {
     min-height: 300px;
 }
 
+.ban {
+    width: 200px !important;
+    display: inline !important;
+}
+
 #feed {
     margin-left: 40%;
-    width: 45%;
+    width: 55%;
+}
+
+.ban-group {
+    float: right;
+    margin-top: 0;
+    height: 1px;
 }
 
 #logo {
