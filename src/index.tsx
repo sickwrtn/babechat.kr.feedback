@@ -113,10 +113,18 @@ function Index() {
 
     return (<>
         <div id="sumbit" className='border rounded'>
-            <Sumbit resetFeedback={resetFeedback} />
+            <Sumbit resetFeedback={resetFeedback} isAdmin={false}/>
         </div>
         <div id="feed">
-            <h3>진행중</h3>
+            <h3>공지사항</h3>
+            <ul className="list-group mt-3">
+                {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                    if (data.isNotification){
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted))
+                    }
+                })}
+            </ul>
+            <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,"likeCount").map((data: any)=>{
                     if (data.isProgress){
@@ -136,6 +144,9 @@ function Index() {
                         return
                     }
                     if (data.isCompleted){
+                        return
+                    }
+                    if (data.isNotification){
                         return
                     }
                     return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted)

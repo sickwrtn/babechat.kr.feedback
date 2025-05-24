@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-export default function Sumbit({resetFeedback}:{resetFeedback: ()=>void}){
+export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void,isAdmin:boolean}){
     
     const [title,setTitle] = useState("");
 
@@ -77,13 +77,22 @@ export default function Sumbit({resetFeedback}:{resetFeedback: ()=>void}){
             resetRecaptcha();
             return alert("캡챠 인증 실패..");
         }
-
-        const res2 = await fetch("https://babe-api.fastwrtn.com/feedback",{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-            title:title,
-            content:content,
-            category:category,
-            password:password
-        })})
+        if (isAdmin){
+            var res2 = await fetch("https://babe-api.fastwrtn.com/admin/notification",{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
+                title:title,
+                content:content,
+                category:category,
+                password:password
+            })})
+        }
+        else {
+            var res2 = await fetch("https://babe-api.fastwrtn.com/feedback",{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
+                title:title,
+                content:content,
+                category:category,
+                password:password
+            })})
+        }
         const data = await res2.json()
         if (data.result == "FAIL" && data.data == "ban"){
             return alert(`차단되었습니다. 사유 : ${data.reason} 해제시간 : ${data.expiredAt}`);
@@ -91,7 +100,8 @@ export default function Sumbit({resetFeedback}:{resetFeedback: ()=>void}){
         else if (data.result == "FAIL") {
             return alert(`error ${data.data}`);
         }
-        alert("건의사항 제출 성공!");
+        if (isAdmin) alert("공지사항 등록 성공!");
+        else alert("건의사항 등록 성공!");
         resetRecaptcha();
         resetFeedback();
         setTitle("");
@@ -118,6 +128,7 @@ export default function Sumbit({resetFeedback}:{resetFeedback: ()=>void}){
             checked={isDarkmode}
             onChange={isDarkmodeOnChange}
         />
+        {isAdmin && <h2>공지사항</h2>}
         <Form.Label>제목</Form.Label>
         <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
         <Form.Label>내용</Form.Label>

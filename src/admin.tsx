@@ -123,7 +123,7 @@ function Admin() {
         </>)
     }
 
-    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[],isProgress:boolean,isCompleted:boolean, isDeleted: boolean, token: string){
+    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean, isDeleted: boolean, token: string){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,token)}>
                 { category == 1 &&
@@ -142,7 +142,8 @@ function Admin() {
                     <Badge className="ms-1 badge" text="white" bg="danger" >삭제됨</Badge>
                     {isProgress && <Badge className="ms-1 badge" text="white" bg="secondary" >진행중 탭</Badge>}
                     {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" >완료됨 탭</Badge>}
-                    {(!isProgress && !isCompleted) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
+                    {isNotification && <Badge className="ms-1 badge" text="white" bg="secondary" >공지사항 탭</Badge>}
+                    {(!isProgress && !isCompleted && !isNotification) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
                     <Badge className="ms-1 badge" text="white" bg="primary" >ID : {id}</Badge>
                     </div>
                     {content}
@@ -175,10 +176,18 @@ function Admin() {
     }
     return (<>
         <div id="sumbit" className='border rounded'>
-            <Sumbit resetFeedback={resetFeedback} />
+            <Sumbit resetFeedback={resetFeedback} isAdmin={true}/>
         </div>
         <div id="feed">
-            <h3>진행중</h3>
+            <h3>공지사항</h3>
+            <ul className="list-group mt-3">
+                {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                    if (data.isNotification){
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.userId))
+                    }
+                })}
+            </ul>
+            <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,"likeCount").map((data: any)=>{
                     if (data.isDeleted){
@@ -224,7 +233,7 @@ function Admin() {
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,selectFilter).map((data: any)=>{
                     if (data.isDeleted){
-                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isDeleted,data.userId)
+                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId)
                     }
                 })}
             </ul>
