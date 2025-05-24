@@ -4,9 +4,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
+import { setStrict } from './strict';
 
 
 function Index() {
+    setStrict(()=>{})
     if (localStorage.getItem("auth_token") == null){
         fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
             .then(res=>res.json())

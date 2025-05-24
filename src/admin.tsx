@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
+import { setStrict } from './strict';
 
 const parseJwt = (token: string) => {
     var base64Url = token.split('.')[1];
@@ -16,6 +17,7 @@ const parseJwt = (token: string) => {
 };
 
 function Admin() {
+    setStrict(()=>{})
     if (localStorage.getItem("auth_token") == null || !parseJwt(localStorage.getItem("auth_token") as string).admin){
         const [adminPassword,setAdminPassword] = useState<string>("");
         const adminPasswordOnChange = (e: any) => setAdminPassword(e.target.value)
