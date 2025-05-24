@@ -215,6 +215,9 @@ function Admin() {
                     if (data.isCompleted){
                         return
                     }
+                    if (data.isNotification){
+                        return
+                    }
                     if (data.isDeleted){
                         return
                     }
