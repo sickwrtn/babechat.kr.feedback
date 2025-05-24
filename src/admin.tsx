@@ -50,7 +50,7 @@ function Admin() {
         setModalDislikeCount(dislikeCount);
         setModalIsDeleted(isDeleted);
         setModalBadge(Badge);
-        setModalToken(token);
+        setModalUserId(token);
         setShow(true);
         setIsEdit(false);
     };
@@ -77,7 +77,7 @@ function Admin() {
 
     const [modalBadge, setModalBadge] = useState<string[]>();
 
-    const [modalToken, setModalToken] = useState<string>("");
+    const [modalUserId, setModalUserId] = useState<string>("");
 
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/admin/feedback",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
@@ -185,7 +185,7 @@ function Admin() {
                         return
                     }
                     if (data.isProgress){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.token))
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.userId))
                     }
                 })}
             </ul>
@@ -206,7 +206,7 @@ function Admin() {
                     if (data.isDeleted){
                         return
                     }
-                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.token)
+                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.userId)
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
@@ -216,7 +216,7 @@ function Admin() {
                         return
                     }
                     if (data.isCompleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.token)
+                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.userId)
                     }
                 })}
             </ul>
@@ -224,13 +224,13 @@ function Admin() {
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,selectFilter).map((data: any)=>{
                     if (data.isDeleted){
-                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isDeleted,data.token)
+                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isDeleted,data.userId)
                     }
                 })}
             </ul>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalToken={modalToken}/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId}/>
     </>)
 }
 
