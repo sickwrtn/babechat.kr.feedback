@@ -20,10 +20,10 @@ interface IFeedbakModal{
     setModalDislikeCount: (e:number)=>void,
     resetFeedback: ()=>void,
     isAdmin: boolean
-    modalIp: string
+    modalToken: string
 }
 
-export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalIp}:IFeedbakModal){
+export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalToken}:IFeedbakModal){
 
     const [modalTitleEdit, setModalTitleEdit] = useState<string>("");
 
@@ -53,7 +53,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
     
     const bageEditOnChange = (e:any) => setBageEdit(e.target.value); 
 
-    const [ban,setban] = useState<string>("");
+    const [ban,setban] = useState<string>("1Hour");
 
     const banOnChange = (e:any) =>setban(e.target.value);
 
@@ -103,7 +103,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
     return (
     <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
         <Modal.Header closeButton>
-        <Modal.Title className='fw-bold'>{!isEdit && modalTitle}{isEdit && "편집기"}</Modal.Title>
+        <Modal.Title className='fw-bold' style={{overflow:"hidden"}}>{!isEdit && modalTitle}{isEdit && "편집기"}{isAdmin && <p style={{fontSize:"17px"}}>UserId : {(()=>{if(!(modalToken == "")) return JSON.parse(window.atob(modalToken.split(".")[1])).id})()}</p>}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
             {!isAdmin &&  modalBadge?.map((data)=>(
@@ -139,7 +139,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 <Button variant="outline-danger" className="ms-3" onClick={()=>{
                                     const reason = prompt("차단 사유를 입력해주세요.");
                                     fetch(`https://babe-api.fastwrtn.com/admin/ban`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-                                        ip:modalIp,
+                                        token:modalToken,
                                         reason:reason,
                                         month:banTime(ban)[0],
                                         day:banTime(ban)[1],

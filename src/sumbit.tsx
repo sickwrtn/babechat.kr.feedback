@@ -78,7 +78,7 @@ export default function Sumbit({resetFeedback}:{resetFeedback: ()=>void}){
             return alert("캡챠 인증 실패..");
         }
 
-        const res2 = await fetch("https://babe-api.fastwrtn.com/feedback",{method:"POST",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
+        const res2 = await fetch("https://babe-api.fastwrtn.com/feedback",{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
             title:title,
             content:content,
             category:category,
@@ -86,9 +86,9 @@ export default function Sumbit({resetFeedback}:{resetFeedback: ()=>void}){
         })})
         const data = await res2.json()
         if (data.result == "FAIL" && data.data == "ban"){
-            return alert(`차단되었습니다. 사유 : ${data.reason} 해제시간 : ${data.reason}`);
+            return alert(`차단되었습니다. 사유 : ${data.reason} 해제시간 : ${data.expiredAt}`);
         }
-        else {
+        else if (data.result == "FAIL") {
             return alert(`error ${data.data}`);
         }
         alert("건의사항 제출 성공!");

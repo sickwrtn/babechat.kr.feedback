@@ -42,7 +42,7 @@ function Admin() {
 
     const handleClose = () => setShow(false);
 
-    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, Badge: string[], isDeleted: boolean, ip:string) => {
+    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, Badge: string[], isDeleted: boolean, token:string) => {
         setModalTitle(title);
         setModalContent(content);
         setModalId(id);
@@ -50,7 +50,7 @@ function Admin() {
         setModalDislikeCount(dislikeCount);
         setModalIsDeleted(isDeleted);
         setModalBadge(Badge);
-        setModalIp(ip);
+        setModalToken(token);
         setShow(true);
         setIsEdit(false);
     };
@@ -77,7 +77,7 @@ function Admin() {
 
     const [modalBadge, setModalBadge] = useState<string[]>();
 
-    const [modalIp, setModalIp] = useState<string>("");
+    const [modalToken, setModalToken] = useState<string>("");
 
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/admin/feedback",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
@@ -91,9 +91,9 @@ function Admin() {
             .then(data => setFeedback(data.data))
     },[])
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean, ip: string){
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean, token: string){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,ip)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,token)}>
                 { category == 1 &&
                     <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
                 }
@@ -107,7 +107,6 @@ function Admin() {
                     <div className="fw-bold">{title} {badge.map((data)=>(
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
-                    <Badge className="ms-1 badge" text="white" bg="secondary">{ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary">ID : {id}</Badge>
                     </div>
                     {content}
@@ -124,9 +123,9 @@ function Admin() {
         </>)
     }
 
-    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[],isProgress:boolean,isCompleted:boolean, isDeleted: boolean, ip: string){
+    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[],isProgress:boolean,isCompleted:boolean, isDeleted: boolean, token: string){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,ip)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,token)}>
                 { category == 1 &&
                     <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
                 }
@@ -144,7 +143,6 @@ function Admin() {
                     {isProgress && <Badge className="ms-1 badge" text="white" bg="secondary" >진행중 탭</Badge>}
                     {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" >완료됨 탭</Badge>}
                     {(!isProgress && !isCompleted) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
-                    <Badge className="ms-1 badge" text="white" bg="secondary">{ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary" >ID : {id}</Badge>
                     </div>
                     {content}
@@ -187,7 +185,7 @@ function Admin() {
                         return
                     }
                     if (data.isProgress){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.ip))
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.token))
                     }
                 })}
             </ul>
@@ -208,7 +206,7 @@ function Admin() {
                     if (data.isDeleted){
                         return
                     }
-                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.ip)
+                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.token)
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
@@ -218,7 +216,7 @@ function Admin() {
                         return
                     }
                     if (data.isCompleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.ip)
+                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.token)
                     }
                 })}
             </ul>
@@ -226,13 +224,13 @@ function Admin() {
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,selectFilter).map((data: any)=>{
                     if (data.isDeleted){
-                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isDeleted,data.ip)
+                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isDeleted,data.token)
                     }
                 })}
             </ul>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalIp={modalIp}/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalToken={modalToken}/>
     </>)
 }
 
