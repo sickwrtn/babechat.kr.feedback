@@ -223,6 +223,28 @@ function Admin() {
             return data;
         }
     }
+
+    function Feedback({data,filter,isAdmin}:{data:IFeedback[],filter:IFilter,isAdmin:boolean}) {
+        return (
+            <> 
+                {(!isAdmin) &&
+                    <>
+                        {feedbackFilter(data,filter).map(data =>{
+                            if (!data.isDeleted) return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string))
+                        })}
+                    </>
+                }
+                {isAdmin &&
+                    <>
+                        {feedbackFilter(data,filter).map(data=>{
+                            return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId as string)
+                        })}
+                    </>
+                }
+            </>
+        )
+    }
+
     return (<>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={true}/>
@@ -230,19 +252,11 @@ function Admin() {
         <div id="feed">
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackNotification,"likeCount").map(data=>{
-                    if (!data.isDeleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
-                    }
-                })}
+                <Feedback data={feedbackNotification} filter='likeCount' isAdmin={false} />
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackProgress,"likeCount").map(data=>{
-                    if (!data.isDeleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
-                    }
-                })}
+                <Feedback data={feedbackProgress} filter='likeCount' isAdmin={false} />
             </ul>
             <h3 className="mt-4 d-inline-flex">대기중</h3>
             <Form.Select className="asd" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
@@ -251,25 +265,15 @@ function Admin() {
                 <option value="oldest">오래된순</option>
             </Form.Select>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,selectFilter).map(data=>{
-                    if (!data.isDeleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
-                    }
-                })}
+                <Feedback data={feedback} filter={selectFilter} isAdmin={false} />
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackCompleted,selectFilter).map(data=>{
-                    if (!data.isDeleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
-                    }
-                })}
+                <Feedback data={feedbackCompleted} filter='likeCount' isAdmin={false} />
             </ul>
             <h3 className="mt-4 d-inline-flex">삭제됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackDeleted,selectFilter).map(data=>{
-                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId as string)
-                })}
+                <Feedback data={feedbackDeleted} filter='likeCount' isAdmin={true} />
             </ul>
         </div>
         <div id="footer"></div>

@@ -144,6 +144,16 @@ function Index() {
         }
     }
 
+    function Feedback({data,filter}:{data:IFeedback[],filter:IFilter}) {
+        return (
+            <>
+                {feedbackFilter(data,filter).map(data =>{
+                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
+                })}
+            </>
+        )
+    }
+
     return (<>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={false}/>
@@ -151,15 +161,11 @@ function Index() {
         <div id="feed">
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackNotification,"likeCount").map(data =>{
-                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
-                })}
+                <Feedback data={feedbackNotification} filter='likeCount'/>
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackProgress,"likeCount").map(data =>{
-                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
-                })}
+                <Feedback data={feedbackProgress} filter='likeCount'/>
             </ul>
             <h3 className="mt-4 d-inline-flex">대기중</h3>
             <Form.Select className="asd" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
@@ -168,15 +174,11 @@ function Index() {
                 <option value="oldest">오래된순</option>
             </Form.Select>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,selectFilter).map(data=>{
-                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification)
-                })}
+                <Feedback data={feedback} filter={selectFilter}/>
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackCompleted,selectFilter).map(data=>{
-                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification)
-                })}
+                <Feedback data={feedbackCompleted} filter='likeCount'/>
             </ul>
         </div>
         <div id="footer"></div>
