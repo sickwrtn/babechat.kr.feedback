@@ -129,4 +129,11 @@ footer{
     .modalPassword {
         width: 50% !important;
     }
+    .recaptcha-container {
+        display: inline-block; /* 또는 block */
+    /* ReCAPTCHA 위젯의 기본 크기가 304px (너비) x 78px (높이) 임을 가정 */
+    /* 크기 변경 비율 계산 (예: 0.8배로 축소) */
+    transform: scale(0.95); /* 80% 크기로 축소 */
+    transform-origin: 0 0; /* 왼쪽 상단을 기준으로 축소 */
+    }
 }

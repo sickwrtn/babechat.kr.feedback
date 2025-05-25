@@ -135,12 +135,14 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         <FormControl type="text" className='mb-3' placeholder="건의사항을 구체적으로 적어주세요. (마크다운 사용 가능)" as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
         <Form.Label>비밀번호</Form.Label>
         <FormControl type="text" className='mb-3' placeholder="비밀번호는 수정 및 삭제에 사용됩니다." value={password} onChange={passwordOnChange} isInvalid={passwordIsVaild}/>
-        <ReCAPTCHA
-            sitekey="6LcMp0QrAAAAAIlT_zQPHX3RAGEbrm6pDSOTycau"
-            onChange={recaptchaOnChange}
-            ref={recaptchaRef}
-            className='racaptcha'
-        />
+        <div className='recaptcha-container'>
+            <ReCAPTCHA
+                sitekey="6LcMp0QrAAAAAIlT_zQPHX3RAGEbrm6pDSOTycau"
+                onChange={recaptchaOnChange}
+                ref={recaptchaRef}
+                className='racaptcha'
+            />
+        </div>
         <ToggleButtonGroup className="d-inline-flex mt-3" type="radio" name="options" defaultValue={1} value={category} onChange={categoryOnChange}>
             <ToggleButton id="tbg-btn-1" variant='outline-secondary' value={1}>
                 개선
