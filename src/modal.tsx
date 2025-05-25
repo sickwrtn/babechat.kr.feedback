@@ -21,10 +21,11 @@ interface IFeedbakModal{
     resetFeedback: ()=>void,
     isAdmin: boolean,
     modalUserId: string,
-    modalIsLoading: boolean
+    modalIsLoading: boolean,
+    modalIp: string
 }
 
-export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading}:IFeedbakModal){
+export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
 
     const [modalTitleEdit, setModalTitleEdit] = useState<string>("");
 
@@ -216,6 +217,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                                 const reason = prompt("차단 사유를 입력해주세요.");
                                                 fetch(`https://babe-api.fastwrtn.com/admin/ban`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
                                                     userId:modalUserId,
+                                                    ip:modalIp,
                                                     reason:reason,
                                                     month:banTime(ban)[0],
                                                     day:banTime(ban)[1],

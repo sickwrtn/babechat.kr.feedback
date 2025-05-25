@@ -84,6 +84,8 @@ function Admin() {
 
     const [modalIsLoading, setModalIsLoading] = useState<boolean>(false);
 
+    const [modalIp, setModalIp] = useState<string>("");
+
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
@@ -140,13 +142,14 @@ function Admin() {
                     setModalBadge(data.data.badge);
                     setModalIsDeleted(data.data.isDeleted);
                     setModalUserId(data.data.userId as string);
+                    setModalIp(data.data.ip as string);
                     setIsEdit(false);
                     setModalIsLoading(false);
                 })
         }
     }, [location]);
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean){
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean,ip: string){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/sick/admin?id=${id}`,{replace:false})}>
                 {!isNotification && 
@@ -169,6 +172,7 @@ function Admin() {
                     <div className="fw-bold">{title} {badge.map((data)=>(
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
+                    <Badge className="ms-1 badge" text="white" bg="secondary">{ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary">ID : {id}</Badge>
                     </div>
                     {content}
@@ -185,7 +189,7 @@ function Admin() {
         </>)
     }
 
-    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean){
+    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean,ip: string){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/sick/admin?id=${id}`,{replace:false})}>
                 {!isNotification && 
@@ -213,6 +217,7 @@ function Admin() {
                     {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" >완료됨 탭</Badge>}
                     {isNotification && <Badge className="ms-1 badge" text="white" bg="secondary" >공지사항 탭</Badge>}
                     {(!isProgress && !isCompleted && !isNotification) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
+                    <Badge className="ms-1 badge" text="white" bg="info">IP : {ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary" >ID : {id}</Badge>
                     </div>
                     {content}
@@ -250,14 +255,14 @@ function Admin() {
                 {(!isAdmin) &&
                     <>
                         {feedbackFilter(data,filter).map(data =>{
-                            if (!data.isDeleted) return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isNotification))
+                            if (!data.isDeleted) return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isNotification,data.ip as string))
                         })}
                     </>
                 }
                 {isAdmin &&
                     <>
                         {feedbackFilter(data,filter).map(data=>{
-                            return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification)
+                            return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.ip as string)
                         })}
                     </>
                 }
@@ -299,7 +304,7 @@ function Admin() {
             </ul>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIsLoading={modalIsLoading}/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIsLoading={modalIsLoading} modalIp={modalIp}/>
     </>)
 }
 
