@@ -78,8 +78,7 @@ body {
 }
 
 .ban {
-    width: 200px !important;
-    display: inline !important;
+    width: 150px !important;
 }
 
 #feed {
@@ -112,6 +111,10 @@ footer{
     font-size: 13px;
 }
 
+.modalPassword {
+    width: 20% !important;
+}
+
 @media (max-width: 768px) {
     #sumbit {
         position: relative;
@@ -122,5 +125,8 @@ footer{
         margin-top: 5%;
         margin-left: 5%;
         width: 90%;
+    }
+    .modalPassword {
+        width: 50% !important;
     }
 }

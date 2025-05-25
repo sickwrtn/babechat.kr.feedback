@@ -254,9 +254,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
         </Modal.Body>
         <Modal.Footer>
             {!isAdmin &&
-                <Form.Group controlId="formPlaintextPassword">
-                    <Form.Control type="password" placeholder="비밀번호" value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
-                </Form.Group>
+                <Form.Control className="modalPassword" type="password" placeholder="비밀번호" value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
             }
             {isAdmin && 
                 <>
