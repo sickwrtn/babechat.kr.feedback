@@ -37,6 +37,12 @@ function Index() {
 
     const [feedback, setFeedback] = useState([] as any[]);
 
+    const [feedbackProgress,setFeedbackProgress] = useState<any[]>([]);
+
+    const [feedbackCompleted,setFeedbackCompleted] = useState<any[]>([]);
+
+    const [feedbackNotification,setFeedbackNotification] = useState<any[]>([]);
+
     const [modalTitle, setModalTitle] = useState("");
 
     const [modalContent,setModalContent] = useState("");
@@ -56,15 +62,33 @@ function Index() {
     const [modalBadge, setModalBadge] = useState([] as string[]);
 
     const resetFeedback = () => {
-        fetch("https://babe-api.fastwrtn.com/feedback")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
             .then(res => res.json())
             .then(data => setFeedback(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress")
+            .then(res => res.json())
+            .then(data => setFeedbackProgress(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed")
+            .then(res => res.json())
+            .then(data => setFeedbackCompleted(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification")
+            .then(res => res.json())
+            .then(data => setFeedbackNotification(data.data))
     }
 
     useEffect(()=>{
-        fetch("https://babe-api.fastwrtn.com/feedback")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
             .then(res => res.json())
             .then(data => setFeedback(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress")
+            .then(res => res.json())
+            .then(data => setFeedbackProgress(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed")
+            .then(res => res.json())
+            .then(data => setFeedbackCompleted(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification")
+            .then(res => res.json())
+            .then(data => setFeedbackNotification(data.data))
     },[])
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean,isNotification: boolean){
@@ -127,7 +151,7 @@ function Index() {
         <div id="feed">
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackNotification,"likeCount").map((data: any)=>{
                     if (data.isNotification){
                         return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
                     }
@@ -135,7 +159,7 @@ function Index() {
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackProgress,"likeCount").map((data: any)=>{
                     if (data.isProgress){
                         return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
                     }
@@ -163,7 +187,7 @@ function Index() {
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedbackCompleted,selectFilter).map((data: any)=>{
                     if (data.isCompleted){
                         return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification)
                     }

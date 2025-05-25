@@ -59,6 +59,14 @@ function Admin() {
 
     const [feedback, setFeedback] = useState<any[]>([]);
 
+    const [feedbackProgress,setFeedbackProgress] = useState<any[]>([]);
+
+    const [feedbackCompleted,setFeedbackCompleted] = useState<any[]>([]);
+
+    const [feedbackNotification,setFeedbackNotification] = useState<any[]>([]);
+
+    const [feedbackDeleted,setFeedbackDeleted] = useState<any[]>([]);
+
     const [modalTitle, setModalTitle] = useState<string>("");
 
     const [modalContent,setModalContent] = useState<string>("");
@@ -82,15 +90,39 @@ function Admin() {
     const [modalUserId, setModalUserId] = useState<string>("");
 
     const resetFeedback = () => {
-        fetch("https://babe-api.fastwrtn.com/admin/feedback",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then(data => setFeedback(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackProgress(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackCompleted(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackNotification(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackDeleted(data.data))
     }
 
     useEffect(()=>{
-        fetch("https://babe-api.fastwrtn.com/admin/feedback",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then(data => setFeedback(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackProgress(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackCompleted(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackNotification(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then(data => setFeedbackDeleted(data.data))
     },[])
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean, isNotification: boolean, token: string){
@@ -197,7 +229,7 @@ function Admin() {
         <div id="feed">
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackNotification,"likeCount").map((data: any)=>{
                     if (data.isDeleted){
                         return
                     }
@@ -208,7 +240,7 @@ function Admin() {
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackProgress,"likeCount").map((data: any)=>{
                     if (data.isDeleted){
                         return
                     }
@@ -242,7 +274,7 @@ function Admin() {
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedbackCompleted,selectFilter).map((data: any)=>{
                     if (data.isDeleted){
                         return
                     }
@@ -253,7 +285,7 @@ function Admin() {
             </ul>
             <h3 className="mt-4 d-inline-flex">삭제됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedbackDeleted,selectFilter).map((data: any)=>{
                     if (data.isDeleted){
                         return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId)
                     }
