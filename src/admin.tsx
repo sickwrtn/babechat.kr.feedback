@@ -259,7 +259,7 @@ function Admin() {
                 <Feedback data={feedbackProgress} filter='likeCount' isAdmin={false} />
             </ul>
             <div className='tab-container mt-4 d-flex'>
-                <h3>대기중</h3>
+                <h3 className='mt-1'>대기중</h3>
                 <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
                     <option value="likeCount">추천순</option>
                     <option value="latest">최신순</option>
