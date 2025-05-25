@@ -61,7 +61,10 @@ body {
 }
 
 .ban-container {
-    margin-left: 36%;
+    margin-left: auto !important;
+}
+.ban {
+    width: 150px !important;
 }
 
 #footer {
@@ -88,10 +91,6 @@ body {
 .b-content {
     overflow: auto;
     min-height: 300px;
-}
-
-.ban {
-    width: 150px !important;
 }
 
 #feed {
