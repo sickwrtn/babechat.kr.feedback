@@ -44,11 +44,13 @@ body {
     overflow: hidden;
 }
 
-.asd {
-    display: inline !important;
-    width: 25% !important;
-    float: right;
-    margin-top: 3.7%;
+.tab-container {
+    width: 100%;
+}
+
+.tab-select {
+    width: 150px !important;
+    margin-left: auto;
 }
 
 #footer {
