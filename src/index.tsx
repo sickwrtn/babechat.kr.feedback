@@ -54,6 +54,8 @@ function Index() {
 
     const [modalBadge, setModalBadge] = useState<string[]>([]);
 
+    const [modalIsLoading, setModalIsLoading] = useState<boolean>(false);
+
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
             .then(res => res.json())
@@ -87,6 +89,8 @@ function Index() {
         const params = new URLSearchParams(location.search);
         const id = params.get('id');
         if (id != null){
+            setModalIsLoading(true);
+            setShow(true);
             fetch(`https://babe-api.fastwrtn.com/feedbackitem?id=${id}`)
                 .then(res => res.json())
                 .then((data: IResponse<IFeedback>) => {
@@ -101,7 +105,7 @@ function Index() {
                     setModalBadge(data.data.badge);
                     setModalIsDeleted(data.data.isDeleted);
                     setIsEdit(false);
-                    setShow(true);
+                    setModalIsLoading(false);
                 })
         }
     }, [location]);
@@ -199,7 +203,7 @@ function Index() {
             </ul>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId=''/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading}/>
     </>)
 }
 

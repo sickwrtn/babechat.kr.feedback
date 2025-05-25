@@ -53,6 +53,13 @@ body {
     margin-left: auto;
 }
 
+.modal-loading {
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 150px;
+}
+
 #footer {
     margin-top: 100px;
 }

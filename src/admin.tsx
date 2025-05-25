@@ -82,6 +82,8 @@ function Admin() {
 
     const [modalUserId, setModalUserId] = useState<string>("");
 
+    const [modalIsLoading, setModalIsLoading] = useState<boolean>(false);
+
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
@@ -122,6 +124,8 @@ function Admin() {
         const params = new URLSearchParams(location.search);
         const id = params.get('id');
         if (id != null){
+            setModalIsLoading(true);
+            setShow(true);
             fetch(`https://babe-api.fastwrtn.com/admin/feedbackitem?id=${id}`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
                 .then(res => res.json())
                 .then((data: IResponse<IFeedback>) => {
@@ -137,7 +141,7 @@ function Admin() {
                     setModalIsDeleted(data.data.isDeleted);
                     setModalUserId(data.data.userId as string);
                     setIsEdit(false);
-                    setShow(true);
+                    setModalIsLoading(false);
                 })
         }
     }, [location]);
@@ -295,7 +299,7 @@ function Admin() {
             </ul>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId}/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIsLoading={modalIsLoading}/>
     </>)
 }
 
