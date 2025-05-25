@@ -6,6 +6,7 @@ import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
 import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Index() {
     setStrict(()=>{})
@@ -18,22 +19,14 @@ function Index() {
     }
 
     const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const handleClose = () => {
+        navigate('/',{replace:false});
+        setShow(false)
+    };
 
     const [isEdit,setIsEdit] = useState(false);
-
-    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, Badge: string[], isDeleted: boolean) => {
-        setModalTitle(title);
-        setModalContent(content);
-        setModalId(id);
-        setModalLikeCount(likeCount);
-        setModalDislikeCount(dislikeCount);
-        setModalBadge(Badge);
-        setModalIsDeleted(isDeleted)
-        setIsEdit(false);
-        setShow(true);
-    };
 
     const [feedback, setFeedback] = useState<IFeedback[]>([]);
 
@@ -75,7 +68,6 @@ function Index() {
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
     }
-
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
             .then(res => res.json())
@@ -91,9 +83,29 @@ function Index() {
             .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
     },[])
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[], isDeleted: boolean,isNotification: boolean){
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const id = params.get('id');
+        if (id != null){
+            fetch(`https://babe-api.fastwrtn.com/feedbackitem?id=${id}`)
+                .then(res => res.json())
+                .then((data: IResponse<IFeedback>) => {
+                    setModalTitle(data.data.title);
+                    setModalContent(data.data.content);
+                    setModalId(data.data.id);
+                    setModalLikeCount(data.data.likeCount);
+                    setModalDislikeCount(data.data.dislikeCount);
+                    setModalBadge(data.data.badge);
+                    setModalIsDeleted(data.data.isDeleted);
+                    setIsEdit(false);
+                    setShow(true);
+                })
+        }
+    }, [location]);
+
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/?id=${id}`,{replace:false})}>
                 {!isNotification && 
                     <>
                         { category == 1 &&
@@ -148,7 +160,7 @@ function Index() {
         return (
             <>
                 {feedbackFilter(data,filter).map(data =>{
-                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
+                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isNotification))
                 })}
             </>
         )

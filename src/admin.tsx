@@ -6,6 +6,7 @@ import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
 import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const parseJwt = (token: string) => {
     var base64Url = token.split('.')[1];
@@ -42,20 +43,11 @@ function Admin() {
     }
 
     const [show, setShow] = useState<boolean>(false);
-
-    const handleClose = () => setShow(false);
-
-    const handleShow = (id: number, title: string, content: string, likeCount: number, dislikeCount: number, Badge: string[], isDeleted: boolean, token:string) => {
-        setModalTitle(title);
-        setModalContent(content);
-        setModalId(id);
-        setModalLikeCount(likeCount);
-        setModalDislikeCount(dislikeCount);
-        setModalIsDeleted(isDeleted);
-        setModalBadge(Badge);
-        setModalUserId(token);
-        setShow(true);
-        setIsEdit(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const handleClose = () => {
+        navigate('/sick/admin',{replace:false});
+        setShow(false)
     };
 
     const [feedback, setFeedback] = useState<IFeedback[]>([]);
@@ -126,9 +118,30 @@ function Admin() {
             .then((data: IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
     },[])
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[], isDeleted: boolean, isNotification: boolean, token: string){
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const id = params.get('id');
+        if (id != null){
+            fetch(`https://babe-api.fastwrtn.com/admin/feedbackitem?id=${id}`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+                .then(res => res.json())
+                .then((data: IResponse<IFeedback>) => {
+                    setModalTitle(data.data.title);
+                    setModalContent(data.data.content);
+                    setModalId(data.data.id);
+                    setModalLikeCount(data.data.likeCount);
+                    setModalDislikeCount(data.data.dislikeCount);
+                    setModalBadge(data.data.badge);
+                    setModalIsDeleted(data.data.isDeleted);
+                    setModalUserId(data.data.userId as string);
+                    setIsEdit(false);
+                    setShow(true);
+                })
+        }
+    }, [location]);
+
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,token)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/sick/admin?id=${id}`,{replace:false})}>
                 {!isNotification && 
                     <>
                         { category == 1 &&
@@ -165,9 +178,9 @@ function Admin() {
         </>)
     }
 
-    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean, isDeleted: boolean, token: string){
+    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,token)}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/sick/admin?id=${id}`,{replace:false})}>
                 {!isNotification && 
                     <>
                         { category == 1 &&
@@ -230,14 +243,14 @@ function Admin() {
                 {(!isAdmin) &&
                     <>
                         {feedbackFilter(data,filter).map(data =>{
-                            if (!data.isDeleted) return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string))
+                            if (!data.isDeleted) return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isNotification))
                         })}
                     </>
                 }
                 {isAdmin &&
                     <>
                         {feedbackFilter(data,filter).map(data=>{
-                            return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId as string)
+                            return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification)
                         })}
                     </>
                 }
