@@ -8,6 +8,135 @@ import { setStrict } from './strict';
 import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
 import { useLocation, useNavigate } from 'react-router-dom';
 
+
+function compressIPv6(ipv6Address:string):string {
+  return ipv6Address.split(":").slice(3,7).join(":");
+}
+function isIPv6(ipString: string): boolean {
+    // 1. 빈 문자열 또는 너무 길거나 짧은 경우 (최소 "::1", 최대 39자)
+    if (!ipString || ipString.length < 2 || ipString.length > 39) {
+        return false;
+    }
+
+    // 2. 더블 콜론(::) 개수 확인
+    const doubleColonCount = (ipString.match(/::/g) || []).length;
+    if (doubleColonCount > 1) {
+        return false; // ::는 한 번만 사용 가능
+    }
+
+    // 3. 콜론으로 시작하거나 끝나는 경우 (특수 케이스 :: 제외)
+    // "::1"은 유효, "1::"도 유효. 하지만 ":1"이나 "1:"은 유효하지 않음.
+    if (ipString.startsWith(':') && !ipString.startsWith('::')) {
+        return false;
+    }
+    if (ipString.endsWith(':') && !ipString.endsWith('::')) {
+        return false;
+    }
+
+    // 4. IPv4-mapped IPv6 주소 처리 (예: ::ffff:192.168.1.1)
+    // 마지막 블록이 IPv4 주소 형태인지 확인
+    const lastColonIndex = ipString.lastIndexOf(':');
+    if (lastColonIndex !== -1 && ipString.substring(lastColonIndex + 1).includes('.')) {
+        // IPv4 주소 유효성 검사는 별도로 필요할 수 있으나, 여기서는 단순 IPv6 형식만 검사
+        // 이 경우, 마지막 콜론 이후 부분을 IPv4로 간주하고 앞부분만 IPv6 헥스텟으로 검사
+        const parts = ipString.split(':');
+        // ::ffff:192.168.1.1 형태라면, 마지막 2개의 헥스텟(ffff, c0a8) 대신 IPv4 주소가 오는 것
+        // 따라서 IPv6 블록 개수는 6개여야 함. (예: `a:b:c:d:e:f:192.168.1.1`이면 7개 파트)
+        if (parts.length < 2 || parts.length > 8) { // 최소 2개 (::192.168.1.1) 최대 7개 (a:b:c:d:e:f:192.168.1.1)
+             // 여기서 8개를 넘는 경우를 방지
+             return false;
+        }
+
+        // 마지막 부분을 IPv4 주소로 간주하고 유효성 검사 (아주 기본적인)
+        const ipv4Part = parts[parts.length - 1];
+        const ipv4Segments = ipv4Part.split('.');
+        if (ipv4Segments.length !== 4) {
+            return false;
+        }
+        for (const segment of ipv4Segments) {
+            const num = parseInt(segment, 10);
+            if (isNaN(num) || num < 0 || num > 255 || segment.length === 0 || (segment.length > 1 && segment.startsWith('0'))) {
+                return false; // 유효하지 않은 숫자 또는 선행 0
+            }
+        }
+
+        // IPv4 부분이 유효하다면, 나머지 앞부분의 IPv6 헥스텟을 검사
+        const ipv6HexParts = parts.slice(0, parts.length - 1);
+        // ::가 사용된 경우 빈 문자열이 생길 수 있으므로, 실제 헥스텟만 필터링
+        const actualHexParts = ipv6HexParts.filter(part => part !== '');
+
+        if (doubleColonCount === 1) { // ::가 사용된 경우
+            // ::ffff:192.168.1.1 -> parts = ["", "", "ffff", "192.168.1.1"]
+            // ipv6HexParts = ["", "", "ffff"] -> actualHexParts = ["ffff"]
+            // 헥스텟 개수는 1개 (ffff) + IPv4가 대체하는 2개 헥스텟 (총 3개)
+            // 원래 8개 헥스텟 중 IPv4가 2개 헥스텟 대체, ::가 나머지 0 헥스텟 대체
+            // 따라서 실제 보이는 헥스텟은 6개 미만이어야 함
+            if (actualHexParts.length > 6) {
+                return false;
+            }
+        } else { // ::가 사용되지 않은 경우
+            // a:b:c:d:e:f:192.168.1.1 형태는 6개의 헥스텟이 존재해야 함
+            if (actualHexParts.length !== 6) {
+                return false;
+            }
+        }
+
+        // 이제 각 헥스텟의 유효성만 검사
+        for (const hexPart of actualHexParts) {
+            if (!/^[0-9a-fA-F]{1,4}$/.test(hexPart)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    // 5. 일반적인 IPv6 주소 처리 (IPv4-mapped 아님)
+    let parts = ipString.split(':');
+    let blockCount = parts.length;
+
+    // 더블 콜론이 사용된 경우
+    if (doubleColonCount === 1) {
+        // "::"로 스플릿하면 "::" 양쪽에 빈 문자열이 생김
+        // "2001::1" -> ["2001", "1"]
+        // "::1" -> ["", "1"]
+        // "1::" -> ["1", ""]
+        // "::" -> ["", ""]
+        const doubleColonParts = ipString.split('::');
+        if (doubleColonParts.length !== 2) {
+            // 이전에 doubleColonCount를 검사했으므로, 이 경우는 보통 발생하지 않음
+            return false;
+        }
+
+        const leftBlocks = doubleColonParts[0].split(':').filter(b => b !== '');
+        const rightBlocks = doubleColonParts[1].split(':').filter(b => b !== '');
+
+        // 양쪽 블록의 합이 7개 이하여야 한다 (::가 최소 하나의 0 블록을 대체)
+        if (leftBlocks.length + rightBlocks.length >= 8) {
+            return false;
+        }
+
+        // 각 헥스텟의 유효성 검사
+        for (const part of leftBlocks.concat(rightBlocks)) {
+            if (!/^[0-9a-fA-F]{1,4}$/.test(part)) {
+                return false;
+            }
+        }
+    } else { // 더블 콜론이 사용되지 않은 경우
+        if (blockCount !== 8) {
+            return false; // 정확히 8개의 블록이 있어야 함
+        }
+        // 각 헥스텟의 유효성 검사
+        for (const part of parts) {
+            if (!/^[0-9a-fA-F]{1,4}$/.test(part)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 const parseJwt = (token: string) => {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -172,7 +301,7 @@ function Admin() {
                     <div className="fw-bold">{title} {badge.map((data)=>(
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
-                    <Badge className="ms-1 badge" text="white" bg="info">IP : {ip}</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="info">IP : { isIPv6(ip) && compressIPv6(ip)}{!isIPv6(ip) && ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary">ID : {id}</Badge>
                     </div>
                     {content}
@@ -217,7 +346,7 @@ function Admin() {
                     {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" >완료됨 탭</Badge>}
                     {isNotification && <Badge className="ms-1 badge" text="white" bg="secondary" >공지사항 탭</Badge>}
                     {(!isProgress && !isCompleted && !isNotification) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
-                    <Badge className="ms-1 badge" text="white" bg="info">IP : {ip}</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="info">IP : {isIPv6(ip) && compressIPv6(ip)}{!isIPv6(ip) && ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary" >ID : {id}</Badge>
                     </div>
                     {content}
