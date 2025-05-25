@@ -152,17 +152,13 @@ function Index() {
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedbackNotification,"likeCount").map(data =>{
-                    if (data.isNotification){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
-                    }
+                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedbackProgress,"likeCount").map(data =>{
-                    if (data.isProgress){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
-                    }
+                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">대기중</h3>
@@ -173,24 +169,13 @@ function Index() {
             </Form.Select>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,selectFilter).map(data=>{
-                    if (data.isProgress){
-                        return
-                    }
-                    if (data.isCompleted){
-                        return
-                    }
-                    if (data.isNotification){
-                        return
-                    }
                     return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification)
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedbackCompleted,selectFilter).map(data=>{
-                    if (data.isCompleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification)
-                    }
+                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification)
                 })}
             </ul>
         </div>

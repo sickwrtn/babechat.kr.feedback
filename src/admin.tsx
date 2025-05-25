@@ -231,22 +231,16 @@ function Admin() {
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedbackNotification,"likeCount").map(data=>{
-                    if (data.isDeleted){
-                        return
-                    }
-                    if (data.isNotification){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string))
+                    if (!data.isDeleted){
+                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
                     }
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedbackProgress,"likeCount").map(data=>{
-                    if (data.isDeleted){
-                        return
-                    }
-                    if (data.isProgress){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string))
+                    if (!data.isDeleted){
+                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
                     }
                 })}
             </ul>
@@ -258,28 +252,15 @@ function Admin() {
             </Form.Select>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedback,selectFilter).map(data=>{
-                    if (data.isProgress){
-                        return
+                    if (!data.isDeleted){
+                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
                     }
-                    if (data.isCompleted){
-                        return
-                    }
-                    if (data.isNotification){
-                        return
-                    }
-                    if (data.isDeleted){
-                        return
-                    }
-                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedbackCompleted,selectFilter).map(data=>{
-                    if (data.isDeleted){
-                        return
-                    }
-                    if (data.isCompleted){
+                    if (!data.isDeleted){
                         return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
                     }
                 })}
@@ -287,9 +268,7 @@ function Admin() {
             <h3 className="mt-4 d-inline-flex">삭제됨</h3>
             <ul className="list-group mt-3">
                 {feedbackFilter(feedbackDeleted,selectFilter).map(data=>{
-                    if (data.isDeleted){
                         return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId as string)
-                    }
                 })}
             </ul>
         </div>
