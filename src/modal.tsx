@@ -395,8 +395,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             .then((data:any) => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("편집되었습니다.");
-                                                    resetFeedback();
-                                                    handleClose();
+                                                    window.location.reload()
                                                 }
                                                 else if (data.result == "FAIL" && data.data == "auth"){
                                                     return alert("권한이 없습니다.");
@@ -448,8 +447,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             .then((data:any) => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("편집되었습니다.");
-                                                    resetFeedback();
-                                                    handleClose();
+                                                    window.location.reload()
                                                 }
                                                 else if (data.result == "FAIL" && data.data == "wrong password"){
                                                     return alert("잘못된 비밀번호 입니다.");
