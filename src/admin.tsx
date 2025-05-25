@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
+import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
 
 const parseJwt = (token: string) => {
     var base64Url = token.split('.')[1];
@@ -57,15 +58,15 @@ function Admin() {
         setIsEdit(false);
     };
 
-    const [feedback, setFeedback] = useState<any[]>([]);
+    const [feedback, setFeedback] = useState<IFeedback[]>([]);
 
-    const [feedbackProgress,setFeedbackProgress] = useState<any[]>([]);
+    const [feedbackProgress,setFeedbackProgress] = useState<IFeedback[]>([]);
 
-    const [feedbackCompleted,setFeedbackCompleted] = useState<any[]>([]);
+    const [feedbackCompleted,setFeedbackCompleted] = useState<IFeedback[]>([]);
 
-    const [feedbackNotification,setFeedbackNotification] = useState<any[]>([]);
+    const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
 
-    const [feedbackDeleted,setFeedbackDeleted] = useState<any[]>([]);
+    const [feedbackDeleted,setFeedbackDeleted] = useState<IFeedback[]>([]);
 
     const [modalTitle, setModalTitle] = useState<string>("");
 
@@ -81,7 +82,7 @@ function Admin() {
 
     const [isEdit,setIsEdit] = useState<boolean>(false);
 
-    const [selectFilter, setSelectFilter] = useState<string>("likeCount");
+    const [selectFilter, setSelectFilter] = useState<IFilter>("likeCount");
 
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
@@ -92,40 +93,40 @@ function Admin() {
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedback(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedback(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackProgress(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackCompleted(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackNotification(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackDeleted(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
     }
 
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedback(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedback(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackProgress(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackCompleted(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackNotification(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then(data => setFeedbackDeleted(data.data))
+            .then((data: IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
     },[])
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean, isNotification: boolean, token: string){
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[], isDeleted: boolean, isNotification: boolean, token: string){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,token)}>
                 {!isNotification && 
@@ -164,7 +165,7 @@ function Admin() {
         </>)
     }
 
-    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean, isDeleted: boolean, token: string){
+    function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean, isDeleted: boolean, token: string){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted,token)}>
                 {!isNotification && 
@@ -208,7 +209,7 @@ function Admin() {
         </>)
     }
 
-    function feedbackFilter(data:any, standard:string){
+    function feedbackFilter(data:IFeedback[], standard:IFilter){
         if(standard == "likeCount"){
             return data.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount));
         }
@@ -229,23 +230,23 @@ function Admin() {
         <div id="feed">
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackNotification,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackNotification,"likeCount").map(data=>{
                     if (data.isDeleted){
                         return
                     }
                     if (data.isNotification){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId))
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string))
                     }
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackProgress,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackProgress,"likeCount").map(data=>{
                     if (data.isDeleted){
                         return
                     }
                     if (data.isProgress){
-                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId))
+                        return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string))
                     }
                 })}
             </ul>
@@ -256,7 +257,7 @@ function Admin() {
                 <option value="oldest">오래된순</option>
             </Form.Select>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedback,selectFilter).map(data=>{
                     if (data.isProgress){
                         return
                     }
@@ -269,25 +270,25 @@ function Admin() {
                     if (data.isDeleted){
                         return
                     }
-                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId)
+                    return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackCompleted,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedbackCompleted,selectFilter).map(data=>{
                     if (data.isDeleted){
                         return
                     }
                     if (data.isCompleted){
-                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId)
+                        return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification,data.userId as string)
                     }
                 })}
             </ul>
             <h3 className="mt-4 d-inline-flex">삭제됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackDeleted,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedbackDeleted,selectFilter).map(data=>{
                     if (data.isDeleted){
-                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId)
+                        return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.isDeleted,data.userId as string)
                     }
                 })}
             </ul>

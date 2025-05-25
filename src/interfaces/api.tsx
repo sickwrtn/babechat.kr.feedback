@@ -1,33 +1,25 @@
-export interface CharacterData{
-    label: string;
-    chatCount: number;
-    likeCount: number;
-    commentCount: number;
-    isTopActive: number;
-    isTopNew: number;
+export type IFilter = "likeCount" | "latest" | "oldest";
+
+export type ICategory = 1 | 2 | 3
+
+export interface IResponse <T>{
+    result: string,
+    data:T
 }
 
-export interface RankData{
-    rank: number;
-    characterId: string;
-}
-
-export interface Rank{
-    label: string;
-    datas: Array<RankData>
-}
-
-export interface CharacterDcdData{
-    label: string;
-    data: number;
-}
-
-export interface Character{
-    name: string;
-    datas: Array<CharacterData>;    
-}
-
-export interface Response<T>{
-    result: string;
-    data: T
+export interface IFeedback {
+    id: number,
+    category: ICategory,
+    badge: string[],
+    title: string,
+    content: string,
+    likeCount: number,
+    dislikeCount: number,
+    isProgress: boolean,
+    isNotification: boolean,
+    isCompleted: boolean,
+    isDeleted: boolean,
+    createdAt: string,
+    ip? : string,
+    userId?: string
 }

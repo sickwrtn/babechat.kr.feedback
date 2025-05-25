@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
-
+import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
 
 function Index() {
     setStrict(()=>{})
@@ -35,63 +35,63 @@ function Index() {
         setShow(true);
     };
 
-    const [feedback, setFeedback] = useState([] as any[]);
+    const [feedback, setFeedback] = useState<IFeedback[]>([]);
 
-    const [feedbackProgress,setFeedbackProgress] = useState<any[]>([]);
+    const [feedbackProgress,setFeedbackProgress] = useState<IFeedback[]>([]);
 
-    const [feedbackCompleted,setFeedbackCompleted] = useState<any[]>([]);
+    const [feedbackCompleted,setFeedbackCompleted] = useState<IFeedback[]>([]);
 
-    const [feedbackNotification,setFeedbackNotification] = useState<any[]>([]);
+    const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
 
-    const [modalTitle, setModalTitle] = useState("");
+    const [modalTitle, setModalTitle] = useState<string>("");
 
-    const [modalContent,setModalContent] = useState("");
+    const [modalContent,setModalContent] = useState<string>("");
 
-    const [modalId, setModalId] = useState(0);
+    const [modalId, setModalId] = useState<number>(0);
 
-    const [modalLikeCount, setModalLikeCount] = useState(0);
+    const [modalLikeCount, setModalLikeCount] = useState<number>(0);
     
-    const [modalDislikeCount, setModalDislikeCount] = useState(0);
+    const [modalDislikeCount, setModalDislikeCount] = useState<number>(0);
 
     const [modalIsDeleted, setModalIsDeleted] = useState<boolean>(false);
 
-    const [selectFilter, setSelectFilter] = useState("likeCount");
+    const [selectFilter, setSelectFilter] = useState<IFilter>("likeCount");
 
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
-    const [modalBadge, setModalBadge] = useState([] as string[]);
+    const [modalBadge, setModalBadge] = useState<string[]>([]);
 
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
             .then(res => res.json())
-            .then(data => setFeedback(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
         fetch("https://babe-api.fastwrtn.com/feedback?tab=progress")
             .then(res => res.json())
-            .then(data => setFeedbackProgress(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
         fetch("https://babe-api.fastwrtn.com/feedback?tab=completed")
             .then(res => res.json())
-            .then(data => setFeedbackCompleted(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
         fetch("https://babe-api.fastwrtn.com/feedback?tab=notification")
             .then(res => res.json())
-            .then(data => setFeedbackNotification(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
     }
 
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
             .then(res => res.json())
-            .then(data => setFeedback(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
         fetch("https://babe-api.fastwrtn.com/feedback?tab=progress")
             .then(res => res.json())
-            .then(data => setFeedbackProgress(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
         fetch("https://babe-api.fastwrtn.com/feedback?tab=completed")
             .then(res => res.json())
-            .then(data => setFeedbackCompleted(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
         fetch("https://babe-api.fastwrtn.com/feedback?tab=notification")
             .then(res => res.json())
-            .then(data => setFeedbackNotification(data.data))
+            .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
     },[])
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: number, badge: string[], isDeleted: boolean,isNotification: boolean){
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[], isDeleted: boolean,isNotification: boolean){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>handleShow(id,title,content,likeCount,dislikeCount,badge,isDeleted)}>
                 {!isNotification && 
@@ -129,15 +129,15 @@ function Index() {
         </>)
     }
 
-    function feedbackFilter(data:any, standard:string){
+    function feedbackFilter(data:IFeedback[], standard:IFilter):IFeedback[] {
         if(standard == "likeCount"){
-            return data.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount));
+            return data.sort((a,b) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount));
         }
         else if (standard == "latest"){
-            return data.sort((a: any,b: any) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
+            return data.sort((a,b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
         }
         else if (standard == "oldest"){
-            return data.sort((a: any,b: any) => Number(new Date(a.createdAt)) - Number(new Date(b.createdAt)));
+            return data.sort((a,b) => Number(new Date(a.createdAt)) - Number(new Date(b.createdAt)));
         }
         else{
             return data;
@@ -151,7 +151,7 @@ function Index() {
         <div id="feed">
             <h3>공지사항</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackNotification,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackNotification,"likeCount").map(data =>{
                     if (data.isNotification){
                         return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
                     }
@@ -159,7 +159,7 @@ function Index() {
             </ul>
             <h3 className="mt-4 d-inline-flex">진행중</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackProgress,"likeCount").map((data: any)=>{
+                {feedbackFilter(feedbackProgress,"likeCount").map(data =>{
                     if (data.isProgress){
                         return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification))
                     }
@@ -172,7 +172,7 @@ function Index() {
                 <option value="oldest">오래된순</option>
             </Form.Select>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedback,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedback,selectFilter).map(data=>{
                     if (data.isProgress){
                         return
                     }
@@ -187,7 +187,7 @@ function Index() {
             </ul>
             <h3 className="mt-4 d-inline-flex">완료됨</h3>
             <ul className="list-group mt-3">
-                {feedbackFilter(feedbackCompleted,selectFilter).map((data: any)=>{
+                {feedbackFilter(feedbackCompleted,selectFilter).map(data=>{
                     if (data.isCompleted){
                         return accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isDeleted,data.isNotification)
                     }
