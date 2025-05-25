@@ -131,44 +131,6 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             setIsBageEditShow(true);
                                             setBageEdit((modalBadge as string[]).join(","));
                                         }}>배지 수정</Badge>
-                                    <div className='float-end d-flex'>
-                                        <Form.Select className="ban" defaultValue={"1Hour"} onChange={banOnChange}>
-                                            <option value="1Hour">1시간</option>
-                                            <option value="3Hour">2시간</option>
-                                            <option value="6Hour">6시간</option>
-                                            <option value="12Hour">12시간</option>
-                                            <option value="1Day">1일</option>
-                                            <option value="3Day">3일</option>
-                                            <option value="7Day">7일</option>
-                                            <option value="14Day">14일</option>
-                                            <option value="1Month">1개월</option>
-                                            <option value="3Month">3개월</option>
-                                            <option value="6Month">6개월</option>
-                                            <option value="1Year">1년</option>
-                                        </Form.Select>
-                                        <Button variant="outline-danger" className="ms-3" onClick={()=>{
-                                            const reason = prompt("차단 사유를 입력해주세요.");
-                                            fetch(`https://babe-api.fastwrtn.com/admin/ban`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-                                                userId:modalUserId,
-                                                reason:reason,
-                                                month:banTime(ban)[0],
-                                                day:banTime(ban)[1],
-                                                hour:banTime(ban)[2]
-                                            })})
-                                                .then(res => res.json())
-                                                .then((data:any) => {
-                                                    if (data.result == "SUCCESS"){
-                                                        alert("차단 되었습니다.");
-                                                    }
-                                                    else if (data.result == "FAIL" && data.data == "auth"){
-                                                        return alert("권한이 없습니다.");
-                                                    }
-                                                    else {
-                                                        return alert(`오류 ${data.data}`);
-                                                    }
-                                                })
-                                        }}>차단</Button>
-                                    </div>
                                 </div>
                             </>
                             }
@@ -234,10 +196,50 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 추천 : {modalLikeCount}
                             </Button>
                             {isAdmin && 
-                                <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
-                                    <Form.Label className="float-start">댓글</Form.Label>
-                                    <Form.Control as="textarea" rows={3} /> 
-                                </Form.Group>
+                                <>
+                                    <div className='ban-container d-flex mt-3'>
+                                        <Form.Select className="ban" defaultValue={"1Hour"} onChange={banOnChange}>
+                                            <option value="1Hour">1시간</option>
+                                            <option value="3Hour">2시간</option>
+                                            <option value="6Hour">6시간</option>
+                                            <option value="12Hour">12시간</option>
+                                            <option value="1Day">1일</option>
+                                            <option value="3Day">3일</option>
+                                            <option value="7Day">7일</option>
+                                            <option value="14Day">14일</option>
+                                            <option value="1Month">1개월</option>
+                                            <option value="3Month">3개월</option>
+                                            <option value="6Month">6개월</option>
+                                            <option value="1Year">1년</option>
+                                        </Form.Select>
+                                        <Button variant="outline-danger" className="ms-1" onClick={()=>{
+                                            const reason = prompt("차단 사유를 입력해주세요.");
+                                            fetch(`https://babe-api.fastwrtn.com/admin/ban`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
+                                                userId:modalUserId,
+                                                reason:reason,
+                                                month:banTime(ban)[0],
+                                                day:banTime(ban)[1],
+                                                hour:banTime(ban)[2]
+                                            })})
+                                                .then(res => res.json())
+                                                .then((data:any) => {
+                                                    if (data.result == "SUCCESS"){
+                                                        alert("차단 되었습니다.");
+                                                    }
+                                                    else if (data.result == "FAIL" && data.data == "auth"){
+                                                        return alert("권한이 없습니다.");
+                                                    }
+                                                    else {
+                                                        return alert(`오류 ${data.data}`);
+                                                    }
+                                                })
+                                        }}>차단</Button>
+                                    </div>
+                                    <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
+                                        <Form.Label className="float-start">댓글</Form.Label>
+                                        <Form.Control as="textarea" rows={3} /> 
+                                    </Form.Group>
+                                </>
                             }
                         </div>
                     </>
