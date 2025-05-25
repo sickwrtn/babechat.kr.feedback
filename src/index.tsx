@@ -90,6 +90,9 @@ function Index() {
             fetch(`https://babe-api.fastwrtn.com/feedbackitem?id=${id}`)
                 .then(res => res.json())
                 .then((data: IResponse<IFeedback>) => {
+                    if (data.result == "FAIL"){
+                        return alert("잘못된 ID 입니다.");
+                    }
                     setModalTitle(data.data.title);
                     setModalContent(data.data.content);
                     setModalId(data.data.id);

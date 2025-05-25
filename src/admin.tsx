@@ -125,6 +125,9 @@ function Admin() {
             fetch(`https://babe-api.fastwrtn.com/admin/feedbackitem?id=${id}`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
                 .then(res => res.json())
                 .then((data: IResponse<IFeedback>) => {
+                    if (data.result == "FAIL"){
+                        return alert("잘못된 ID 입니다.");
+                    }
                     setModalTitle(data.data.title);
                     setModalContent(data.data.content);
                     setModalId(data.data.id);
