@@ -172,7 +172,7 @@ function Admin() {
                     <div className="fw-bold">{title} {badge.map((data)=>(
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
-                    <Badge className="ms-1 badge" text="white" bg="secondary">{ip}</Badge>
+                    <Badge className="ms-1 badge" text="white" bg="info">IP : {ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary">ID : {id}</Badge>
                     </div>
                     {content}
