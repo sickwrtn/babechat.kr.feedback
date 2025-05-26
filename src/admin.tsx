@@ -9,8 +9,9 @@ import {IFeedback,IResponse,IFilter,ICategory, IBan} from './interfaces'
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function compressIPv6(ipv6Address:string):string {
-  return ipv6Address.split(":").slice(3,7).join(":");
+   return ipv6Address.split(":").slice(3,7).join(":");
 }
+
 function isIPv6(ipString: string): boolean {
     // 1. 빈 문자열 또는 너무 길거나 짧은 경우 (최소 "::1", 최대 39자)
     if (!ipString || ipString.length < 2 || ipString.length > 39) {
@@ -418,8 +419,8 @@ function Admin() {
             <Sumbit resetFeedback={resetFeedback} isAdmin={true}/>
         </div>
         <div id="feed">
-            <Tabs defaultActiveKey="home" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="home" title="메인">
+            <Tabs defaultActiveKey="main" id="uncontrolled-tab-example" className="mb-3">
+                <Tab eventKey="main" title="메인">
                     <h3>공지사항</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackNotification} filter='likeCount' isAdmin={false} />

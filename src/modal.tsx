@@ -1,9 +1,13 @@
 import './main.css'
 import { FormControl, Modal, Button, Form ,ToggleButton, ToggleButtonGroup, Badge, Spinner} from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
-import remarkGfm from 'remark-gfm';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
+import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
+import "highlight.js/styles/a11y-dark.css";
+
 interface IFeedbakModal{
     show: boolean,
     isEdit: boolean,
@@ -162,8 +166,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                     { !isEdit &&
                     <>
                         <div className='b-content mt-2'>
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {modalContent.replace(/\n/gi,"\n\n")}
+                            <ReactMarkdown remarkPlugins={[remarkBreaks]}rehypePlugins={[rehypeHighlight,rehypeRaw]}>
+                                {modalContent}
                             </ReactMarkdown>
                         </div>
                         <div className='b-footer'>
@@ -249,9 +253,11 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                     { isEdit &&
                         <Form.Group className="m-4">
                             <Form.Label>제목</Form.Label>
-                            <FormControl type="text" className='mb-3' placeholder="제목은 직관적이게 써주세요." value={modalTitleEdit} onChange={modalTitleEditOnChange} isInvalid={modalTitleEditIsVaild}/>
+                            <FormControl type="text" placeholder="제목은 직관적이게 작성해주세요." maxLength={20} value={modalTitleEdit} onChange={modalTitleEditOnChange} isInvalid={modalTitleEditIsVaild}/>
+                            <Form.Text className="text-muted text-end d-block">{modalTitleEdit.length}/20</Form.Text>
                             <Form.Label>내용</Form.Label>
-                            <FormControl type="text" className='mb-2' placeholder="건의사항을 구체적으로 적어주세요. (마크다운 사용 가능)" as="textarea" rows={5} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
+                            <FormControl type="text" placeholder="건의사항을 구체적으로 적어주세요.&#10;마크다운을 지원합니다!" maxLength={65000} as="textarea" rows={10} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
+                            <Form.Text className="text-muted text-end d-block">{modalTitleEdit.length}/65000</Form.Text>
                             <ToggleButtonGroup className="d-inline-flex" type="radio" name="options2" defaultValue={1} value={categoryEdit} onChange={categoryEditOnChange}>
                                 <ToggleButton id="tbg-btn2-1" variant='outline-secondary' value={1}>
                                     개선
@@ -268,7 +274,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                 </Modal.Body>
                 <Modal.Footer>
                     {!isAdmin &&
-                        <Form.Control className="modalPassword" type="password" placeholder="비밀번호" value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
+                        <Form.Control className="modalPassword" type="password" maxLength={12} placeholder="비밀번호" value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
                     }
                     {isAdmin && 
                         <>
