@@ -73,7 +73,7 @@ body {
 
 .b-modal {
     background-color: rgb(252 252 252);
-    white-space: normal !important;
+    white-space: nowrap;
 }
 #sumbit {
     box-shadow: 0 1px 3px rgba(32, 32, 32, 0.12), 0 1px 2px rgba(0,0,0,0.24);
