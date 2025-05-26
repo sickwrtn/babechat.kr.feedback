@@ -204,7 +204,11 @@ function Admin() {
 
     const [selectFilter, setSelectFilter] = useState<IFilter>("likeCount");
 
+    const [deleteSelectFilter, setDeleteSelectFilter] = useState<IFilter>("latest");
+
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
+
+    const deleteSelectFilterOnChange = (val: any) => setDeleteSelectFilter(val.target.value);
 
     const [modalBadge, setModalBadge] = useState<string[]>();
 
@@ -447,9 +451,16 @@ function Admin() {
                     </ul>
                 </Tab>
                 <Tab eventKey="deleted" title="삭제됨">
-                    <h3 className="d-inline-flex">삭제됨</h3>
+                    <div className='tab-container d-flex'>
+                        <h3>삭제됨</h3>
+                        <Form.Select className="tab-select" defaultValue={"latest"} onChange={deleteSelectFilterOnChange}>
+                            <option value="latest">최신순</option>
+                            <option value="likeCount">추천순</option>
+                            <option value="oldest">오래된순</option>
+                        </Form.Select>
+                    </div>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackDeleted} filter='likeCount' isAdmin={true} />
+                        <Feedback data={feedbackDeleted} filter={deleteSelectFilter} isAdmin={true} />
                     </ul>
                 </Tab>
                 <Tab eventKey="banList" title="차단관리">
