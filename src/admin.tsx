@@ -7,6 +7,7 @@ import FeedbackModal from './modal';
 import { setStrict } from './strict';
 import {IFeedback,IResponse,IFilter,ICategory, IBan} from './interfaces'
 import { useLocation, useNavigate } from 'react-router-dom';
+import MyPaginationComponent from './page';
 
 function compressIPv6(ipv6Address:string):string {
    return ipv6Address.split(":").slice(3,7).join(":");
@@ -181,6 +182,8 @@ function Admin() {
 
     const [feedback, setFeedback] = useState<IFeedback[]>([]);
 
+    const [feedbackCount, setFeedbackCount] = useState<number>(0);
+
     const [feedbackProgress,setFeedbackProgress] = useState<IFeedback[]>([]);
 
     const [feedbackCompleted,setFeedbackCompleted] = useState<IFeedback[]>([]);
@@ -188,6 +191,10 @@ function Admin() {
     const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
 
     const [feedbackDeleted,setFeedbackDeleted] = useState<IFeedback[]>([]);
+
+    const [feedbackDeletedCount, setFeedbackDeletedCount] = useState<number>(0);
+
+    const [feedbackTop,setFeedbackTop] = useState<IFeedback[]>([]);
 
     const [modalTitle, setModalTitle] = useState<string>("");
 
@@ -221,22 +228,32 @@ function Admin() {
 
     const [ban,setBan] = useState<IBan[]>([]);
 
+    const [standCurrentPage,setStandCurrentPage] = useState<number>(1);
+
+    const [deleteCurrentPage,setDeleteCurrentPage] = useState<number>(1);
+
     const resetFeedback = () => {
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+        fetch(`https://babe-api.fastwrtn.com/admin/feedback?tab=stand&sort=${selectFilter}&offset=${(standCurrentPage - 1) * 10}&limit=10`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then((data: IResponse<IFeedback[]>) => setFeedback(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-            .then(res => res.json())
-            .then((data: IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-            .then(res => res.json())
-            .then((data: IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-            .then(res => res.json())
-            .then((data: IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+        fetch(`https://babe-api.fastwrtn.com/admin/feedback?tab=deleted&sort=${deleteSelectFilter}&offset=${(deleteCurrentPage - 1) * 10}&limit=10`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then((data: IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress&sort=likeCount&offset=0&limit=100",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data: IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed&sort=likeCount&offset=0&limit=100",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data: IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification&sort=likeCount&offset=0&limit=100",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data: IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback/count?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data:IResponse<number>) => setFeedbackCount(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback/count?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data:IResponse<number>) => setFeedbackDeletedCount(data.data))
     }
 
     const resetBan = () => {
@@ -246,24 +263,27 @@ function Admin() {
     }
 
     useEffect(()=>{
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+        fetch(`https://babe-api.fastwrtn.com/admin/feedback?tab=stand&sort=likeCount&offset=0&limit=10`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
-            .then((data: IResponse<IFeedback[]>) => setFeedback(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then((data:IResponse<IFeedback[]>) => setFeedbackTop(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=progress&sort=likeCount&offset=0&limit=100",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then((data: IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=completed&sort=likeCount&offset=0&limit=100",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then((data: IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=notification&sort=likeCount&offset=0&limit=100",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then((data: IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
-        fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-            .then(res => res.json())
-            .then((data: IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
         fetch("https://babe-api.fastwrtn.com/admin/ban",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then((data: IResponse<IBan[]>)=> setBan(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback/count?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data:IResponse<number>) => setFeedbackCount(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/feedback/count?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data:IResponse<number>) => setFeedbackDeletedCount(data.data))
     },[])
 
     useEffect(() => {
@@ -292,6 +312,18 @@ function Admin() {
                 })
         }
     }, [location]);
+
+    useEffect(()=>{
+        fetch(`https://babe-api.fastwrtn.com/admin/feedback?tab=stand&sort=${selectFilter}&offset=${(standCurrentPage - 1) * 10}&limit=10`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
+    },[standCurrentPage,selectFilter])
+
+    useEffect(()=>{
+        fetch(`https://babe-api.fastwrtn.com/admin/feedback?tab=deleted&sort=${deleteSelectFilter}&offset=${(deleteCurrentPage - 1) * 10}&limit=10`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data:IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
+    },[deleteCurrentPage,deleteSelectFilter])
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean,ip: string){
         return (<>
@@ -378,34 +410,19 @@ function Admin() {
         </>)
     }
 
-    function feedbackFilter(data:IFeedback[], standard:IFilter){
-        if(standard == "likeCount"){
-            return data.sort((a: any,b: any) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount));
-        }
-        else if (standard == "latest"){
-            return data.sort((a: any,b: any) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
-        }
-        else if (standard == "oldest"){
-            return data.sort((a: any,b: any) => Number(new Date(a.createdAt)) - Number(new Date(b.createdAt)));
-        }
-        else{
-            return data;
-        }
-    }
-
-    function Feedback({data,filter,isAdmin}:{data:IFeedback[],filter:IFilter,isAdmin:boolean}) {
+    function Feedback({data,isAdmin}:{data:IFeedback[],isAdmin:boolean}) {
         return (
             <> 
                 {(!isAdmin) &&
                     <>
-                        {feedbackFilter(data,filter).map(data =>{
+                        {data.map(data =>{
                             if (!data.isDeleted) return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isNotification,data.ip as string))
                         })}
                     </>
                 }
                 {isAdmin &&
                     <>
-                        {feedbackFilter(data,filter).map(data=>{
+                        {data.map(data=>{
                             return accordionItemAdmin(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isProgress,data.isCompleted,data.isNotification,data.ip as string)
                         })}
                     </>
@@ -423,19 +440,19 @@ function Admin() {
                 <Tab eventKey="main" title="메인">
                     <h3>공지사항</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackNotification} filter='likeCount' isAdmin={false} />
+                        <Feedback data={feedbackNotification} isAdmin={false} />
                     </ul>
                     <h3 className="mt-4 d-inline-flex">진행중</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackProgress} filter='likeCount' isAdmin={false} />
+                        <Feedback data={feedbackProgress} isAdmin={false} />
                     </ul>
                     <h3 className="mt-4 d-inline-flex">완료됨</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackCompleted} filter='likeCount' isAdmin={false} />
+                        <Feedback data={feedbackCompleted} isAdmin={false} />
                     </ul>
                     <h3 className='mt-4'>대기중</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedback} filter='likeCount' isAdmin={false} />
+                        <Feedback data={feedbackTop} isAdmin={false} />
                     </ul>
                 </Tab>
                 <Tab eventKey="stand" title="대기중">
@@ -448,8 +465,13 @@ function Admin() {
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedback} filter={selectFilter} isAdmin={false} />
+                        <Feedback data={feedback} isAdmin={false} />
                     </ul>
+                    <MyPaginationComponent
+                            totalPages={Math.ceil(feedbackCount / 10)}
+                            currentPage={standCurrentPage}
+                            onPageChange={(e:any)=>setStandCurrentPage(e)}
+                        />
                 </Tab>
                 <Tab eventKey="deleted" title="삭제됨">
                     <div className='tab-container d-flex'>
@@ -461,8 +483,15 @@ function Admin() {
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackDeleted} filter={deleteSelectFilter} isAdmin={true} />
+                        <Feedback data={feedbackDeleted} isAdmin={true} />
                     </ul>
+                    <div className='mt-5'>
+                        <MyPaginationComponent
+                            totalPages={Math.ceil(feedbackDeletedCount / 10)}
+                            currentPage={deleteCurrentPage}
+                            onPageChange={(e:any)=>setDeleteCurrentPage(e)}
+                        />
+                    </div>
                 </Tab>
                 <Tab eventKey="banList" title="차단관리">
                     <h3>차단 목록</h3>

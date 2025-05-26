@@ -7,6 +7,7 @@ import FeedbackModal from './modal';
 import { setStrict } from './strict';
 import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
 import { useLocation, useNavigate } from 'react-router-dom';
+import MyPaginationComponent from './page';
 
 function Index() {
     setStrict(()=>{})
@@ -30,11 +31,15 @@ function Index() {
 
     const [feedback, setFeedback] = useState<IFeedback[]>([]);
 
+    const [feedbackCount,setFeedbackCount] = useState<number>(0);
+
     const [feedbackProgress,setFeedbackProgress] = useState<IFeedback[]>([]);
 
     const [feedbackCompleted,setFeedbackCompleted] = useState<IFeedback[]>([]);
 
     const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
+
+    const [feedbackTop, setFeedbackTop] = useState<IFeedback[]>([])
 
     const [modalTitle, setModalTitle] = useState<string>("");
 
@@ -56,36 +61,47 @@ function Index() {
 
     const [modalIsLoading, setModalIsLoading] = useState<boolean>(false);
 
+    const [currentPage,setCurrentPage] = useState<number>(1);
+
+    const currentPageOnChange = (e:number) => setCurrentPage(e); 
+
     const resetFeedback = () => {
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
+        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=${(currentPage - 1) * 10}&limit=10`)
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress&sort=likeCount&offset=0&limit=100")
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed&sort=likeCount&offset=0&limit=100")
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification&sort=likeCount&offset=0&limit=100")
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback/count?tab=stand")
+            .then(res => res.json())
+            .then((data:IResponse<number>) => setFeedbackCount(data.data))
     }
+
     useEffect(()=>{
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=stand")
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress&sort=likeCount&offset=0&limit=100")
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed&sort=likeCount&offset=0&limit=100")
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification")
+        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification&sort=likeCount&offset=0&limit=100")
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
+        fetch("https://babe-api.fastwrtn.com/feedback/count?tab=stand")
+            .then(res => res.json())
+            .then((data:IResponse<number>) => setFeedbackCount(data.data))
     },[])
 
     useEffect(() => {
+        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=0&limit=10`)
+            .then(res => res.json())
+            .then((data:IResponse<IFeedback[]>) => setFeedbackTop(data.data))
         const params = new URLSearchParams(location.search);
         const id = params.get('id');
         if (id != null){
@@ -109,6 +125,12 @@ function Index() {
                 })
         }
     }, [location]);
+
+    useEffect(()=>{
+        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=${selectFilter}&offset=${(currentPage - 1) * 10}&limit=10`)
+            .then(res => res.json())
+            .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
+    },[currentPage,selectFilter])
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean){
         return (<>
@@ -148,30 +170,16 @@ function Index() {
         </>)
     }
 
-    function feedbackFilter(data:IFeedback[], standard:IFilter):IFeedback[] {
-        if(standard == "likeCount"){
-            return data.sort((a,b) => (b.likeCount - b.dislikeCount) - (a.likeCount - a.dislikeCount));
-        }
-        else if (standard == "latest"){
-            return data.sort((a,b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
-        }
-        else if (standard == "oldest"){
-            return data.sort((a,b) => Number(new Date(a.createdAt)) - Number(new Date(b.createdAt)));
-        }
-        else{
-            return data;
-        }
-    }
-
-    function Feedback({data,filter}:{data:IFeedback[],filter:IFilter}) {
+    function Feedback({data}:{data:IFeedback[]}) {
         return (
             <>
-                {feedbackFilter(data,filter).map(data =>{
+                {data.map(data =>{
                     return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isNotification))
                 })}
             </>
         )
     }
+
     return (<>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={false}/>
@@ -181,19 +189,19 @@ function Index() {
                 <Tab eventKey="main" title="메인">
                     <h3>공지사항</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackNotification} filter='likeCount'/>
+                        <Feedback data={feedbackNotification}/>
                     </ul>
                     <h3 className="mt-4 d-inline-flex">진행중</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackProgress} filter='likeCount'/>
+                        <Feedback data={feedbackProgress}/>
                     </ul>
                     <h3 className="mt-4 d-inline-flex">완료됨</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackCompleted} filter='likeCount'/>
+                        <Feedback data={feedbackCompleted}/>
                     </ul>
                         <h3 className='mt-4'>대기중</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedback} filter='likeCount'/>
+                        <Feedback data={feedbackTop}/>
                     </ul>
                 </Tab>
                 <Tab eventKey="stand" title="대기중">
@@ -206,8 +214,15 @@ function Index() {
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedback} filter={selectFilter}/>
+                        <Feedback data={feedback}/>
                     </ul>
+                    <div className='mt-5'>
+                        <MyPaginationComponent
+                            totalPages={Math.ceil(feedbackCount / 10)}
+                            currentPage={currentPage}
+                            onPageChange={currentPageOnChange}
+                        />
+                    </div>
                 </Tab>
             </Tabs>
         </div>
