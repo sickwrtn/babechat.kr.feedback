@@ -414,7 +414,7 @@ function Admin() {
             <Sumbit resetFeedback={resetFeedback} isAdmin={true}/>
         </div>
         <div id="feed">
-            <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
+            <Tabs defaultActiveKey="home" id="uncontrolled-tab-example" className="mb-3">
                 <Tab eventKey="home" title="메인">
                     <h3>공지사항</h3>
                     <ul className="list-group mt-3">
