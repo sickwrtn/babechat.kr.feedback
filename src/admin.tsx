@@ -434,8 +434,8 @@ function Admin() {
                     </ul>
                 </Tab>
                 <Tab eventKey="stand" title="대기중">
-                    <div className='tab-container mt-4 d-flex'>
-                        <h3 className='mt-1'>대기중</h3>
+                    <div className='tab-container d-flex'>
+                        <h3>대기중</h3>
                         <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
                             <option value="likeCount">추천순</option>
                             <option value="latest">최신순</option>
@@ -447,13 +447,14 @@ function Admin() {
                     </ul>
                 </Tab>
                 <Tab eventKey="deleted" title="삭제됨">
-                    <h3 className="mt-4 d-inline-flex">삭제됨</h3>
+                    <h3 className="d-inline-flex">삭제됨</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackDeleted} filter='likeCount' isAdmin={true} />
                     </ul>
                 </Tab>
                 <Tab eventKey="banList" title="차단관리">
-                    <Table striped bordered hover>
+                    <h3>차단 목록</h3>
+                    <Table className="mt-4" striped bordered>
                         <thead>
                             <tr>
                             <th>#</th>
