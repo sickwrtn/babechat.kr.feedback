@@ -1,5 +1,5 @@
 import './main.css'
-import {Form, Badge} from 'react-bootstrap';
+import {Form, Badge, Tab, Tabs} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
@@ -172,35 +172,44 @@ function Index() {
             </>
         )
     }
-
     return (<>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={false}/>
         </div>
         <div id="feed">
-            <h3>공지사항</h3>
-            <ul className="list-group mt-3">
-                <Feedback data={feedbackNotification} filter='likeCount'/>
-            </ul>
-            <h3 className="mt-4 d-inline-flex">진행중</h3>
-            <ul className="list-group mt-3">
-                <Feedback data={feedbackProgress} filter='likeCount'/>
-            </ul>
-            <div className='tab-container mt-4 d-flex'>
-                <h3 className='mt-1'>대기중</h3>
-                <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
-                    <option value="likeCount">추천순</option>
-                    <option value="latest">최신순</option>
-                    <option value="oldest">오래된순</option>
-                </Form.Select>
-            </div>
-            <ul className="list-group mt-3">
-                <Feedback data={feedback} filter={selectFilter}/>
-            </ul>
-            <h3 className="mt-4 d-inline-flex">완료됨</h3>
-            <ul className="list-group mt-3">
-                <Feedback data={feedbackCompleted} filter='likeCount'/>
-            </ul>
+            <Tabs defaultActiveKey="main" id="uncontrolled-tab-example" className="mb-3">
+                <Tab eventKey="main" title="메인">
+                    <h3>공지사항</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackNotification} filter='likeCount'/>
+                    </ul>
+                    <h3 className="mt-4 d-inline-flex">진행중</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackProgress} filter='likeCount'/>
+                    </ul>
+                    <h3 className="mt-4 d-inline-flex">완료됨</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackCompleted} filter='likeCount'/>
+                    </ul>
+                        <h3 className='mt-4'>대기중</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedback} filter='likeCount'/>
+                    </ul>
+                </Tab>
+                <Tab eventKey="stand" title="대기중">
+                    <div className='tab-container mt-4 d-flex'>
+                        <h3 className='mt-1'>대기중</h3>
+                        <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
+                            <option value="likeCount">추천순</option>
+                            <option value="latest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                        </Form.Select>
+                    </div>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedback} filter={selectFilter}/>
+                    </ul>
+                </Tab>
+            </Tabs>
         </div>
         <div id="footer"></div>
         <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading} modalIp=''/>

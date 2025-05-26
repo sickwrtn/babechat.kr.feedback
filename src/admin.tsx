@@ -424,6 +424,16 @@ function Admin() {
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackProgress} filter='likeCount' isAdmin={false} />
                     </ul>
+                    <h3 className="mt-4 d-inline-flex">완료됨</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackCompleted} filter='likeCount' isAdmin={false} />
+                    </ul>
+                    <h3 className='mt-4'>대기중</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedback} filter='likeCount' isAdmin={false} />
+                    </ul>
+                </Tab>
+                <Tab eventKey="stand" title="대기중">
                     <div className='tab-container mt-4 d-flex'>
                         <h3 className='mt-1'>대기중</h3>
                         <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
@@ -435,16 +445,14 @@ function Admin() {
                     <ul className="list-group mt-3">
                         <Feedback data={feedback} filter={selectFilter} isAdmin={false} />
                     </ul>
-                    <h3 className="mt-4 d-inline-flex">완료됨</h3>
-                    <ul className="list-group mt-3">
-                        <Feedback data={feedbackCompleted} filter='likeCount' isAdmin={false} />
-                    </ul>
+                </Tab>
+                <Tab eventKey="deleted" title="삭제됨">
                     <h3 className="mt-4 d-inline-flex">삭제됨</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackDeleted} filter='likeCount' isAdmin={true} />
                     </ul>
                 </Tab>
-                <Tab eventKey="profile" title="차단관리">
+                <Tab eventKey="banList" title="차단관리">
                     <Table striped bordered hover>
                         <thead>
                             <tr>
