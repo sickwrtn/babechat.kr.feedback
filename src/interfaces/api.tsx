@@ -23,3 +23,12 @@ export interface IFeedback {
     ip? : string,
     userId?: string
 }
+
+export interface IBan {
+    id: Number,
+    userId: string,
+    reason: string,
+    ip: string,
+    expiredAt: string,
+    createdAt: string
+}

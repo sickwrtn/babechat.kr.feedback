@@ -1,13 +1,12 @@
 import './main.css'
-import { FormControl, Button, Form, Badge} from 'react-bootstrap';
+import { FormControl, Button, Form, Badge, Tab, Tabs, Table} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
-import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
+import {IFeedback,IResponse,IFilter,ICategory, IBan} from './interfaces'
 import { useLocation, useNavigate } from 'react-router-dom';
-
 
 function compressIPv6(ipv6Address:string):string {
   return ipv6Address.split(":").slice(3,7).join(":");
@@ -215,6 +214,8 @@ function Admin() {
 
     const [modalIp, setModalIp] = useState<string>("");
 
+    const [ban,setBan] = useState<IBan[]>([]);
+
     const resetFeedback = () => {
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
@@ -233,6 +234,12 @@ function Admin() {
             .then((data: IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
     }
 
+    const resetBan = () => {
+        fetch("https://babe-api.fastwrtn.com/admin/ban",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data: IResponse<IBan[]>)=> setBan(data.data))
+    }
+
     useEffect(()=>{
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=stand",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
@@ -249,6 +256,9 @@ function Admin() {
         fetch("https://babe-api.fastwrtn.com/admin/feedback?tab=deleted",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
             .then(res => res.json())
             .then((data: IResponse<IFeedback[]>) => setFeedbackDeleted(data.data))
+        fetch("https://babe-api.fastwrtn.com/admin/ban",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+            .then(res => res.json())
+            .then((data: IResponse<IBan[]>)=> setBan(data.data))
     },[])
 
     useEffect(() => {
@@ -404,33 +414,75 @@ function Admin() {
             <Sumbit resetFeedback={resetFeedback} isAdmin={true}/>
         </div>
         <div id="feed">
-            <h3>공지사항</h3>
-            <ul className="list-group mt-3">
-                <Feedback data={feedbackNotification} filter='likeCount' isAdmin={false} />
-            </ul>
-            <h3 className="mt-4 d-inline-flex">진행중</h3>
-            <ul className="list-group mt-3">
-                <Feedback data={feedbackProgress} filter='likeCount' isAdmin={false} />
-            </ul>
-            <div className='tab-container mt-4 d-flex'>
-                <h3 className='mt-1'>대기중</h3>
-                <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
-                    <option value="likeCount">추천순</option>
-                    <option value="latest">최신순</option>
-                    <option value="oldest">오래된순</option>
-                </Form.Select>
-            </div>
-            <ul className="list-group mt-3">
-                <Feedback data={feedback} filter={selectFilter} isAdmin={false} />
-            </ul>
-            <h3 className="mt-4 d-inline-flex">완료됨</h3>
-            <ul className="list-group mt-3">
-                <Feedback data={feedbackCompleted} filter='likeCount' isAdmin={false} />
-            </ul>
-            <h3 className="mt-4 d-inline-flex">삭제됨</h3>
-            <ul className="list-group mt-3">
-                <Feedback data={feedbackDeleted} filter='likeCount' isAdmin={true} />
-            </ul>
+            <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
+                <Tab eventKey="home" title="메인">
+                    <h3>공지사항</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackNotification} filter='likeCount' isAdmin={false} />
+                    </ul>
+                    <h3 className="mt-4 d-inline-flex">진행중</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackProgress} filter='likeCount' isAdmin={false} />
+                    </ul>
+                    <div className='tab-container mt-4 d-flex'>
+                        <h3 className='mt-1'>대기중</h3>
+                        <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
+                            <option value="likeCount">추천순</option>
+                            <option value="latest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                        </Form.Select>
+                    </div>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedback} filter={selectFilter} isAdmin={false} />
+                    </ul>
+                    <h3 className="mt-4 d-inline-flex">완료됨</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackCompleted} filter='likeCount' isAdmin={false} />
+                    </ul>
+                    <h3 className="mt-4 d-inline-flex">삭제됨</h3>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackDeleted} filter='likeCount' isAdmin={true} />
+                    </ul>
+                </Tab>
+                <Tab eventKey="profile" title="차단관리">
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                            <th>#</th>
+                            <th>IP</th>
+                            <th>Reason</th>
+                            <th>ExpiredAt</th>
+                            <th>CreatedAt</th>
+                            <th>Do</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {ban.map(data => (
+                                <tr>
+                                    <td>{String(data.id)}</td>
+                                    <td>{data.ip}</td>
+                                    <td>{data.reason}</td>
+                                    <td>{data.expiredAt}</td>
+                                    <td>{data.createdAt}</td>
+                                    <td><Button size='sm' onClick={()=>{
+                                        fetch(`https://babe-api.fastwrtn.com/admin/ban?id=${data.id}`,{method:"DELETE",headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+                                            .then(res => res.json())
+                                            .then((data: IResponse<string>)=> {
+                                                if (data.result == "SUCCESS"){
+                                                    alert("차단을 해제했습니다.");
+                                                    resetBan();
+                                                }
+                                                else{
+                                                    alert("권한이 없습니다.");
+                                                }
+                                            })
+                                    }}>차단 해제</Button></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </Tab>
+            </Tabs>
         </div>
         <div id="footer"></div>
         <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIsLoading={modalIsLoading} modalIp={modalIp}/>
