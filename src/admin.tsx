@@ -467,11 +467,13 @@ function Admin() {
                     <ul className="list-group mt-3">
                         <Feedback data={feedback} isAdmin={false} />
                     </ul>
-                    <MyPaginationComponent
-                            totalPages={Math.ceil(feedbackCount / 10)}
-                            currentPage={standCurrentPage}
-                            onPageChange={(e:any)=>setStandCurrentPage(e)}
-                        />
+                    <div className='mt-5'>
+                        <MyPaginationComponent
+                                totalPages={Math.ceil(feedbackCount / 10)}
+                                currentPage={standCurrentPage}
+                                onPageChange={(e:any)=>setStandCurrentPage(e)}
+                            />
+                    </div>
                 </Tab>
                 <Tab eventKey="deleted" title="삭제됨">
                     <div className='tab-container d-flex'>
