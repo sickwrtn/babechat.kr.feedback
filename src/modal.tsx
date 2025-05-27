@@ -260,7 +260,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                             <FormControl type="text" placeholder="제목은 직관적이게 작성해주세요." maxLength={20} value={modalTitleEdit} onChange={modalTitleEditOnChange} isInvalid={modalTitleEditIsVaild}/>
                             <Form.Text className="text-muted text-end d-block">{modalTitleEdit.length}/20</Form.Text>
                             <Form.Label>내용</Form.Label>
-                            <FormControl type="text" placeholder="건의사항을 구체적으로 적어주세요.&#10;마크다운을 지원합니다!" maxLength={65000} as="textarea" rows={10} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
+                            <FormControl type="text" placeholder="건의사항을 구체적으로 적어주세요.&#10;마크다운을 지원합니다!&#10;![](이미지링크)" maxLength={65000} as="textarea" rows={10} value={modalContentEdit} onChange={modalContentEditOnChange} isInvalid={ModalContentEditIsVaild}/>
                             <Form.Text className="text-muted text-end d-block">{modalTitleEdit.length}/65000</Form.Text>
                             <ToggleButtonGroup className="d-inline-flex" type="radio" name="options2" defaultValue={1} value={categoryEdit} onChange={categoryEditOnChange}>
                                 <ToggleButton id="tbg-btn2-1" variant='outline-secondary' value={1}>

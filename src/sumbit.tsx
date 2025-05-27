@@ -133,7 +133,7 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         <FormControl type="text" placeholder="제목은 직관적이게 작성해주세요."  maxLength={20} value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
         <Form.Text className="text-muted text-end d-block">{title.length}/20</Form.Text>
         <Form.Label>내용</Form.Label>
-        <FormControl type="text" placeholder="건의사항을 구체적으로 적어주세요.&#10;마크다운을 지원합니다!" maxLength={65000} as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
+        <FormControl type="text" placeholder="건의사항을 구체적으로 적어주세요.&#10;마크다운을 지원합니다!&#10;![](이미지링크)" maxLength={65000} as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
         <Form.Text className="text-muted text-end d-block">{content.length}/65000</Form.Text>
         <Form.Label>비밀번호</Form.Label>
         <FormControl type="text" placeholder="비밀번호는 수정 및 삭제에 사용됩니다." maxLength={12} value={password} onChange={passwordOnChange} isInvalid={passwordIsVaild}/>
