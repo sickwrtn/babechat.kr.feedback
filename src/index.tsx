@@ -45,6 +45,8 @@ function Index() {
 
     const [modalContent,setModalContent] = useState<string>("");
 
+    const [modalCategory, setModalCategory] = useState<ICategory>(1);
+
     const [modalId, setModalId] = useState<number>(0);
 
     const [modalLikeCount, setModalLikeCount] = useState<number>(0);
@@ -123,6 +125,7 @@ function Index() {
                     setModalDislikeCount(data.data.dislikeCount);
                     setModalBadge(data.data.badge);
                     setModalIsDeleted(data.data.isDeleted);
+                    setModalCategory(data.data.category);
                     setIsEdit(false);
                     setModalIsLoading(false);
                 })
@@ -230,7 +233,7 @@ function Index() {
             </Tabs>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading} modalIp=''/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading} modalIp=''/>
     </>)
 }
 

@@ -2,11 +2,12 @@ import './main.css'
 import { FormControl, Modal, Button, Form ,ToggleButton, ToggleButtonGroup, Badge, Spinner} from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 import "highlight.js/styles/a11y-dark.css";
+import { ICategory } from './interfaces';
 
 interface IFeedbakModal{
     show: boolean,
@@ -16,6 +17,7 @@ interface IFeedbakModal{
     modalTitle: string,
     modalBadge: string[] | undefined,
     modalContent: string,
+    modalCategory: ICategory,
     modalId: number,
     modalLikeCount: number,
     setModalLikeCount: (e:number)=>void,
@@ -29,7 +31,7 @@ interface IFeedbakModal{
     modalIp: string
 }
 
-export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
+export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalCategory,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
 
     const [modalTitleEdit, setModalTitleEdit] = useState<string>("");
 
@@ -43,7 +45,9 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
 
     const [ModalContentEditIsVaild, setModalContentEditIsVaild] = useState<boolean>(false);
 
-    const [categoryEdit, setCategoryEdit] = useState<1 | 2 | 3>(1);
+    const [categoryEdit, setCategoryEdit] = useState<ICategory>(1);
+
+    useEffect(()=>setCategoryEdit(modalCategory),[modalCategory]);
     
     const categoryEditOnChange = (val: any) => setCategoryEdit(val);
 
