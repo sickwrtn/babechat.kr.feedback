@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
-import {IFeedback,IResponse,IFilter,ICategory} from './interfaces'
+import {IFeedback,IFilter,ICategory} from './interfaces'
 import { useLocation, useNavigate } from 'react-router-dom';
 import MyPaginationComponent from './page';
+import { sillo } from './sdk';
 
 function Index() {
     setStrict(()=>{})
@@ -18,6 +19,8 @@ function Index() {
                 localStorage.setItem("auth_token",data.data);
             })
     }
+
+    const api = new sillo(localStorage.getItem("auth_token") as string);
 
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
@@ -68,42 +71,31 @@ function Index() {
     const currentPageOnChange = (e:number) => setCurrentPage(e); 
 
     const resetFeedback = () => {
-        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=0&limit=10`)
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackTop(data.data))
-        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=${(currentPage - 1) * 10}&limit=10`)
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress&sort=likeCount&offset=0&limit=100")
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed&sort=likeCount&offset=0&limit=100")
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification&sort=likeCount&offset=0&limit=100")
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback/count?tab=stand")
-            .then(res => res.json())
-            .then((data:IResponse<number>) => setFeedbackCount(data.data))
+        api.getFeedback("stand",selectFilter,(currentPage - 1) * 10,10)
+            .then(data=>setFeedback(data.data))
+        api.getFeedback("stand","likeCount",0,10)
+            .then(data=>setFeedbackTop(data.data))
+        api.getFeedback("progress","likeCount",0,100)
+            .then(data=>setFeedbackProgress(data.data))
+        api.getFeedback("completed","likeCount",0,100)
+            .then(data=>setFeedbackCompleted(data.data))
+        api.getFeedback("notification","likeCount",0,100)
+            .then(data=>setFeedbackNotification(data.data))
+        api.getFeedback_Count("stand")
+            .then(data=>setFeedbackCount(data.data))
     }
 
     useEffect(()=>{
-        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=0&limit=10`)
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackTop(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=progress&sort=likeCount&offset=0&limit=100")
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=completed&sort=likeCount&offset=0&limit=100")
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackCompleted(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback?tab=notification&sort=likeCount&offset=0&limit=100")
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackNotification(data.data))
-        fetch("https://babe-api.fastwrtn.com/feedback/count?tab=stand")
-            .then(res => res.json())
-            .then((data:IResponse<number>) => setFeedbackCount(data.data))
+        api.getFeedback("stand","likeCount",0,10)
+            .then(data=>setFeedbackTop(data.data))
+        api.getFeedback("progress","likeCount",0,100)
+            .then(data=>setFeedbackProgress(data.data))
+        api.getFeedback("completed","likeCount",0,100)
+            .then(data=>setFeedbackCompleted(data.data))
+        api.getFeedback("notification","likeCount",0,100)
+            .then(data=>setFeedbackNotification(data.data))
+        api.getFeedback_Count("stand")
+            .then(data=>setFeedbackCount(data.data))
     },[])
 
     useEffect(() => {
@@ -112,10 +104,11 @@ function Index() {
         if (id != null){
             setModalIsLoading(true);
             setShow(true);
-            fetch(`https://babe-api.fastwrtn.com/feedbackitem?id=${id}`)
-                .then(res => res.json())
-                .then((data: IResponse<IFeedback>) => {
+            api.getFeedback_Item(Number(id))
+                .then(data => {
                     if (data.result == "FAIL"){
+                        setModalIsLoading(false);
+                        setShow(false);
                         return alert("잘못된 ID 입니다.");
                     }
                     setModalTitle(data.data.title);
@@ -133,9 +126,8 @@ function Index() {
     }, [location]);
 
     useEffect(()=>{
-        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=${selectFilter}&offset=${(currentPage - 1) * 10}&limit=10`)
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
+        api.getFeedback("stand",selectFilter,(currentPage - 1) * 10,10)
+            .then(data=>setFeedback(data.data))
     },[currentPage,selectFilter])
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean){
@@ -162,7 +154,9 @@ function Index() {
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
                     </div>
+                    <div className="text-muted form-text">
                     {content}
+                    </div>
                 </div>
                 <div className="badge border">
                     {(likeCount - dislikeCount) >= 0 && 
