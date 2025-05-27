@@ -48,6 +48,8 @@ function Index() {
 
     const [modalContent,setModalContent] = useState<string>("");
 
+    const [modalComment, setModalComment] = useState<string | null>(null);
+
     const [modalCategory, setModalCategory] = useState<ICategory>(1);
 
     const [modalId, setModalId] = useState<number>(0);
@@ -113,6 +115,7 @@ function Index() {
                     }
                     setModalTitle(data.data.title);
                     setModalContent(data.data.content);
+                    setModalComment(data.data.comment);
                     setModalId(data.data.id);
                     setModalLikeCount(data.data.likeCount);
                     setModalDislikeCount(data.data.dislikeCount);
@@ -227,7 +230,7 @@ function Index() {
             </Tabs>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading} modalIp=''/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalComment={modalComment} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading} modalIp=''/>
     </>)
 }
 

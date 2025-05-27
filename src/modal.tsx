@@ -7,32 +7,13 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 import "highlight.js/styles/a11y-dark.css";
-import { ICategory } from './interfaces';
+import { ICategory, IFeedbakModal } from './interfaces';
+import { sillo } from './sdk';
 
-interface IFeedbakModal{
-    show: boolean,
-    isEdit: boolean,
-    setIsEdit: (e:boolean)=>void,
-    handleClose: ()=>void,
-    modalTitle: string,
-    modalBadge: string[] | undefined,
-    modalContent: string,
-    modalCategory: ICategory,
-    modalId: number,
-    modalLikeCount: number,
-    setModalLikeCount: (e:number)=>void,
-    modalDislikeCount: number,
-    modalIsDeleted: boolean,
-    setModalDislikeCount: (e:number)=>void,
-    resetFeedback: ()=>void,
-    isAdmin: boolean,
-    modalUserId: string,
-    modalIsLoading: boolean,
-    modalIp: string
-}
+export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalComment,modalCategory,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
 
-export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalCategory,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
-
+    const api = new sillo(localStorage.getItem("auth_token") as string);
+    
     const [modalTitleEdit, setModalTitleEdit] = useState<string>("");
 
     const [modalContentEdit, setModalContentEdit] = useState<string>("");
@@ -53,6 +34,10 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
 
     const [modalPassword,setModalPassword] = useState<string>("");
 
+    const [modalCommentEdit,setModalCommentEdit] = useState<string>("");
+
+    const modalCommentEditOnChange = (e: any) => setModalCommentEdit(e.target.value);
+
     const [modalPasswordIsVaild,setModalPasswordIsVaild] = useState<boolean>(false);
 
     const modalPasswordOnChange = (e: any) => setModalPassword(e.target.value);
@@ -67,8 +52,10 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
 
     const banOnChange = (e:any) =>setban(e.target.value);
 
-    function banTime(ban: string){
-        let answord = [0,0,0];
+    const [isCommentEditShow,setIsCommentEditShow] = useState<boolean>(false);
+
+    function banTime(ban: string): [number,number,number]{
+        let answord: [number,number,number] = [0,0,0];
         switch (ban){
             case "1Hour":
                 answord = [0,0,1];
@@ -147,11 +134,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 <>
                                     <FormControl type="text" placeholder="수정" as="textarea" rows={1} value={bageEdit} onChange={bageEditOnChange}/>
                                     <Button className="mt-2" size='sm' variant="success" onClick={()=>{
-                                        fetch(`https://babe-api.fastwrtn.com/admin/badge?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-                                            badge:bageEdit.split(",")
-                                        })})
-                                            .then(res => res.json())
-                                            .then((data:any) => {
+                                        api.putBage(modalId,bageEdit.split(","))
+                                            .then(data=> {
                                                 if (data.result == "SUCCESS"){
                                                     alert("수정되었습니다.");
                                                     resetFeedback();
@@ -176,9 +160,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                         </div>
                         <div className='b-footer'>
                             <Button className="me-1" variant="outline-danger" onClick={()=>{
-                                fetch(`https://babe-api.fastwrtn.com/dislike?id=${modalId}`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-                                    .then(res => res.json())
-                                    .then(data => {
+                                api.getDislike(modalId)
+                                    .then(data=>{
                                         if (data.result == "FAIL" && data.data == "already"){
                                             return alert("한번만 가능합니다.");
                                         } 
@@ -191,9 +174,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 비추천 : {modalDislikeCount}
                             </Button>
                             <Button className="ms-1" variant="outline-success" onClick={()=>{
-                                fetch(`https://babe-api.fastwrtn.com/like?id=${modalId}`,{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-                                    .then(res => res.json())
-                                    .then(data => {
+                                api.getLike(modalId)
+                                    .then(data=>{
                                         if (data.result == "FAIL" && data.data == "already"){
                                             return alert("한번만 가능합니다.");
                                         } 
@@ -223,16 +205,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             </Form.Select>
                                             <Button variant="outline-danger" className="ms-1" onClick={()=>{
                                                 const reason = prompt("차단 사유를 입력해주세요.");
-                                                fetch(`https://babe-api.fastwrtn.com/admin/ban`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-                                                    userId:modalUserId,
-                                                    ip:modalIp,
-                                                    reason:reason,
-                                                    month:banTime(ban)[0],
-                                                    day:banTime(ban)[1],
-                                                    hour:banTime(ban)[2]
-                                                })})
-                                                    .then(res => res.json())
-                                                    .then((data:any) => {
+                                                api.postBan(modalUserId,modalIp,reason,banTime(ban))
+                                                    .then(data=>{
                                                         if (data.result == "SUCCESS"){
                                                             alert("차단 되었습니다.");
                                                         }
@@ -245,14 +219,64 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                                     })
                                             }}>차단</Button>
                                         </div>
-                                        <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
-                                            <Form.Label className="float-start">댓글</Form.Label>
-                                            <Form.Control as="textarea" rows={3} /> 
-                                        </Form.Group>
                                 </>
                             }
                         </div>
                     </>
+                    }
+                    { !isAdmin &&
+                        <>
+                        { modalComment != null &&
+                            <>
+                                <div className='d-flex'>
+                                    <h3 className='me-2'>운영팀의 코멘트</h3>
+                                    <img style={{height:"32px",marginTop:"3px"}} src="https://www.babechat.ai/assets/svgs/babechat.svg" />
+                                </div>
+                                <div className='border p-2 mt-2 rounded' style={{minHeight:"120px"}}>
+                                    <div className='aptx'>
+                                        <ReactMarkdown>{modalComment}</ReactMarkdown>
+                                    </div>
+                                </div>
+                            </>
+                        }
+                        </>
+                    }
+                    { isAdmin &&
+                        <>
+                            { modalComment != null && !isCommentEditShow &&
+                                <>
+                                    <div className='d-flex mt-3'>
+                                        <h3 className='me-2'>운영팀의 코멘트</h3>
+                                        <img style={{height:"32px",marginTop:"3px"}} src="https://www.babechat.ai/assets/svgs/babechat.svg" />
+                                    </div>
+                                    <div className='border p-2 mt-2 rounded' style={{minHeight:"120px"}}>
+                                        <div className='aptx'>
+                                            <ReactMarkdown>{modalComment}</ReactMarkdown>
+                                        </div>
+                                    </div>
+                                    <Button variant='outline-info'className='float-end mt-2' onClick={()=>{setIsCommentEditShow(true); setModalCommentEdit(modalComment)}}>수정</Button>
+                                </>
+                            }
+                            { modalComment == null || isCommentEditShow &&
+                                <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
+                                    <Form.Label className="float-start h3">댓글</Form.Label>
+                                    <Form.Control className='mt-2' as="textarea" rows={5} value={modalCommentEdit} onChange={modalCommentEditOnChange}/> 
+                                    <Button variant='outline-success'className='float-end mt-2' onClick={()=>{
+                                        api.postComment(modalId,modalCommentEdit)
+                                            .then(data => {
+                                                if (data.result == "FAIL"){
+                                                    return alert("권한이 없습니다.");
+                                                }
+                                                else if (data.result == "SUCCESS"){
+                                                    alert("댓글 등록 성공!");
+                                                    window.location.reload();
+                                                }
+                                            })
+                                    }}>등록</Button>
+                                    <Button variant='outline-danger me-2'className='float-end mt-2' onClick={()=>setIsCommentEditShow(false)}>닫기</Button>
+                                </Form.Group>
+                            }
+                        </>
                     }
                     { isEdit &&
                         <Form.Group className="m-4">
@@ -285,9 +309,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                             { !isEdit &&
                                 <>
                                     <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        fetch(`https://babe-api.fastwrtn.com/admin/progress?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
-                                            .then(res => res.json())
-                                            .then((data:any) => {
+                                        api.putProgress_Admin(modalId)
+                                            .then(data=>{
                                                 if (data.result == "SUCCESS"){
                                                     alert("진행중 탭으로 이동되었습니다.");
                                                     resetFeedback();
@@ -302,9 +325,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             })
                                     }}>진행중 탭으로 이동</Button>
                                     <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        fetch(`https://babe-api.fastwrtn.com/admin/compeleted?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
-                                            .then(res => res.json())
-                                            .then((data:any) => {
+                                        api.putCompeleted_Admin(modalId)
+                                            .then(data => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("완료 탭으로 이동되었습니다.");
                                                     resetFeedback();
@@ -319,9 +341,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             })
                                     }}>완료 탭으로 이동</Button>
                                     <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        fetch(`https://babe-api.fastwrtn.com/admin/clear?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
-                                            .then(res => res.json())
-                                            .then((data:any) => {
+                                        api.putClear_Admin(modalId)
+                                            .then(data=>{
                                                 if (data.result == "SUCCESS"){
                                                     alert("대기중 탭으로 이동되었습니다.");
                                                     resetFeedback();
@@ -344,9 +365,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     </Button>
                                     {modalIsDeleted &&
                                         <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                                            fetch(`https://babe-api.fastwrtn.com/admin/undeleted?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
-                                                .then(res => res.json())
-                                                .then((data:any) => {
+                                            api.putRecover_Admin(modalId)
+                                                .then(data => {
                                                     if (data.result == "SUCCESS"){
                                                         alert("복구되었습니다.");
                                                         resetFeedback();
@@ -365,9 +385,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     }
                                     {!modalIsDeleted &&
                                         <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                                            fetch(`https://babe-api.fastwrtn.com/admin/feedback?id=${modalId}`,{method:"DELETE",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({})})
-                                                .then(res => res.json())
-                                                .then((data:any) => {
+                                            api.delete_Admin(modalId)
+                                                .then(data => {
                                                     if (data.result == "SUCCESS"){
                                                         alert("삭제되었습니다.");
                                                         resetFeedback();
@@ -396,13 +415,11 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                         const modalContentEditValid = modalContentEdit.trim().length > 0;
                                         setModalTitleEditIsVaild(!modalTitleEditValid);
                                         setModalContentEditIsVaild(!modalContentEditValid);
-                                        fetch(`https://babe-api.fastwrtn.com/admin/feedback?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-                                            title:modalTitleEdit,
-                                            content:modalContentEdit,
-                                            category:categoryEdit
-                                        })})
-                                            .then(res => res.json())
-                                            .then((data:any) => {
+                                        if (!modalTitleEditValid || !modalContentEditValid){
+                                            return alert("잘못된 양식입니다.");
+                                        }
+                                        api.putEdit_Admin(modalId,modalTitleEdit,modalContentEdit,categoryEdit)
+                                            .then(data => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("편집되었습니다.");
                                                     window.location.reload()
@@ -444,17 +461,11 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                         setModalPasswordIsVaild(!modalPasswordValid);
                                         setModalTitleEditIsVaild(!modalTitleEditValid);
                                         setModalContentEditIsVaild(!modalContentEditValid);
-                                        if (!modalPasswordValid){
+                                        if (!modalPasswordValid || !modalTitleEditValid || !modalContentEditValid){
                                             return alert("잘못된 양식입니다.");
                                         }
-                                        fetch(`https://babe-api.fastwrtn.com/feedback?id=${modalId}`,{method:"PUT",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
-                                            title:modalTitleEdit,
-                                            content:modalContentEdit,
-                                            category:categoryEdit,
-                                            password:modalPassword
-                                        })})
-                                            .then(res => res.json())
-                                            .then((data:any) => {
+                                        api.putEdit(modalId,modalTitleEdit,modalContentEdit,categoryEdit,modalPassword)
+                                            .then(data => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("편집되었습니다.");
                                                     window.location.reload()
@@ -478,11 +489,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     if (!modalPasswordValid){
                                         return alert("잘못된 양식입니다.");
                                     }
-                                    fetch(`https://babe-api.fastwrtn.com/feedback?id=${modalId}`,{method:"DELETE",headers:{"Content-Type" : "application/json"},body:JSON.stringify({
-                                        password:modalPassword
-                                    })})
-                                        .then(res => res.json())
-                                        .then((data:any) => {
+                                    api.delete(modalId,modalPassword)
+                                        .then(data => {
                                             if (data.result == "SUCCESS"){
                                                 alert("삭제되었습니다.");
                                                 resetFeedback();

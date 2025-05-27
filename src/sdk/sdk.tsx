@@ -1,4 +1,4 @@
-import { IBan, IFeedback, IFilter, IResponse, ITab } from "../interfaces";
+import { IBan, ICategory, IFeedback, IFilter, IResponse, ITab } from "../interfaces";
 
 export class sillo{
     token: string
@@ -20,6 +20,16 @@ export class sillo{
         const response_json: IResponse<number> = await response.json();
         return response_json;
     }
+    async getLike(id: number): Promise<IResponse<string>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/like?id=${id}`,{headers:{"Authorization":this.token}})
+        const response_json: IResponse<string> = await response.json();
+        return response_json;
+    }
+    async getDislike(id: number): Promise<IResponse<string>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/dislike?id=${id}`,{headers:{"Authorization":this.token}})
+        const response_json: IResponse<string> = await response.json();
+        return response_json;
+    }
     async getFeedback_Admin(tab: ITab,sort: IFilter,offset: number,limit: number): Promise<IResponse<IFeedback[]>>{
         const response = await fetch(`https://babe-api.fastwrtn.com/admin/feedback?tab=${tab}&sort=${sort}&offset=${offset}&limit=${limit}`,{headers:{"Authorization":this.token}});
         const response_json: IResponse<IFeedback[]> = await response.json();
@@ -35,9 +45,69 @@ export class sillo{
         const response_json: IResponse<number> = await response.json();
         return response_json;
     }
+    async postComment(id: number,content: string){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/comment?id=${id}`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({content:content})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json
+    }
+    async deleteComment(id: number){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/comment?id=${id}`,{method:"DELETE",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json
+    }
+    async putEdit(id: number, title: string, content: string, category: ICategory, password: string){
+        const response = await fetch(`https://babe-api.fastwrtn.com/feedback?id=${id}`,{method:"PUT",headers:{"Content-Type" : "application/json"},body:JSON.stringify({title:title,content:content,category:category,password:password})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json;
+    }
+    async putEdit_Admin(id: number, title: string, content: string, category: ICategory){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/feedback?id=${id}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({title:title,content:content,category:category})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json
+    }
+    async putProgress_Admin(id: number){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/progress?id=${id}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json;
+    }
+    async putCompeleted_Admin(id: number){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/compeleted?id=${id}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json;
+    }
+    async putClear_Admin(id: number){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/clear?id=${id}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json;
+    }
+    async putRecover_Admin(id: number){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/undeleted?id=${id}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json()
+        return response_json;
+    }
+    async delete(id: number, password: string){
+        const response = await fetch(`https://babe-api.fastwrtn.com/feedback?id=${id}`,{method:"DELETE",headers:{"Content-Type" : "application/json"},body:JSON.stringify({password:password})})
+        const response_json: IResponse<string> = await response.json()
+        return response_json;
+    }
+    async delete_Admin(id: number){
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/feedback?id=${id}`,{method:"DELETE",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json()
+        return response_json;
+    }
     async getBan(): Promise<IResponse<IBan[]>>{
         const response = await fetch("https://babe-api.fastwrtn.com/admin/ban",{headers:{"Authorization":this.token}});
         const response_json: IResponse<IBan[]> = await response.json()
+        return response_json
+    }
+    async postBan(userId: string,ip: string,reason: string | null,time: [number,number,number]): Promise<IResponse<string>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/ban`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({userId:userId,ip:ip,reason:reason,month:time[0],day:time[1],hour:time[2]})})
+        const response_json: IResponse<string> = await response.json();
+        return response_json
+    }
+    async putBage(id: number,bage: string[]): Promise<IResponse<string>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/badge?id=${id}`,{method:"PUT",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({badge:bage})})
+        const response_json: IResponse<string> = await response.json()
         return response_json
     }
 }

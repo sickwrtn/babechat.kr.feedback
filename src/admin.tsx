@@ -213,6 +213,8 @@ function Admin() {
 
     const [modalIsDeleted, setModalIsDeleted] = useState<boolean>(false);
 
+    const [modalComment, setModalComment] = useState<string | null>(null);
+
     const [isEdit,setIsEdit] = useState<boolean>(false);
 
     const [selectFilter, setSelectFilter] = useState<IFilter>("latest");
@@ -299,6 +301,7 @@ function Admin() {
                     setModalIsDeleted(data.data.isDeleted);
                     setModalUserId(data.data.userId as string);
                     setModalIp(data.data.ip as string);
+                    setModalComment(data.data.comment);
                     setIsEdit(false);
                     setModalIsLoading(false);
                 })
@@ -531,7 +534,7 @@ function Admin() {
             </Tabs>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIsLoading={modalIsLoading} modalIp={modalIp}/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalComment={modalComment} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIsLoading={modalIsLoading} modalIp={modalIp}/>
     </>)
 }
 

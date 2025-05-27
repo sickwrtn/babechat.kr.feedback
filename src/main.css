@@ -80,6 +80,11 @@ body {
     height: auto;
 }
 
+.aptx img {
+    max-width: 100%; /* 부모 요소의 너비를 넘지 않도록 설정 */
+    height: auto;
+}
+
 #sumbit {
     box-shadow: 0 1px 3px rgba(32, 32, 32, 0.12), 0 1px 2px rgba(0,0,0,0.24);
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);

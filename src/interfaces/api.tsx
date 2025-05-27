@@ -2,10 +2,12 @@ export type IFilter = "likeCount" | "latest" | "oldest";
 
 export type ITab = "stand" | "progress" | "completed" | "notification" | "deleted";
 
-export type ICategory = 1 | 2 | 3
+export type ICategory = 1 | 2 | 3;
+
+export type IResult = "SUCCESS" | "FAIL";
 
 export interface IResponse <T>{
-    result: string,
+    result: IResult,
     data:T
 }
 
