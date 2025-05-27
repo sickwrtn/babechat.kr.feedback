@@ -243,7 +243,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                     }
                     { isAdmin &&
                         <>
-                            { modalComment != null && !isCommentEditShow &&
+                            { (modalComment != null && !isCommentEditShow) &&
                                 <>
                                     <div className='d-flex mt-3'>
                                         <h3 className='me-2'>운영팀의 코멘트</h3>
@@ -257,7 +257,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     <Button variant='outline-info'className='float-end mt-2' onClick={()=>{setIsCommentEditShow(true); setModalCommentEdit(modalComment)}}>수정</Button>
                                 </>
                             }
-                            { modalComment == null || isCommentEditShow &&
+                            { (modalComment == null || isCommentEditShow) &&
                                 <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label className="float-start h3">댓글</Form.Label>
                                     <Form.Control className='mt-2' as="textarea" rows={5} value={modalCommentEdit} onChange={modalCommentEditOnChange}/> 
