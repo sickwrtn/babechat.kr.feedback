@@ -66,6 +66,9 @@ function Index() {
     const currentPageOnChange = (e:number) => setCurrentPage(e); 
 
     const resetFeedback = () => {
+        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=0&limit=10`)
+            .then(res => res.json())
+            .then((data:IResponse<IFeedback[]>) => setFeedbackTop(data.data))
         fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=${(currentPage - 1) * 10}&limit=10`)
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedback(data.data))
@@ -84,6 +87,9 @@ function Index() {
     }
 
     useEffect(()=>{
+        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=0&limit=10`)
+            .then(res => res.json())
+            .then((data:IResponse<IFeedback[]>) => setFeedbackTop(data.data))
         fetch("https://babe-api.fastwrtn.com/feedback?tab=progress&sort=likeCount&offset=0&limit=100")
             .then(res => res.json())
             .then((data:IResponse<IFeedback[]>) => setFeedbackProgress(data.data))
@@ -99,9 +105,6 @@ function Index() {
     },[])
 
     useEffect(() => {
-        fetch(`https://babe-api.fastwrtn.com/feedback?tab=stand&sort=likeCount&offset=0&limit=10`)
-            .then(res => res.json())
-            .then((data:IResponse<IFeedback[]>) => setFeedbackTop(data.data))
         const params = new URLSearchParams(location.search);
         const id = params.get('id');
         if (id != null){
