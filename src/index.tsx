@@ -55,7 +55,7 @@ function Index() {
 
     const [modalIsDeleted, setModalIsDeleted] = useState<boolean>(false);
 
-    const [selectFilter, setSelectFilter] = useState<IFilter>("likeCount");
+    const [selectFilter, setSelectFilter] = useState<IFilter>("latest");
 
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
@@ -213,7 +213,7 @@ function Index() {
                 <Tab eventKey="stand" title="대기중">
                     <div className='tab-container d-flex'>
                         <h3>대기중</h3>
-                        <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={selectFilterOnChange}>
+                        <Form.Select className="tab-select" defaultValue={"latest"} onChange={selectFilterOnChange}>
                             <option value="likeCount">추천순</option>
                             <option value="latest">최신순</option>
                             <option value="oldest">오래된순</option>
