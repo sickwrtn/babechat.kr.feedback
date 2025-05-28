@@ -224,7 +224,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                         </div>
                     </>
                     }
-                    { !isAdmin &&
+                    { (!isAdmin && !isEdit) &&
                         <>
                         { modalComment != null &&
                             <>
@@ -241,7 +241,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                         }
                         </>
                     }
-                    { isAdmin &&
+                    { (isAdmin && !isEdit) &&
                         <>
                             { (modalComment != null && !isCommentEditShow) &&
                                 <>
@@ -273,7 +273,9 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                                 }
                                             })
                                     }}>등록</Button>
-                                    <Button variant='outline-danger me-2'className='float-end mt-2' onClick={()=>setIsCommentEditShow(false)}>닫기</Button>
+                                    { isCommentEditShow &&
+                                        <Button variant='outline-danger me-2'className='float-end mt-2' onClick={()=>setIsCommentEditShow(false)}>닫기</Button>
+                                    }
                                 </Form.Group>
                             }
                         </>
