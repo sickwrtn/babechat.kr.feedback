@@ -234,7 +234,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 </div>
                                 <div className='border p-2 mt-2 rounded' style={{minHeight:"120px"}}>
                                     <div className='aptx'>
-                                        <ReactMarkdown>{modalComment}</ReactMarkdown>
+                                        <ReactMarkdown remarkPlugins={[remarkBreaks]} rehypePlugins={[rehypeHighlight,rehypeRaw]}>{modalComment}</ReactMarkdown>
                                     </div>
                                 </div>
                             </>
@@ -251,7 +251,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     </div>
                                     <div className='border p-2 mt-2 rounded' style={{minHeight:"120px"}}>
                                         <div className='aptx'>
-                                            <ReactMarkdown>{modalComment}</ReactMarkdown>
+                                            <ReactMarkdown remarkPlugins={[remarkBreaks]} rehypePlugins={[rehypeHighlight,rehypeRaw]}>{modalComment}</ReactMarkdown>
                                         </div>
                                     </div>
                                     <Button variant='outline-info'className='float-end mt-2' onClick={()=>{setIsCommentEditShow(true); setModalCommentEdit(modalComment)}}>수정</Button>
