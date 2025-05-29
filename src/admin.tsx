@@ -325,7 +325,7 @@ function Admin() {
                         return alert("잘못된 ID 입니다.");
                     }
                     if (data.data.absorption != null){
-                        navigate(`/sick/admin?id=${data.data.absorption}`,{replace:false});
+                        navigate(`/sick/admin?id=${data.data.absorption}&ext=${id}`,{replace:false});
                         return;
                     }
                     setModalData(prev=>({

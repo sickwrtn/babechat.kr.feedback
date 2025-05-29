@@ -147,7 +147,7 @@ function Index() {
                         return alert("잘못된 ID 입니다.");
                     }
                     if (data.data.absorption != null){
-                        navigate(`/?id=${data.data.absorption}`,{replace:false});
+                        navigate(`/?id=${data.data.absorption}&ext=${id}`,{replace:false});
                         return
                     }
                     setModalData(prev=>({
