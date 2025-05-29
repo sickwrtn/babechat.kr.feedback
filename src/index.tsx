@@ -58,6 +58,8 @@ function Index() {
     
     const [modalDislikeCount, setModalDislikeCount] = useState<number>(0);
 
+    const [modalAbsorptionList, setModalAbsorptionList] = useState<string[] | null>(null);
+
     const [modalIsDeleted, setModalIsDeleted] = useState<boolean>(false);
 
     const [selectFilter, setSelectFilter] = useState<IFilter>("latest");
@@ -113,12 +115,17 @@ function Index() {
                         setShow(false);
                         return alert("잘못된 ID 입니다.");
                     }
+                    if (data.data.absorption != null){
+                        navigate(`/?id=${data.data.absorption}`,{replace:false});
+                        return
+                    }
                     setModalTitle(data.data.title);
                     setModalContent(data.data.content);
                     setModalComment(data.data.comment);
                     setModalId(data.data.id);
                     setModalLikeCount(data.data.likeCount);
                     setModalDislikeCount(data.data.dislikeCount);
+                    setModalAbsorptionList(data.data.absorptionList);
                     setModalBadge(data.data.badge);
                     setModalIsDeleted(data.data.isDeleted);
                     setModalCategory(data.data.category);
@@ -133,7 +140,7 @@ function Index() {
             .then(data=>setFeedback(data.data))
     },[currentPage,selectFilter])
 
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, category: ICategory, badge: string[],isNotification: boolean){
+    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number,absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isNotification: boolean){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/?id=${id}`,{replace:false})}>
                 {!isNotification && 
@@ -156,6 +163,12 @@ function Index() {
                     <div className="fw-bold">{title} {badge.map((data)=>(
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
+                    {absorption &&
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">⇄ #{absorption}로 병합됨</Badge>
+                    }
+                    {(absorptionList?.length != 0) &&
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} 통합의견</Badge>
+                    }
                     </div>
                     <div className="text-muted form-text">
                     {content}
@@ -177,7 +190,7 @@ function Index() {
         return (
             <>
                 {data.map(data =>{
-                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.category,data.badge,data.isNotification))
+                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.absorption,data.absorptionList,data.category,data.badge,data.isNotification))
                 })}
             </>
         )
@@ -230,7 +243,7 @@ function Index() {
             </Tabs>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalComment={modalComment} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading} modalIp=''/>
+        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalComment={modalComment} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalAbsorptionList={modalAbsorptionList} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIsLoading={modalIsLoading} modalIp=''/>
     </>)
 }
 

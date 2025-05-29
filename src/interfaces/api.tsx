@@ -20,6 +20,8 @@ export interface IFeedback {
     comment: string | null,
     likeCount: number,
     dislikeCount: number,
+    absorption: number | null,
+    absorptionList: string[] | null,
     isProgress: boolean,
     isNotification: boolean,
     isCompleted: boolean,

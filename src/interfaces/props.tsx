@@ -14,6 +14,7 @@ export interface IFeedbakModal{
     modalLikeCount: number,
     setModalLikeCount: (e:number)=>void,
     modalDislikeCount: number,
+    modalAbsorptionList: string[] | null,
     modalIsDeleted: boolean,
     setModalDislikeCount: (e:number)=>void,
     resetFeedback: ()=>void,

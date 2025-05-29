@@ -110,4 +110,14 @@ export class sillo{
         const response_json: IResponse<string> = await response.json()
         return response_json
     }
+    async postAbsorption(id: number, to: number): Promise<IResponse<string>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/absorption?id=${id}&to=${to}`,{method:"POST",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json()
+        return response_json
+    }
+    async deleteAbsorption(id: number, target: number): Promise<IResponse<string>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/absorption?id=${id}&target=${target}`,{method:"DELETE",headers:{"Content-Type" : "application/json","Authorization":this.token},body:JSON.stringify({})})
+        const response_json: IResponse<string> = await response.json()
+        return response_json
+    }
 }

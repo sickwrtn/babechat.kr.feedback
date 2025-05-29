@@ -10,7 +10,7 @@ import "highlight.js/styles/a11y-dark.css";
 import { ICategory, IFeedbakModal } from './interfaces';
 import { sillo } from './sdk';
 
-export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalComment,modalCategory,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
+export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalComment,modalCategory,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalAbsorptionList,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
 
     const api = new sillo(localStorage.getItem("auth_token") as string);
     
@@ -45,8 +45,14 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
     const [isBageEditShow, setIsBageEditShow] = useState<boolean>(false);
 
     const [bageEdit,setBageEdit] = useState<string>("");
-    
+
     const bageEditOnChange = (e:any) => setBageEdit(e.target.value); 
+
+    const [isAbsorptionEditShow, setIsAbsorptionEditShow] = useState<boolean>(false);
+
+    const [absorptionEdit,setAbsorptionEdit] = useState<string>("");
+
+    const absorptionEditOnChange = (e:any) => setAbsorptionEdit(e.target.value);
 
     const [ban,setban] = useState<string>("1Hour");
 
@@ -100,7 +106,22 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
     return (
     <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
         <Modal.Header closeButton>
-        {!modalIsLoading && <Modal.Title className='fw-bold' style={{overflow:"hidden"}}>{!isEdit && modalTitle}{isEdit && "편집기"}{isAdmin && <p style={{fontSize:"17px"}}>UserId : {modalUserId}</p>}</Modal.Title>}
+        {!modalIsLoading && 
+            <Modal.Title className='fw-bold' style={{overflow:"hidden"}}>
+                <div className='d-flex'>
+                {!isEdit && 
+                    <>
+                        {modalTitle}
+                        <div className='text-muted'>
+                            #{modalId}
+                        </div>
+                    </>
+                }
+                {isEdit && "편집기"}
+                </div>
+                {isAdmin && <div style={{fontSize:"17px"}}>UserId : {modalUserId}</div>}
+            </Modal.Title>
+            }
         </Modal.Header>
         {modalIsLoading &&
             <Modal.Body className='modal-loading'>
@@ -118,17 +139,17 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                     {isAdmin &&
                         <>
                             {!isBageEditShow && 
-                            <>
-                                <div className='badge-group'>
-                                    {modalBadge?.map((data)=>(
-                                        <Badge className="badge me-1" style={{cursor:"default"}} text="white" bg="secondary">{data}</Badge>
-                                    ))}
-                                    <Badge className="badge" style={{cursor:"pointer"}} text="white" bg="primary" onClick={()=>{
-                                            setIsBageEditShow(true);
-                                            setBageEdit((modalBadge as string[]).join(","));
-                                        }}>배지 수정</Badge>
-                                </div>
-                            </>
+                                <>
+                                    <div className='badge-group'>
+                                        {modalBadge?.map((data)=>(
+                                            <Badge className="badge me-1" style={{cursor:"default"}} text="white" bg="secondary">{data}</Badge>
+                                        ))}
+                                        <Badge className="badge" style={{cursor:"pointer"}} text="white" bg="primary" onClick={()=>{
+                                                setIsBageEditShow(true);
+                                                setBageEdit((modalBadge as string[]).join(","));
+                                            }}>배지 수정</Badge>
+                                    </div>
+                                </>
                             }
                             {isBageEditShow && 
                                 <>
@@ -158,7 +179,53 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 {modalContent}
                             </ReactMarkdown>
                         </div>
-                        <div className='b-footer'>
+                        {(modalAbsorptionList?.length != 0) &&
+                            <div>
+                                {!isAbsorptionEditShow && modalAbsorptionList?.map(data => 
+                                    <Badge className="me-1" style={{cursor:"default"}} bg="primary">⇄ #{data}와 병합됨</Badge>
+                                )}
+                                {isAdmin && 
+                                    <>
+                                        {isAbsorptionEditShow && 
+                                            <>
+                                                {modalAbsorptionList?.map(data => 
+                                                    <Badge className="me-1" style={{cursor:"pointer"}} bg="danger" onClick={()=>{
+                                                        api.deleteAbsorption(modalId,Number(data))
+                                                            .then(data => {
+                                                                if (data.result == "FAIL"){
+                                                                    return alert("실패 " + data.data);
+                                                                }
+                                                                alert("병합 해제되었습니다!");
+                                                                window.location.reload();
+                                                            })
+                                                    }}>X #{data}와 병합됨</Badge>
+                                                )}
+                                                <Badge className="me-1" style={{cursor:"pointer"}} bg="danger" onClick={()=>setIsAbsorptionEditShow(false)}>닫기</Badge>
+                                            </>
+                                        }
+                                        {!isAbsorptionEditShow &&
+                                            <Badge style={{cursor:"pointer"}} bg="danger" onClick={()=>setIsAbsorptionEditShow(true)}>병합 수정</Badge>
+                                        }
+                                    </>
+                                }
+                            </div>
+                        }
+                        {isAdmin &&
+                            <div className='mt-2 d-flex'>
+                                <FormControl className="AES me-2" type="text" placeholder="병합될 게시물 ID를 입력해주세요." value={absorptionEdit} onChange={absorptionEditOnChange}/>
+                                <Button variant="outline-success" size='sm' onClick={()=>{
+                                    api.postAbsorption(modalId,Number(absorptionEdit))
+                                        .then(data => {
+                                            if (data.result == "FAIL"){
+                                                return alert("실패 " + data.data);
+                                            }
+                                            alert("병합 되었습니다!");
+                                            window.location.reload();
+                                        })
+                                }}>병합</Button>
+                            </div>
+                        }
+                        <div className='b-footer mt-3'>
                             <Button className="me-1" variant="outline-danger" onClick={()=>{
                                 api.getDislike(modalId)
                                     .then(data=>{
