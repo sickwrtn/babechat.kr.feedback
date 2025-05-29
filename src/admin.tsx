@@ -6,6 +6,7 @@ import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
 import {IFeedback,IResponse,IFilter,ICategory, IBan} from './interfaces'
+import { IModalData } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MyPaginationComponent from './page';
 import { sillo } from './sdk';
@@ -199,23 +200,50 @@ function Admin() {
 
     const [feedbackTop,setFeedbackTop] = useState<IFeedback[]>([]);
 
-    const [modalTitle, setModalTitle] = useState<string>("");
+    const [modalData, setModalData] = useState<IModalData>({
+        id: 0,
+        title: "",
+        content: "",
+        comment: "",
+        category: 1,
+        likeCount: 0,
+        dislikeCount: 0,
+        absorptionList: null,
+        isDeleted: false,
+        badge: [],
+        isLoading: false
+    });
 
-    const [modalContent,setModalContent] = useState<string>("");
+    const [extraData, setExtraData] = useState<IModalData>({
+        id: 0,
+        title: "",
+        content: "",
+        comment: "",
+        category: 1,
+        likeCount: 0,
+        dislikeCount: 0,
+        absorptionList: null,
+        isDeleted: false,
+        badge: [],
+        isLoading: false
+    });
 
-    const [modalCategory, setModalCategory] = useState<ICategory>(1);
-
-    const [modalId, setModalId] = useState<number>(0);
-
-    const [modalLikeCount, setModalLikeCount] = useState<number>(0);
-    
-    const [modalDislikeCount, setModalDislikeCount] = useState<number>(0);
-
-    const [modalAbsorptionList, setModalAbsorptionList] = useState<string[] | null>(null);
-
-    const [modalIsDeleted, setModalIsDeleted] = useState<boolean>(false);
-
-    const [modalComment, setModalComment] = useState<string | null>(null);
+    const initalExtra = ()=>{
+        setExtraData(prev=>({
+            ...prev,
+            id: 0,
+            title: "",
+            content: "",
+            comment: "",
+            category: 1,
+            likeCount: 0,
+            dislikeCount: 0,
+            absorptionList: null,
+            isDeleted: false,
+            badge: [],
+            isLoading: false
+        }))
+    }
 
     const [isEdit,setIsEdit] = useState<boolean>(false);
 
@@ -227,11 +255,7 @@ function Admin() {
 
     const deleteSelectFilterOnChange = (val: any) => setDeleteSelectFilter(val.target.value);
 
-    const [modalBadge, setModalBadge] = useState<string[]>();
-
     const [modalUserId, setModalUserId] = useState<string>("");
-
-    const [modalIsLoading, setModalIsLoading] = useState<boolean>(false);
 
     const [modalIp, setModalIp] = useState<string>("");
 
@@ -283,13 +307,20 @@ function Admin() {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const id = params.get('id');
+        const ext = params.get('ext');
         if (id != null){
-            setModalIsLoading(true);
+            setModalData(prev=>({
+                ...prev,
+                isLoading:true
+            }))
             setShow(true);
             api.getFeedback_Admin_Item(Number(id))
                 .then(data=>{
                     if (data.result == "FAIL"){
-                        setModalIsLoading(false);
+                        setModalData(prev=>({
+                            ...prev,
+                            isLoading:false
+                        }))
                         setShow(false);
                         return alert("잘못된 ID 입니다.");
                     }
@@ -297,21 +328,54 @@ function Admin() {
                         navigate(`/sick/admin?id=${data.data.absorption}`,{replace:false});
                         return;
                     }
-                    setModalTitle(data.data.title);
-                    setModalContent(data.data.content);
-                    setModalCategory(data.data.category);
-                    setModalId(data.data.id);
-                    setModalLikeCount(data.data.likeCount);
-                    setModalDislikeCount(data.data.dislikeCount);
-                    setModalAbsorptionList(data.data.absorptionList);
-                    setModalBadge(data.data.badge);
-                    setModalIsDeleted(data.data.isDeleted);
+                    setModalData(prev=>({
+                        ...prev,
+                        id:data.data.id,
+                        title:data.data.title,
+                        content:data.data.content,
+                        comment:data.data.comment,
+                        likeCount:data.data.likeCount,
+                        dislikeCount:data.data.dislikeCount,
+                        absorptionList:data.data.absorptionList,
+                        badge:data.data.badge,
+                        isDeleted:data.data.isDeleted,
+                        category:data.data.category,
+                        isLoading:false
+                    }))
                     setModalUserId(data.data.userId as string);
                     setModalIp(data.data.ip as string);
-                    setModalComment(data.data.comment);
                     setIsEdit(false);
-                    setModalIsLoading(false);
                 })
+        }
+        if (ext != null){
+            api.getFeedback_Admin_Item(Number(ext))
+                .then(data=>{
+                    if (data.result == "FAIL"){
+                        setExtraData(prev=>({
+                            ...prev,
+                            isLoading:false
+                        }))
+                        setShow(false);
+                        return alert("잘못된 EXTRA ID 입니다.");
+                    }
+                    setExtraData(prev=>({
+                        ...prev,
+                        id:data.data.id,
+                        title:data.data.title,
+                        content:data.data.content,
+                        comment:data.data.comment,
+                        likeCount:data.data.likeCount,
+                        dislikeCount:data.data.dislikeCount,
+                        absorptionList:data.data.absorptionList,
+                        badge:data.data.badge,
+                        isDeleted:data.data.isDeleted,
+                        category:data.data.category,
+                        isLoading:false
+                    }))
+                })
+        }
+        else {
+            initalExtra();
         }
     }, [location]);
 
@@ -349,7 +413,7 @@ function Admin() {
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
                     {absorption &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">⇄ #{absorption}로 병합됨</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}로 병합됨</Badge>
                     }
                     {(absorptionList?.length != 0) &&
                         <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} 통합의견</Badge>
@@ -402,7 +466,7 @@ function Admin() {
                     {isNotification && <Badge className="ms-1 badge" text="white" bg="secondary" >공지사항 탭</Badge>}
                     {(!isProgress && !isCompleted && !isNotification) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
                     {absorption &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">⇄ #{absorption}와 병합됨</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}와 병합됨</Badge>
                     }
                     {(absorptionList?.length != 0) &&
                         <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} 통합의견</Badge>
@@ -553,7 +617,7 @@ function Admin() {
             </Tabs>
         </div>
         <div id="footer"></div>
-        <FeedbackModal show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} modalTitle={modalTitle} modalBadge={modalBadge} modalContent={modalContent} modalComment={modalComment} modalCategory={modalCategory} modalId={modalId} modalLikeCount={modalLikeCount} setModalLikeCount={setModalLikeCount} modalDislikeCount={modalDislikeCount} setModalDislikeCount={setModalDislikeCount} modalAbsorptionList={modalAbsorptionList} modalIsDeleted={modalIsDeleted} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIsLoading={modalIsLoading} modalIp={modalIp}/>
+        <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIp={modalIp}/>
     </>)
 }
 

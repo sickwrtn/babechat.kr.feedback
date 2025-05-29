@@ -9,10 +9,13 @@ import remarkBreaks from "remark-breaks";
 import "highlight.js/styles/a11y-dark.css";
 import { ICategory, IFeedbakModal } from './interfaces';
 import { sillo } from './sdk';
+import { useNavigate } from 'react-router-dom';
 
-export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTitle,modalBadge,modalContent,modalComment,modalCategory,modalId,modalLikeCount,setModalLikeCount,modalDislikeCount,setModalDislikeCount,modalAbsorptionList,modalIsDeleted,resetFeedback,isAdmin,modalUserId,modalIsLoading,modalIp}:IFeedbakModal){
+export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit,handleClose,resetFeedback,isAdmin,modalUserId,modalIp}:IFeedbakModal){
 
     const api = new sillo(localStorage.getItem("auth_token") as string);
+
+    const navigate = useNavigate();
     
     const [modalTitleEdit, setModalTitleEdit] = useState<string>("");
 
@@ -28,7 +31,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
 
     const [categoryEdit, setCategoryEdit] = useState<ICategory>(1);
 
-    useEffect(()=>setCategoryEdit(modalCategory),[modalCategory]);
+    useEffect(()=>setCategoryEdit(modalData.category),[modalData.category]);
     
     const categoryEditOnChange = (val: any) => setCategoryEdit(val);
 
@@ -106,14 +109,14 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
     return (
     <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
         <Modal.Header closeButton>
-        {!modalIsLoading && 
+        {!modalData.isLoading && 
             <Modal.Title className='fw-bold' style={{overflow:"hidden"}}>
                 <div className='d-flex'>
                 {!isEdit && 
                     <>
-                        {modalTitle}
+                        {modalData.title}
                         <div className='text-muted'>
-                            #{modalId}
+                            #{modalData.id}
                         </div>
                     </>
                 }
@@ -123,17 +126,17 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
             </Modal.Title>
             }
         </Modal.Header>
-        {modalIsLoading &&
+        {modalData.isLoading &&
             <Modal.Body className='modal-loading'>
                 <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
             </Modal.Body>
         }
-        {!modalIsLoading &&
+        {!modalData.isLoading &&
             <>
                 <Modal.Body>
-                    {!isAdmin &&  modalBadge?.map((data)=>(
+                    {!isAdmin &&  modalData.badge?.map((data)=>(
                         <Badge className="badge me-1" style={{cursor:"default"}} text="white" bg="secondary">{data}</Badge>
                     ))}
                     {isAdmin &&
@@ -141,12 +144,12 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                             {!isBageEditShow && 
                                 <>
                                     <div className='badge-group'>
-                                        {modalBadge?.map((data)=>(
+                                        {modalData.badge?.map((data)=>(
                                             <Badge className="badge me-1" style={{cursor:"default"}} text="white" bg="secondary">{data}</Badge>
                                         ))}
                                         <Badge className="badge" style={{cursor:"pointer"}} text="white" bg="primary" onClick={()=>{
                                                 setIsBageEditShow(true);
-                                                setBageEdit((modalBadge as string[]).join(","));
+                                                setBageEdit((modalData.badge as string[]).join(","));
                                             }}>배지 수정</Badge>
                                     </div>
                                 </>
@@ -155,7 +158,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 <>
                                     <FormControl type="text" placeholder="수정" as="textarea" rows={1} value={bageEdit} onChange={bageEditOnChange}/>
                                     <Button className="mt-2" size='sm' variant="success" onClick={()=>{
-                                        api.putBage(modalId,bageEdit.split(","))
+                                        api.putBage(modalData.id,bageEdit.split(","))
                                             .then(data=> {
                                                 if (data.result == "SUCCESS"){
                                                     alert("수정되었습니다.");
@@ -176,21 +179,42 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                     <>
                         <div className='b-content mt-2'>
                             <ReactMarkdown remarkPlugins={[remarkBreaks]}rehypePlugins={[rehypeHighlight,rehypeRaw]}>
-                                {modalContent}
+                                {modalData.content}
                             </ReactMarkdown>
                         </div>
-                        {(modalAbsorptionList?.length != 0) &&
+                        {(modalData.absorptionList?.length != 0) &&
                             <div>
-                                {!isAbsorptionEditShow && modalAbsorptionList?.map(data => 
-                                    <Badge className="me-1" style={{cursor:"default"}} bg="primary">⇄ #{data}와 병합됨</Badge>
+                                {!isAbsorptionEditShow && modalData.absorptionList?.map(data => 
+                                    <>
+                                        { !isAdmin &&
+                                            <>
+                                                { data == String(extraData.id) &&
+                                                    <Badge className="me-1" style={{cursor:"default"}} bg="success">⇄ #{data}과 병합됨</Badge>
+                                                }
+                                                { data != String(extraData.id) &&
+                                                    <Badge className="me-1" style={{cursor:"pointer"}} onClick={()=>navigate(`/?id=${modalData.id}&ext=${data}`,{replace:false})} bg="primary">⇄ #{data}과 병합됨</Badge>
+                                                }
+                                            </>
+                                        }
+                                        { isAdmin &&
+                                            <>
+                                                { data == String(extraData.id) &&
+                                                    <Badge className="me-1" style={{cursor:"default"}} bg="success">⇄ #{data}과 병합됨</Badge>
+                                                }
+                                                { data != String(extraData.id) &&
+                                                    <Badge className="me-1" style={{cursor:"pointer"}} onClick={()=>navigate(`/sick/admin?id=${modalData.id}&ext=${data}`,{replace:false})} bg="primary">⇄ #{data}과 병합됨</Badge>
+                                                }
+                                            </>
+                                        }
+                                    </>
                                 )}
                                 {isAdmin && 
                                     <>
                                         {isAbsorptionEditShow && 
                                             <>
-                                                {modalAbsorptionList?.map(data => 
+                                                {modalData.absorptionList?.map(data => 
                                                     <Badge className="me-1" style={{cursor:"pointer"}} bg="danger" onClick={()=>{
-                                                        api.deleteAbsorption(modalId,Number(data))
+                                                        api.deleteAbsorption(modalData.id,Number(data))
                                                             .then(data => {
                                                                 if (data.result == "FAIL"){
                                                                     return alert("실패 " + data.data);
@@ -198,7 +222,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                                                 alert("병합 해제되었습니다!");
                                                                 window.location.reload();
                                                             })
-                                                    }}>X #{data}와 병합됨</Badge>
+                                                    }}>X #{data}과 병합됨</Badge>
                                                 )}
                                                 <Badge className="me-1" style={{cursor:"pointer"}} bg="danger" onClick={()=>setIsAbsorptionEditShow(false)}>닫기</Badge>
                                             </>
@@ -210,48 +234,40 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 }
                             </div>
                         }
-                        {isAdmin &&
-                            <div className='mt-2 d-flex'>
-                                <FormControl className="AES me-2" type="text" placeholder="병합될 게시물 ID를 입력해주세요." value={absorptionEdit} onChange={absorptionEditOnChange}/>
-                                <Button variant="outline-success" size='sm' onClick={()=>{
-                                    api.postAbsorption(modalId,Number(absorptionEdit))
-                                        .then(data => {
-                                            if (data.result == "FAIL"){
-                                                return alert("실패 " + data.data);
-                                            }
-                                            alert("병합 되었습니다!");
-                                            window.location.reload();
-                                        })
-                                }}>병합</Button>
-                            </div>
+                        {extraData.id != 0 &&
+                            <>
+                                <h2 className='mt-2'>#{extraData.id}과 병합됨</h2>
+                                <div className='b-content mt-2 border p-2 rounded'>
+                                    <ReactMarkdown remarkPlugins={[remarkBreaks]}rehypePlugins={[rehypeHighlight,rehypeRaw]}>
+                                        {extraData.content}
+                                    </ReactMarkdown>
+                                </div>
+                            </>
                         }
                         <div className='b-footer mt-3'>
                             <Button className="me-1" variant="outline-danger" onClick={()=>{
-                                api.getDislike(modalId)
+                                api.getDislike(modalData.id)
                                     .then(data=>{
                                         if (data.result == "FAIL" && data.data == "already"){
                                             return alert("한번만 가능합니다.");
-                                        } 
-                                        setModalDislikeCount(modalDislikeCount+1);
+                                        }
                                         alert("비추천되었습니다.");
-                                        resetFeedback();
+                                        window.location.reload()
                                     })
-                                resetFeedback();
                             }}>
-                                비추천 : {modalDislikeCount}
+                                비추천 : {modalData.dislikeCount}
                             </Button>
                             <Button className="ms-1" variant="outline-success" onClick={()=>{
-                                api.getLike(modalId)
+                                api.getLike(modalData.id)
                                     .then(data=>{
                                         if (data.result == "FAIL" && data.data == "already"){
                                             return alert("한번만 가능합니다.");
                                         } 
-                                        setModalLikeCount(modalLikeCount+1);
                                         alert("추천되었습니다.");
-                                        resetFeedback();
+                                        window.location.reload()
                                     })
                             }}>
-                                추천 : {modalLikeCount}
+                                추천 : {modalData.likeCount}
                             </Button>
                             {isAdmin && 
                                 <>
@@ -288,12 +304,27 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                         </div>
                                 </>
                             }
+                            {isAdmin &&
+                            <div className='mt-3 d-flex justify-content-center'>
+                                <FormControl className="AES me-2" type="text" placeholder="병합될 게시물 ID를 입력해주세요." value={absorptionEdit} onChange={absorptionEditOnChange}/>
+                                <Button variant="outline-success" size='sm' onClick={()=>{
+                                    api.postAbsorption(modalData.id,Number(absorptionEdit))
+                                        .then(data => {
+                                            if (data.result == "FAIL"){
+                                                return alert("실패 " + data.data);
+                                            }
+                                            alert("병합 되었습니다!");
+                                            window.location.reload();
+                                        })
+                                }}>병합</Button>
+                            </div>
+                            }
                         </div>
                     </>
                     }
                     { (!isAdmin && !isEdit) &&
                         <>
-                        { modalComment != null &&
+                        { modalData.comment != null &&
                             <>
                                 <div className='d-flex'>
                                     <h3 className='me-2'>운영팀의 코멘트</h3>
@@ -301,7 +332,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                 </div>
                                 <div className='border p-2 mt-2 rounded' style={{minHeight:"120px"}}>
                                     <div className='aptx'>
-                                        <ReactMarkdown remarkPlugins={[remarkBreaks]} rehypePlugins={[rehypeHighlight,rehypeRaw]}>{modalComment}</ReactMarkdown>
+                                        <ReactMarkdown remarkPlugins={[remarkBreaks]} rehypePlugins={[rehypeHighlight,rehypeRaw]}>{modalData.comment}</ReactMarkdown>
                                     </div>
                                 </div>
                             </>
@@ -310,7 +341,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                     }
                     { (isAdmin && !isEdit) &&
                         <>
-                            { (modalComment != null && !isCommentEditShow) &&
+                            { (modalData.comment != null && !isCommentEditShow) &&
                                 <>
                                     <div className='d-flex mt-3'>
                                         <h3 className='me-2'>운영팀의 코멘트</h3>
@@ -318,18 +349,18 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     </div>
                                     <div className='border p-2 mt-2 rounded' style={{minHeight:"120px"}}>
                                         <div className='aptx'>
-                                            <ReactMarkdown remarkPlugins={[remarkBreaks]} rehypePlugins={[rehypeHighlight,rehypeRaw]}>{modalComment}</ReactMarkdown>
+                                            <ReactMarkdown remarkPlugins={[remarkBreaks]} rehypePlugins={[rehypeHighlight,rehypeRaw]}>{modalData.comment}</ReactMarkdown>
                                         </div>
                                     </div>
-                                    <Button variant='outline-info'className='float-end mt-2' onClick={()=>{setIsCommentEditShow(true); setModalCommentEdit(modalComment)}}>수정</Button>
+                                    <Button variant='outline-info'className='float-end mt-2' onClick={()=>{setIsCommentEditShow(true); setModalCommentEdit(modalData.comment as string)}}>수정</Button>
                                 </>
                             }
-                            { (modalComment == null || isCommentEditShow) &&
+                            { (modalData.comment == null || isCommentEditShow) &&
                                 <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label className="float-start h3">댓글</Form.Label>
                                     <Form.Control className='mt-2' as="textarea" rows={5} value={modalCommentEdit} onChange={modalCommentEditOnChange}/> 
                                     <Button variant='outline-success'className='float-end mt-2' onClick={()=>{
-                                        api.postComment(modalId,modalCommentEdit)
+                                        api.postComment(modalData.id,modalCommentEdit)
                                             .then(data => {
                                                 if (data.result == "FAIL"){
                                                     return alert("권한이 없습니다.");
@@ -378,7 +409,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                             { !isEdit &&
                                 <>
                                     <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        api.putProgress_Admin(modalId)
+                                        api.putProgress_Admin(modalData.id)
                                             .then(data=>{
                                                 if (data.result == "SUCCESS"){
                                                     alert("진행중 탭으로 이동되었습니다.");
@@ -394,7 +425,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             })
                                     }}>진행중 탭으로 이동</Button>
                                     <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        api.putCompeleted_Admin(modalId)
+                                        api.putCompeleted_Admin(modalData.id)
                                             .then(data => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("완료 탭으로 이동되었습니다.");
@@ -410,7 +441,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             })
                                     }}>완료 탭으로 이동</Button>
                                     <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        api.putClear_Admin(modalId)
+                                        api.putClear_Admin(modalData.id)
                                             .then(data=>{
                                                 if (data.result == "SUCCESS"){
                                                     alert("대기중 탭으로 이동되었습니다.");
@@ -427,14 +458,14 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     }}>대기중 탭으로 이동</Button>
                                     <Button className="me-1" variant="outline-secondary" onClick={()=>{
                                             setIsEdit(true);
-                                            setModalTitleEdit(modalTitle);
-                                            setModalContentEdit(modalContent);
+                                            setModalTitleEdit(modalData.title);
+                                            setModalContentEdit(modalData.content);
                                         }}>
                                         편집
                                     </Button>
-                                    {modalIsDeleted &&
+                                    {modalData.isDeleted &&
                                         <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                                            api.putRecover_Admin(modalId)
+                                            api.putRecover_Admin(modalData.id)
                                                 .then(data => {
                                                     if (data.result == "SUCCESS"){
                                                         alert("복구되었습니다.");
@@ -452,9 +483,9 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                             복구
                                         </Button> 
                                     }
-                                    {!modalIsDeleted &&
+                                    {!modalData.isDeleted &&
                                         <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                                            api.delete_Admin(modalId)
+                                            api.delete_Admin(modalData.id)
                                                 .then(data => {
                                                     if (data.result == "SUCCESS"){
                                                         alert("삭제되었습니다.");
@@ -487,7 +518,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                         if (!modalTitleEditValid || !modalContentEditValid){
                                             return alert("잘못된 양식입니다.");
                                         }
-                                        api.putEdit_Admin(modalId,modalTitleEdit,modalContentEdit,categoryEdit)
+                                        api.putEdit_Admin(modalData.id,modalTitleEdit,modalContentEdit,categoryEdit)
                                             .then(data => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("편집되었습니다.");
@@ -512,8 +543,8 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                             { !isEdit &&
                             <Button className="me-1" variant="outline-secondary" onClick={()=>{
                                     setIsEdit(true);
-                                    setModalTitleEdit(modalTitle);
-                                    setModalContentEdit(modalContent);
+                                    setModalTitleEdit(modalData.title);
+                                    setModalContentEdit(modalData.content);
                                 }}>
                                 편집
                             </Button>
@@ -533,7 +564,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                         if (!modalPasswordValid || !modalTitleEditValid || !modalContentEditValid){
                                             return alert("잘못된 양식입니다.");
                                         }
-                                        api.putEdit(modalId,modalTitleEdit,modalContentEdit,categoryEdit,modalPassword)
+                                        api.putEdit(modalData.id,modalTitleEdit,modalContentEdit,categoryEdit,modalPassword)
                                             .then(data => {
                                                 if (data.result == "SUCCESS"){
                                                     alert("편집되었습니다.");
@@ -558,7 +589,7 @@ export default function FeedbackModal({show,isEdit,setIsEdit,handleClose,modalTi
                                     if (!modalPasswordValid){
                                         return alert("잘못된 양식입니다.");
                                     }
-                                    api.delete(modalId,modalPassword)
+                                    api.delete(modalData.id,modalPassword)
                                         .then(data => {
                                             if (data.result == "SUCCESS"){
                                                 alert("삭제되었습니다.");
