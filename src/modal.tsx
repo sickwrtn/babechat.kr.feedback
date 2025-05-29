@@ -238,6 +238,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                             <>
                                 <h2 className='mt-2'>#{extraData.id}과 병합됨</h2>
                                 <div className='b-content mt-2 border p-2 rounded'>
+                                    <div className='mb-2'>제목 : {extraData.title}</div>
                                     <ReactMarkdown remarkPlugins={[remarkBreaks]}rehypePlugins={[rehypeHighlight,rehypeRaw]}>
                                         {extraData.content}
                                     </ReactMarkdown>
