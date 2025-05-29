@@ -189,7 +189,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                         { !isAdmin &&
                                             <>
                                                 { data == String(extraData.id) &&
-                                                    <Badge className="me-1" style={{cursor:"default"}} bg="success">⇄ #{data}과 병합됨</Badge>
+                                                    <Badge className="me-1" style={{cursor:"pointer"}} onClick={()=>navigate(`/?id=${modalData.id}`)} bg="success">⇄ #{data}과 병합됨</Badge>
                                                 }
                                                 { data != String(extraData.id) &&
                                                     <Badge className="me-1" style={{cursor:"pointer"}} onClick={()=>navigate(`/?id=${modalData.id}&ext=${data}`,{replace:false})} bg="primary">⇄ #{data}과 병합됨</Badge>
@@ -199,7 +199,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                         { isAdmin &&
                                             <>
                                                 { data == String(extraData.id) &&
-                                                    <Badge className="me-1" style={{cursor:"default"}} bg="success">⇄ #{data}과 병합됨</Badge>
+                                                    <Badge className="me-1" style={{cursor:"pointer"}} onClick={()=>navigate(`/sick/admin?id=${modalData.id}`)} bg="success">⇄ #{data}과 병합됨</Badge>
                                                 }
                                                 { data != String(extraData.id) &&
                                                     <Badge className="me-1" style={{cursor:"pointer"}} onClick={()=>navigate(`/sick/admin?id=${modalData.id}&ext=${data}`,{replace:false})} bg="primary">⇄ #{data}과 병합됨</Badge>
