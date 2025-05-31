@@ -10,6 +10,11 @@ export class sillo{
         const response_json: IResponse<IFeedback[]> = await response.json();
         return response_json;
     }
+    async getSearchFeedback(tab: ITab,sort: IFilter,keyword:string,offset: number,limit: number): Promise<IResponse<IFeedback[]>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/feedback?tab=${tab}&sort=${sort}&keyword=${keyword}&offset=${offset}&limit=${limit}`);
+        const response_json: IResponse<IFeedback[]> = await response.json();
+        return response_json;
+    }
     async getFeedback_Item(id: number): Promise<IResponse<IFeedback>>{
         const response = await fetch(`https://babe-api.fastwrtn.com/feedbackitem?id=${id}`);
         const response_json: IResponse<IFeedback> = await response.json();
@@ -17,6 +22,11 @@ export class sillo{
     }
     async getFeedback_Count(tab: ITab): Promise<IResponse<number>>{
         const response = await fetch(`https://babe-api.fastwrtn.com/feedback/count?tab=${tab}`);
+        const response_json: IResponse<number> = await response.json();
+        return response_json;
+    }
+    async getSearchFeedback_Count(tab: ITab, keyword: string): Promise<IResponse<number>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/feedback/count?tab=${tab}&keyword=${keyword}`);
         const response_json: IResponse<number> = await response.json();
         return response_json;
     }
@@ -35,6 +45,11 @@ export class sillo{
         const response_json: IResponse<IFeedback[]> = await response.json();
         return response_json;
     }
+    async getSearchFeedback_Admin(tab: ITab,sort: IFilter,keyword: string,offset: number,limit: number): Promise<IResponse<IFeedback[]>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/feedback?tab=${tab}&sort=${sort}&keyword=${keyword}&offset=${offset}&limit=${limit}`,{headers:{"Authorization":this.token}});
+        const response_json: IResponse<IFeedback[]> = await response.json();
+        return response_json;
+    }
     async getFeedback_Admin_Item(id: number): Promise<IResponse<IFeedback>>{
         const response = await fetch(`https://babe-api.fastwrtn.com/admin/feedbackitem?id=${id}`,{headers:{"Authorization":this.token}});
         const response_json: IResponse<IFeedback> = await response.json();
@@ -42,6 +57,11 @@ export class sillo{
     }
     async getFeedback_Admin_Count(tab: ITab): Promise<IResponse<number>>{
         const response = await fetch(`https://babe-api.fastwrtn.com/admin/feedback/count?tab=${tab}`,{headers:{"Authorization":this.token}});
+        const response_json: IResponse<number> = await response.json();
+        return response_json;
+    }
+    async getSearchFeedback_Admin_Count(tab: ITab,keyword: string): Promise<IResponse<number>>{
+        const response = await fetch(`https://babe-api.fastwrtn.com/admin/feedback/count?tab=${tab}&keyword=${keyword}`,{headers:{"Authorization":this.token}});
         const response_json: IResponse<number> = await response.json();
         return response_json;
     }

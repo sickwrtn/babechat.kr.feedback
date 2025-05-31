@@ -63,6 +63,249 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
 
     const [isCommentEditShow,setIsCommentEditShow] = useState<boolean>(false);
 
+    const likeEvent = (id: number) => {
+        api.getLike(id)
+            .then(data=>{
+                if (data.result == "FAIL" && data.data == "already"){
+                    return alert("한번만 가능합니다.");
+                } 
+                alert("추천되었습니다.");
+                window.location.reload()
+            })
+    }
+
+    const dislikeEvent = (id:number) => {
+        api.getDislike(id)
+            .then(data=>{
+                if (data.result == "FAIL" && data.data == "already"){
+                    return alert("한번만 가능합니다.");
+                }
+                alert("비추천되었습니다.");
+                window.location.reload()
+            })
+    }
+
+    const badgeEvent = (id: number, bage: string[]) => {
+        api.putBage(id,bage)
+            .then(data=> {
+                if (data.result == "SUCCESS"){
+                    alert("수정되었습니다.");
+                    resetFeedback();
+                    handleClose();
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+        setIsBageEditShow(false)
+    }
+
+    const absorptionEvent = (id: number,absorptionEdit: number) => {
+        api.postAbsorption(id,absorptionEdit)
+            .then(data => {
+                if (data.result == "FAIL"){
+                    return alert("실패 " + data.data);
+                }
+                alert("병합 되었습니다!");
+                window.location.reload();
+            })
+    }
+
+    const absorptionDeleteEvent = (id: number, data: number) => {
+        api.deleteAbsorption(id,data)
+            .then(data => {
+                if (data.result == "FAIL"){
+                    return alert("실패 " + data.data);
+                }
+                alert("병합 해제되었습니다!");
+                window.location.reload();
+            })
+    }
+
+    const banEvent = (userId: string,ip: string,ban: string) => {
+        const reason = prompt("차단 사유를 입력해주세요.");
+        api.postBan(userId,ip,reason,banTime(ban))
+            .then(data=>{
+                if (data.result == "SUCCESS"){
+                    alert("차단 되었습니다.");
+                }
+                else if (data.result == "FAIL" && data.data == "auth"){
+                    return alert("권한이 없습니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
+    const commentEvent = (id: number, comment: string) => {
+        api.postComment(id,comment)
+            .then(data => {
+                if (data.result == "FAIL"){
+                    return alert("권한이 없습니다.");
+                }
+                else if (data.result == "SUCCESS"){
+                    alert("댓글 등록 성공!");
+                    window.location.reload();
+                }
+            })
+    }
+
+    const progressEvent = (id: number) => {
+        api.putProgress_Admin(id)
+            .then(data=>{
+                if (data.result == "SUCCESS"){
+                    alert("진행중 탭으로 이동되었습니다.");
+                    resetFeedback();
+                    handleClose();
+                }
+                else if (data.result == "FAIL" && data.data == "auth"){
+                    return alert("권한이 없습니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
+    const completedEvent = (id: number) => {
+        api.putCompeleted_Admin(id)
+            .then(data => {
+                if (data.result == "SUCCESS"){
+                    alert("완료 탭으로 이동되었습니다.");
+                    resetFeedback();
+                    handleClose();
+                }
+                else if (data.result == "FAIL" && data.data == "auth"){
+                    return alert("권한이 없습니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }  
+
+    const clearEvent = (id: number) => {
+        api.putClear_Admin(id)
+            .then(data=>{
+                if (data.result == "SUCCESS"){
+                    alert("대기중 탭으로 이동되었습니다.");
+                    resetFeedback();
+                    handleClose();
+                }
+                else if (data.result == "FAIL" && data.data == "auth"){
+                    return alert("권한이 없습니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
+    const recoverEvent = (id: number) => {
+        api.putRecover_Admin(id)
+            .then(data => {
+                if (data.result == "SUCCESS"){
+                    alert("복구되었습니다.");
+                    resetFeedback();
+                    handleClose();
+                }
+                else if (data.result == "FAIL" && data.data == "auth"){
+                    return alert("권한이 없습니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
+    const deleteAdminEvent = (id: number) => {
+        api.delete_Admin(id)
+            .then(data => {
+                if (data.result == "SUCCESS"){
+                    alert("삭제되었습니다.");
+                    resetFeedback();
+                    handleClose();
+                }
+                else if (data.result == "FAIL" && data.data == "auth"){
+                    return alert("권한이 없습니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
+    const editAdminEvent = (id: number,title: string, content: string, category: ICategory) => {
+        const modalTitleEditValid = title.trim().length > 0;
+        const modalContentEditValid = content.trim().length > 0;
+        setModalTitleEditIsVaild(!modalTitleEditValid);
+        setModalContentEditIsVaild(!modalContentEditValid);
+        if (!modalTitleEditValid || !modalContentEditValid){
+            return alert("잘못된 양식입니다.");
+        }
+        api.putEdit_Admin(id,title,content,category)
+            .then(data => {
+                if (data.result == "SUCCESS"){
+                    alert("편집되었습니다.");
+                    window.location.reload()
+                }
+                else if (data.result == "FAIL" && data.data == "auth"){
+                    return alert("권한이 없습니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
+    const deleteEvent = (id: number,password: string) => {
+        const modalPasswordValid = password.trim().length > 0;
+        setModalPasswordIsVaild(!modalPasswordValid);
+        if (!modalPasswordValid){
+            return alert("잘못된 양식입니다.");
+        }
+        api.delete(id,password)
+            .then(data => {
+                if (data.result == "SUCCESS"){
+                    alert("삭제되었습니다.");
+                    resetFeedback();
+                    handleClose();
+                }
+                else if (data.result == "FAIL" && data.data == "wrong password"){
+                    return alert("잘못된 비밀번호 입니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
+    const editEvent = (id: number,title: string,content: string,category: ICategory,password: string) => {
+        const modalPasswordValid = password.trim().length > 0;
+        const modalTitleEditValid = title.trim().length > 0;
+        const modalContentEditValid = content.trim().length > 0;
+        setModalPasswordIsVaild(!modalPasswordValid);
+        setModalTitleEditIsVaild(!modalTitleEditValid);
+        setModalContentEditIsVaild(!modalContentEditValid);
+        if (!modalPasswordValid || !modalTitleEditValid || !modalContentEditValid){
+            return alert("잘못된 양식입니다.");
+        }
+        api.putEdit(id,title,content,category,password)
+            .then(data => {
+                if (data.result == "SUCCESS"){
+                    alert("편집되었습니다.");
+                    window.location.reload()
+                }
+                else if (data.result == "FAIL" && data.data == "wrong password"){
+                    return alert("잘못된 비밀번호 입니다.");
+                }
+                else {
+                    return alert(`오류 ${data.data}`);
+                }
+            })
+    }
+
     function banTime(ban: string): [number,number,number]{
         let answord: [number,number,number] = [0,0,0];
         switch (ban){
@@ -157,20 +400,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                             {isBageEditShow && 
                                 <>
                                     <FormControl type="text" placeholder="수정" as="textarea" rows={1} value={bageEdit} onChange={bageEditOnChange}/>
-                                    <Button className="mt-2" size='sm' variant="success" onClick={()=>{
-                                        api.putBage(modalData.id,bageEdit.split(","))
-                                            .then(data=> {
-                                                if (data.result == "SUCCESS"){
-                                                    alert("수정되었습니다.");
-                                                    resetFeedback();
-                                                    handleClose();
-                                                }
-                                                else {
-                                                    return alert(`오류 ${data.data}`);
-                                                }
-                                            })
-                                        setIsBageEditShow(false)
-                                    }}>등록</Button>
+                                    <Button className="mt-2" size='sm' variant="success" onClick={()=>badgeEvent(modalData.id,bageEdit.split(","))}>등록</Button>
                                 </>
                             }
                         </>
@@ -213,16 +443,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                         {isAbsorptionEditShow && 
                                             <>
                                                 {modalData.absorptionList?.map(data => 
-                                                    <Badge className="me-1" style={{cursor:"pointer"}} bg="danger" onClick={()=>{
-                                                        api.deleteAbsorption(modalData.id,Number(data))
-                                                            .then(data => {
-                                                                if (data.result == "FAIL"){
-                                                                    return alert("실패 " + data.data);
-                                                                }
-                                                                alert("병합 해제되었습니다!");
-                                                                window.location.reload();
-                                                            })
-                                                    }}>X #{data}과 병합됨</Badge>
+                                                    <Badge className="me-1" style={{cursor:"pointer"}} bg="danger" onClick={()=>absorptionDeleteEvent(modalData.id,Number(data))}>X #{data}과 병합됨</Badge>
                                                 )}
                                                 <Badge className="me-1" style={{cursor:"pointer"}} bg="danger" onClick={()=>setIsAbsorptionEditShow(false)}>닫기</Badge>
                                             </>
@@ -246,28 +467,10 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                             </>
                         }
                         <div className='b-footer mt-3'>
-                            <Button className="me-1" variant="outline-danger" onClick={()=>{
-                                api.getDislike(modalData.id)
-                                    .then(data=>{
-                                        if (data.result == "FAIL" && data.data == "already"){
-                                            return alert("한번만 가능합니다.");
-                                        }
-                                        alert("비추천되었습니다.");
-                                        window.location.reload()
-                                    })
-                            }}>
+                            <Button className="me-1" variant="outline-danger" onClick={()=>dislikeEvent(modalData.id)}>
                                 비추천 : {modalData.dislikeCount}
                             </Button>
-                            <Button className="ms-1" variant="outline-success" onClick={()=>{
-                                api.getLike(modalData.id)
-                                    .then(data=>{
-                                        if (data.result == "FAIL" && data.data == "already"){
-                                            return alert("한번만 가능합니다.");
-                                        } 
-                                        alert("추천되었습니다.");
-                                        window.location.reload()
-                                    })
-                            }}>
+                            <Button className="ms-1" variant="outline-success" onClick={()=>likeEvent(modalData.id)}>
                                 추천 : {modalData.likeCount}
                             </Button>
                             {isAdmin && 
@@ -287,37 +490,14 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                                 <option value="6Month">6개월</option>
                                                 <option value="1Year">1년</option>
                                             </Form.Select>
-                                            <Button variant="outline-danger" className="ms-1" onClick={()=>{
-                                                const reason = prompt("차단 사유를 입력해주세요.");
-                                                api.postBan(modalUserId,modalIp,reason,banTime(ban))
-                                                    .then(data=>{
-                                                        if (data.result == "SUCCESS"){
-                                                            alert("차단 되었습니다.");
-                                                        }
-                                                        else if (data.result == "FAIL" && data.data == "auth"){
-                                                            return alert("권한이 없습니다.");
-                                                        }
-                                                        else {
-                                                            return alert(`오류 ${data.data}`);
-                                                        }
-                                                    })
-                                            }}>차단</Button>
+                                            <Button variant="outline-danger" className="ms-1" onClick={()=>banEvent(modalUserId,modalIp,ban)}>차단</Button>
                                         </div>
                                 </>
                             }
                             {isAdmin &&
                             <div className='mt-3 d-flex justify-content-center'>
                                 <FormControl className="AES me-2" type="text" placeholder="병합될 게시물 ID를 입력해주세요." value={absorptionEdit} onChange={absorptionEditOnChange}/>
-                                <Button variant="outline-success" size='sm' onClick={()=>{
-                                    api.postAbsorption(modalData.id,Number(absorptionEdit))
-                                        .then(data => {
-                                            if (data.result == "FAIL"){
-                                                return alert("실패 " + data.data);
-                                            }
-                                            alert("병합 되었습니다!");
-                                            window.location.reload();
-                                        })
-                                }}>병합</Button>
+                                <Button variant="outline-success" size='sm' onClick={()=>absorptionEvent(modalData.id,Number(absorptionEdit))}>병합</Button>
                             </div>
                             }
                         </div>
@@ -360,18 +540,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                 <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label className="float-start h3">댓글</Form.Label>
                                     <Form.Control className='mt-2' as="textarea" rows={5} value={modalCommentEdit} onChange={modalCommentEditOnChange}/> 
-                                    <Button variant='outline-success'className='float-end mt-2' onClick={()=>{
-                                        api.postComment(modalData.id,modalCommentEdit)
-                                            .then(data => {
-                                                if (data.result == "FAIL"){
-                                                    return alert("권한이 없습니다.");
-                                                }
-                                                else if (data.result == "SUCCESS"){
-                                                    alert("댓글 등록 성공!");
-                                                    window.location.reload();
-                                                }
-                                            })
-                                    }}>등록</Button>
+                                    <Button variant='outline-success'className='float-end mt-2' onClick={()=>commentEvent(modalData.id,modalCommentEdit)}>등록</Button>
                                     { isCommentEditShow &&
                                         <Button variant='outline-danger me-2'className='float-end mt-2' onClick={()=>setIsCommentEditShow(false)}>닫기</Button>
                                     }
@@ -409,54 +578,9 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                         <>
                             { !isEdit &&
                                 <>
-                                    <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        api.putProgress_Admin(modalData.id)
-                                            .then(data=>{
-                                                if (data.result == "SUCCESS"){
-                                                    alert("진행중 탭으로 이동되었습니다.");
-                                                    resetFeedback();
-                                                    handleClose();
-                                                }
-                                                else if (data.result == "FAIL" && data.data == "auth"){
-                                                    return alert("권한이 없습니다.");
-                                                }
-                                                else {
-                                                    return alert(`오류 ${data.data}`);
-                                                }
-                                            })
-                                    }}>진행중 탭으로 이동</Button>
-                                    <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        api.putCompeleted_Admin(modalData.id)
-                                            .then(data => {
-                                                if (data.result == "SUCCESS"){
-                                                    alert("완료 탭으로 이동되었습니다.");
-                                                    resetFeedback();
-                                                    handleClose();
-                                                }
-                                                else if (data.result == "FAIL" && data.data == "auth"){
-                                                    return alert("권한이 없습니다.");
-                                                }
-                                                else {
-                                                    return alert(`오류 ${data.data}`);
-                                                }
-                                            })
-                                    }}>완료 탭으로 이동</Button>
-                                    <Button className="me-1" variant="outline-primary" onClick={()=>{
-                                        api.putClear_Admin(modalData.id)
-                                            .then(data=>{
-                                                if (data.result == "SUCCESS"){
-                                                    alert("대기중 탭으로 이동되었습니다.");
-                                                    resetFeedback();
-                                                    handleClose();
-                                                }
-                                                else if (data.result == "FAIL" && data.data == "auth"){
-                                                    return alert("권한이 없습니다.");
-                                                }
-                                                else {
-                                                    return alert(`오류 ${data.data}`);
-                                                }
-                                            })
-                                    }}>대기중 탭으로 이동</Button>
+                                    <Button className="me-1" variant="outline-primary" onClick={()=>progressEvent(modalData.id)}>진행중 탭으로 이동</Button>
+                                    <Button className="me-1" variant="outline-primary" onClick={()=>completedEvent(modalData.id)}>완료 탭으로 이동</Button>
+                                    <Button className="me-1" variant="outline-primary" onClick={()=>clearEvent(modalData.id)}>대기중 탭으로 이동</Button>
                                     <Button className="me-1" variant="outline-secondary" onClick={()=>{
                                             setIsEdit(true);
                                             setModalTitleEdit(modalData.title);
@@ -465,42 +589,12 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                         편집
                                     </Button>
                                     {modalData.isDeleted &&
-                                        <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                                            api.putRecover_Admin(modalData.id)
-                                                .then(data => {
-                                                    if (data.result == "SUCCESS"){
-                                                        alert("복구되었습니다.");
-                                                        resetFeedback();
-                                                        handleClose();
-                                                    }
-                                                    else if (data.result == "FAIL" && data.data == "auth"){
-                                                        return alert("권한이 없습니다.");
-                                                    }
-                                                    else {
-                                                        return alert(`오류 ${data.data}`);
-                                                    }
-                                                })
-                                        }}>
+                                        <Button className="ms-1" variant="outline-danger" onClick={()=>recoverEvent(modalData.id)}>
                                             복구
                                         </Button> 
                                     }
                                     {!modalData.isDeleted &&
-                                        <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                                            api.delete_Admin(modalData.id)
-                                                .then(data => {
-                                                    if (data.result == "SUCCESS"){
-                                                        alert("삭제되었습니다.");
-                                                        resetFeedback();
-                                                        handleClose();
-                                                    }
-                                                    else if (data.result == "FAIL" && data.data == "auth"){
-                                                        return alert("권한이 없습니다.");
-                                                    }
-                                                    else {
-                                                        return alert(`오류 ${data.data}`);
-                                                    }
-                                                })
-                                        }}>
+                                        <Button className="ms-1" variant="outline-danger" onClick={()=>deleteAdminEvent(modalData.id)}>
                                             삭제
                                         </Button> 
                                     }
@@ -511,28 +605,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                     <Button className="me-1" variant="outline-danger" onClick={()=>setIsEdit(false)}>
                                         닫기
                                     </Button>
-                                    <Button className="me-1" variant="outline-success" onClick={()=>{
-                                        const modalTitleEditValid = modalTitleEdit.trim().length > 0;
-                                        const modalContentEditValid = modalContentEdit.trim().length > 0;
-                                        setModalTitleEditIsVaild(!modalTitleEditValid);
-                                        setModalContentEditIsVaild(!modalContentEditValid);
-                                        if (!modalTitleEditValid || !modalContentEditValid){
-                                            return alert("잘못된 양식입니다.");
-                                        }
-                                        api.putEdit_Admin(modalData.id,modalTitleEdit,modalContentEdit,categoryEdit)
-                                            .then(data => {
-                                                if (data.result == "SUCCESS"){
-                                                    alert("편집되었습니다.");
-                                                    window.location.reload()
-                                                }
-                                                else if (data.result == "FAIL" && data.data == "auth"){
-                                                    return alert("권한이 없습니다.");
-                                                }
-                                                else {
-                                                    return alert(`오류 ${data.data}`);
-                                                }
-                                            })
-                                    }}>
+                                    <Button className="me-1" variant="outline-success" onClick={()=>editAdminEvent(modalData.id,modalTitleEdit,modalContentEdit,categoryEdit)}>
                                         제출
                                     </Button>
                                 </>
@@ -555,56 +628,13 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                                     <Button className="me-1" variant="outline-danger" onClick={()=>setIsEdit(false)}>
                                         닫기
                                     </Button>
-                                    <Button className="me-1" variant="outline-success" onClick={()=>{
-                                        const modalPasswordValid = modalPassword.trim().length > 0;
-                                        const modalTitleEditValid = modalTitleEdit.trim().length > 0;
-                                        const modalContentEditValid = modalContentEdit.trim().length > 0;
-                                        setModalPasswordIsVaild(!modalPasswordValid);
-                                        setModalTitleEditIsVaild(!modalTitleEditValid);
-                                        setModalContentEditIsVaild(!modalContentEditValid);
-                                        if (!modalPasswordValid || !modalTitleEditValid || !modalContentEditValid){
-                                            return alert("잘못된 양식입니다.");
-                                        }
-                                        api.putEdit(modalData.id,modalTitleEdit,modalContentEdit,categoryEdit,modalPassword)
-                                            .then(data => {
-                                                if (data.result == "SUCCESS"){
-                                                    alert("편집되었습니다.");
-                                                    window.location.reload()
-                                                }
-                                                else if (data.result == "FAIL" && data.data == "wrong password"){
-                                                    return alert("잘못된 비밀번호 입니다.");
-                                                }
-                                                else {
-                                                    return alert(`오류 ${data.data}`);
-                                                }
-                                            })
-                                    }}>
+                                    <Button className="me-1" variant="outline-success" onClick={()=>editEvent(modalData.id,modalTitleEdit,modalContentEdit,categoryEdit,modalPassword)}>
                                         제출
                                     </Button>
                                 </>
                             }
                             {!isEdit &&
-                                <Button className="ms-1" variant="outline-danger" onClick={()=>{
-                                    const modalPasswordValid = modalPassword.trim().length > 0;
-                                    setModalPasswordIsVaild(!modalPasswordValid);
-                                    if (!modalPasswordValid){
-                                        return alert("잘못된 양식입니다.");
-                                    }
-                                    api.delete(modalData.id,modalPassword)
-                                        .then(data => {
-                                            if (data.result == "SUCCESS"){
-                                                alert("삭제되었습니다.");
-                                                resetFeedback();
-                                                handleClose();
-                                            }
-                                            else if (data.result == "FAIL" && data.data == "wrong password"){
-                                                return alert("잘못된 비밀번호 입니다.");
-                                            }
-                                            else {
-                                                return alert(`오류 ${data.data}`);
-                                            }
-                                        })
-                                }}>
+                                <Button className="ms-1" variant="outline-danger" onClick={()=>deleteEvent(modalData.id,modalPassword)}>
                                     삭제
                                 </Button> 
                             }

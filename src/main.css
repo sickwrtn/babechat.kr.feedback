@@ -142,6 +142,10 @@ footer{
     width: 20% !important;
 }
 
+.search {
+    width: 80% !important;
+}
+
 @media (max-width: 768px) {
     #sumbit {
         position: relative;

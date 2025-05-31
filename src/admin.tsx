@@ -1,5 +1,5 @@
 import './main.css'
-import { FormControl, Button, Form, Badge, Tab, Tabs, Table} from 'react-bootstrap';
+import { FormControl, Button, Form, Badge, Tab, Tabs, Table, InputGroup} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
@@ -200,6 +200,14 @@ function Admin() {
 
     const [feedbackTop,setFeedbackTop] = useState<IFeedback[]>([]);
 
+    const [feedbackSearch, setFeedbackSearch] = useState<IFeedback[]>([]);
+
+    const [feedbackSearchCount, setFeedbackSearchCount] =useState<number>(0);
+
+    const [search, setSearch] = useState<string>("");
+
+    const searchOnChange = (e: any) => setSearch(e.target.value);
+
     const [modalData, setModalData] = useState<IModalData>({
         id: 0,
         title: "",
@@ -251,9 +259,13 @@ function Admin() {
 
     const [deleteSelectFilter, setDeleteSelectFilter] = useState<IFilter>("latest");
 
+    const [searchFilter, setSearchFilter] = useState<IFilter>("likeCount");
+
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
     const deleteSelectFilterOnChange = (val: any) => setDeleteSelectFilter(val.target.value);
+
+    const searchFilterOnChange = (val: any) => setSearchFilter(val.target.value);
 
     const [modalUserId, setModalUserId] = useState<string>("");
 
@@ -264,6 +276,10 @@ function Admin() {
     const [standCurrentPage,setStandCurrentPage] = useState<number>(1);
 
     const [deleteCurrentPage,setDeleteCurrentPage] = useState<number>(1);
+
+    const [searchPage,setSearchPage] = useState<number>(1);
+
+    const searchPageOnChange = (e: number) => setSearchPage(e);
 
     const resetFeedback = () => {
         api.getFeedback_Admin("stand",selectFilter,(standCurrentPage - 1) * 10,10)
@@ -389,6 +405,11 @@ function Admin() {
             .then(data=>setFeedbackDeleted(data.data))
     },[deleteCurrentPage,deleteSelectFilter])
 
+    useEffect(()=>{
+        api.getSearchFeedback_Admin("stand",searchFilter,search,(searchPage - 1) * 10,10)
+            .then(data=>setFeedbackSearch(data.data))
+    },[searchPage,searchFilter])
+
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isNotification: boolean,ip: string){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/sick/admin?id=${id}`,{replace:false})}>
@@ -510,7 +531,7 @@ function Admin() {
             </>
         )
     }
-
+    
     return (<>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={true}/>
@@ -572,6 +593,46 @@ function Admin() {
                             totalPages={Math.ceil(feedbackDeletedCount / 10)}
                             currentPage={deleteCurrentPage}
                             onPageChange={(e:any)=>setDeleteCurrentPage(e)}
+                        />
+                    </div>
+                </Tab>
+                <Tab eventKey="search" title="검색">
+                    <div className='tab-container d-flex'>
+                        <InputGroup className="search">
+                            <Form.Control placeholder="검색할 내용을 입력해주세요." value={search} onChange={searchOnChange}/>
+                            <Button variant="outline-secondary" id="button-addon2" onClick={()=>{
+                                api.getSearchFeedback_Admin("stand", searchFilter, search, 0, 10)
+                                    .then(data =>{ 
+                                            if (data.result == "FAIL"){
+                                                return alert("실패 " + data.data);
+                                            }
+                                            setFeedbackSearch(data.data);
+                                        })
+                                api.getSearchFeedback_Admin_Count("stand", search)
+                                    .then(data => {
+                                        if (data.result == "FAIL"){
+                                                return alert("실패 " + data.data);
+                                            }
+                                        setFeedbackSearchCount(data.data);
+                                    })
+                            }}>
+                            검색
+                            </Button>
+                        </InputGroup>
+                        <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={searchFilterOnChange}>
+                            <option value="latest">최신순</option>
+                            <option value="likeCount">추천순</option>
+                            <option value="oldest">오래된순</option>
+                        </Form.Select>
+                    </div>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackSearch} isAdmin={false} />
+                    </ul>
+                    <div className='mt-5'>
+                        <MyPaginationComponent
+                            totalPages={Math.ceil(feedbackSearchCount / 10)}
+                            currentPage={searchPage}
+                            onPageChange={searchPageOnChange}
                         />
                     </div>
                 </Tab>

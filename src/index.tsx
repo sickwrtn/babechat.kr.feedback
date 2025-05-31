@@ -1,5 +1,5 @@
 import './main.css'
-import {Form, Badge, Tab, Tabs} from 'react-bootstrap';
+import {Form, Badge, Tab, Tabs, InputGroup, Button} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
@@ -44,6 +44,14 @@ function Index() {
     const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
 
     const [feedbackTop, setFeedbackTop] = useState<IFeedback[]>([])
+
+    const [feedbackSearch, setFeedbackSearch] = useState<IFeedback[]>([]);
+
+    const [feedbackSearchCount, setFeedbackSearchCount] =useState<number>(0);
+    
+    const [search, setSearch] = useState<string>("");
+
+    const searchOnChange = (e: any) => setSearch(e.target.value);
 
     const [modalData, setModalData] = useState<IModalData>({
         id: 0,
@@ -94,9 +102,17 @@ function Index() {
 
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
+    const [searchFilter, setSearchFilter] = useState<IFilter>("likeCount");
+
+    const searchFilterOnChange = (val: any) => setSearchFilter(val.target.value);
+
     const [currentPage,setCurrentPage] = useState<number>(1);
 
     const currentPageOnChange = (e:number) => setCurrentPage(e); 
+
+    const [searchPage,setSearchPage] = useState<number>(1);
+
+    const searchPageOnChange = (e: number) => setSearchPage(e);
 
     const resetFeedback = () => {
         api.getFeedback("stand",selectFilter,(currentPage - 1) * 10,10)
@@ -204,6 +220,11 @@ function Index() {
             .then(data=>setFeedback(data.data))
     },[currentPage,selectFilter])
 
+    useEffect(()=>{
+        api.getSearchFeedback("stand",searchFilter,search,(searchPage - 1) * 10,10)
+            .then(data=>setFeedbackSearch(data.data))
+    },[searchPage,searchFilter])
+
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number,absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isNotification: boolean){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/?id=${id}`,{replace:false})}>
@@ -259,7 +280,7 @@ function Index() {
             </>
         )
     }
-
+    
     return (<>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={false}/>
@@ -301,6 +322,46 @@ function Index() {
                             totalPages={Math.ceil(feedbackCount / 10)}
                             currentPage={currentPage}
                             onPageChange={currentPageOnChange}
+                        />
+                    </div>
+                </Tab>
+                <Tab eventKey="search" title="검색">
+                    <div className='tab-container d-flex'>
+                        <InputGroup className="search">
+                            <Form.Control placeholder="검색할 내용을 입력해주세요." value={search} onChange={searchOnChange}/>
+                            <Button variant="outline-secondary" id="button-addon2" onClick={()=>{
+                                api.getSearchFeedback("stand", searchFilter, search, 0, 10)
+                                    .then(data =>{ 
+                                            if (data.result == "FAIL"){
+                                                return alert("실패 " + data.data);
+                                            }
+                                            setFeedbackSearch(data.data);
+                                        })
+                                api.getSearchFeedback_Count("stand", search)
+                                    .then(data => {
+                                        if (data.result == "FAIL"){
+                                                return alert("실패 " + data.data);
+                                            }
+                                        setFeedbackSearchCount(data.data);
+                                    })
+                            }}>
+                            검색
+                            </Button>
+                        </InputGroup>
+                        <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={searchFilterOnChange}>
+                            <option value="likeCount">추천순</option>
+                            <option value="latest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                        </Form.Select>
+                    </div>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackSearch}/>
+                    </ul>
+                    <div className='mt-5'>
+                        <MyPaginationComponent
+                            totalPages={Math.ceil(feedbackSearchCount / 10)}
+                            currentPage={searchPage}
+                            onPageChange={searchPageOnChange}
                         />
                     </div>
                 </Tab>
