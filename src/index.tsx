@@ -112,6 +112,23 @@ function Index() {
 
     const [searchPage,setSearchPage] = useState<number>(1);
 
+    const searchEvent = (keyword: string,filter: IFilter) => {
+        api.getSearchFeedback("stand", filter, keyword, 0, 10)
+            .then(data =>{ 
+                    if (data.result == "FAIL"){
+                        return alert("실패 " + data.data);
+                    }
+                    setFeedbackSearch(data.data);
+                })
+        api.getSearchFeedback_Count("stand", keyword)
+            .then(data => {
+                if (data.result == "FAIL"){
+                        return alert("실패 " + data.data);
+                    }
+                setFeedbackSearchCount(data.data);
+            })
+    }
+
     const searchPageOnChange = (e: number) => setSearchPage(e);
 
     const resetFeedback = () => {
@@ -328,23 +345,12 @@ function Index() {
                 <Tab eventKey="search" title="검색">
                     <div className='tab-container d-flex'>
                         <InputGroup className="search">
-                            <Form.Control placeholder="검색할 내용을 입력해주세요." value={search} onChange={searchOnChange}/>
-                            <Button variant="outline-secondary" id="button-addon2" onClick={()=>{
-                                api.getSearchFeedback("stand", searchFilter, search, 0, 10)
-                                    .then(data =>{ 
-                                            if (data.result == "FAIL"){
-                                                return alert("실패 " + data.data);
-                                            }
-                                            setFeedbackSearch(data.data);
-                                        })
-                                api.getSearchFeedback_Count("stand", search)
-                                    .then(data => {
-                                        if (data.result == "FAIL"){
-                                                return alert("실패 " + data.data);
-                                            }
-                                        setFeedbackSearchCount(data.data);
-                                    })
-                            }}>
+                            <Form.Control placeholder="검색할 내용을 입력해주세요." onKeyDown={(e)=>{
+                                if (e.key == "Enter"){
+                                    searchEvent(search,searchFilter);
+                                }
+                            }} value={search} onChange={searchOnChange}/>
+                            <Button variant="outline-secondary" id="button-addon2" onClick={()=>searchEvent(search,searchFilter)}>
                             검색
                             </Button>
                         </InputGroup>
