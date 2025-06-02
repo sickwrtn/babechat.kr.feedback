@@ -219,7 +219,8 @@ function Admin() {
         absorptionList: null,
         isDeleted: false,
         badge: [],
-        isLoading: false
+        isLoading: false,
+        createdAt: ""
     });
 
     const [extraData, setExtraData] = useState<IModalData>({
@@ -233,7 +234,8 @@ function Admin() {
         absorptionList: null,
         isDeleted: false,
         badge: [],
-        isLoading: false
+        isLoading: false,
+        createdAt: ""
     });
 
     const initalExtra = ()=>{
@@ -373,6 +375,7 @@ function Admin() {
                         badge:data.data.badge,
                         isDeleted:data.data.isDeleted,
                         category:data.data.category,
+                        createdAt:data.data.createdAt,
                         isLoading:false
                     }))
                     setModalUserId(data.data.userId as string);
@@ -403,6 +406,7 @@ function Admin() {
                         badge:data.data.badge,
                         isDeleted:data.data.isDeleted,
                         category:data.data.category,
+                        createdAt:data.data.createdAt,
                         isLoading:false
                     }))
                 })

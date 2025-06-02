@@ -24,5 +24,6 @@ export interface IModalData{
     absorptionList: string[] | null,
     isDeleted: boolean,
     badge: string[],
-    isLoading: boolean
+    isLoading: boolean,
+    createdAt: string
 }

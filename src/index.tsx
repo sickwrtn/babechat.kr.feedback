@@ -64,7 +64,8 @@ function Index() {
         absorptionList: null,
         isDeleted: false,
         badge: [],
-        isLoading: false
+        isLoading: false,
+        createdAt: ""
     });
 
     const [extraData, setExtraData] = useState<IModalData>({
@@ -78,7 +79,8 @@ function Index() {
         absorptionList: null,
         isDeleted: false,
         badge: [],
-        isLoading: false
+        isLoading: false,
+        createdAt: ""
     });
 
     const initalExtra = ()=>{
@@ -195,6 +197,7 @@ function Index() {
                         badge:data.data.badge,
                         isDeleted:data.data.isDeleted,
                         category:data.data.category,
+                        createdAt:data.data.createdAt,
                         isLoading:false
                     }))
                     setIsEdit(false);
@@ -223,6 +226,7 @@ function Index() {
                         badge:data.data.badge,
                         isDeleted:data.data.isDeleted,
                         category:data.data.category,
+                        createdAt:data.data.createdAt,
                         isLoading:false
                     }))
                 })

@@ -353,8 +353,8 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
         <Modal.Header closeButton>
         {!modalData.isLoading && 
-            <Modal.Title className='fw-bold' style={{overflow:"hidden"}}>
-                <div className='d-flex'>
+            <Modal.Title style={{overflow:"hidden"}}>
+                <div className='d-flex fw-bold'>
                 {!isEdit && 
                     <>
                         {modalData.title}
@@ -365,6 +365,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                 }
                 {isEdit && "편집기"}
                 </div>
+                {<div style={{fontSize:"17px"}}>작성 시간 : {modalData.createdAt}</div>}
                 {isAdmin && <div style={{fontSize:"17px"}}>UserId : {modalUserId}</div>}
             </Modal.Title>
             }
