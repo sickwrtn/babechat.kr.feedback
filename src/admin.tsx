@@ -282,14 +282,14 @@ function Admin() {
     const searchPageOnChange = (e: number) => setSearchPage(e);
 
     const searchEvent = (keyword: string,filter: IFilter) => {
-        api.getSearchFeedback_Admin("stand", filter, keyword, 0, 10)
+        api.getAdmin.searchFeedback("stand", filter, keyword, 0, 10)
         .then(data =>{ 
                 if (data.result == "FAIL"){
                     return alert("실패 " + data.data);
                 }
                 setFeedbackSearch(data.data);
             })
-        api.getSearchFeedback_Admin_Count("stand", keyword)
+        api.getAdmin.searchFeedbackCount("stand", keyword)
             .then(data => {
                 if (data.result == "FAIL"){
                         return alert("실패 " + data.data);
@@ -299,41 +299,41 @@ function Admin() {
     }
 
     const resetFeedback = () => {
-        api.getFeedback_Admin("stand",selectFilter,(standCurrentPage - 1) * 10,10)
+        api.getAdmin.feedback("stand",selectFilter,(standCurrentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
-        api.getFeedback_Admin("deleted",deleteSelectFilter,(deleteCurrentPage - 1) * 10,10)
+        api.getAdmin.feedback("deleted",deleteSelectFilter,(deleteCurrentPage - 1) * 10,10)
             .then(data=>setFeedbackDeleted(data.data))
-        api.getFeedback_Admin("progress","likeCount",0,100)
+        api.getAdmin.feedback("progress","likeCount",0,100)
             .then(data=>setFeedbackProgress(data.data))
-        api.getFeedback_Admin("completed","likeCount",0,100)
+        api.getAdmin.feedback("completed","likeCount",0,100)
             .then(data=>setFeedbackCompleted(data.data))
-        api.getFeedback_Admin("notification","likeCount",0,100)
+        api.getAdmin.feedback("notification","likeCount",0,100)
             .then(data=>setFeedbackNotification(data.data))
-        api.getFeedback_Admin_Count("stand")
+        api.getAdmin.FeedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
-        api.getFeedback_Admin_Count("deleted")
+        api.getAdmin.FeedbackCount("deleted")
             .then(data=>setFeedbackDeletedCount(data.data))
     }
 
     const resetBan = () => {
-        api.getBan()
+        api.getAdmin.ban()
             .then(data=>setBan(data.data))
     }
 
     useEffect(()=>{
-        api.getFeedback_Admin("stand","likeCount",0,10)
+        api.getAdmin.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
-        api.getFeedback_Admin("progress","likeCount",0,100)
+        api.getAdmin.feedback("progress","likeCount",0,100)
             .then(data=>setFeedbackProgress(data.data))
-        api.getFeedback_Admin("completed","likeCount",0,100)
+        api.getAdmin.feedback("completed","likeCount",0,100)
             .then(data=>setFeedbackCompleted(data.data))
-        api.getFeedback_Admin("notification","likeCount",0,100)
+        api.getAdmin.feedback("notification","likeCount",0,100)
             .then(data=>setFeedbackNotification(data.data))
-        api.getBan()
+        api.getAdmin.ban()
             .then(data=>setBan(data.data))
-        api.getFeedback_Admin_Count("stand")
+        api.getAdmin.FeedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
-        api.getFeedback_Admin_Count("deleted")
+        api.getAdmin.FeedbackCount("deleted")
             .then(data=>setFeedbackDeletedCount(data.data))
     },[])
 
@@ -347,7 +347,7 @@ function Admin() {
                 isLoading:true
             }))
             setShow(true);
-            api.getFeedback_Admin_Item(Number(id))
+            api.getAdmin.feedbackItem(Number(id))
                 .then(data=>{
                     if (data.result == "FAIL"){
                         setModalData(prev=>({
@@ -381,7 +381,7 @@ function Admin() {
                 })
         }
         if (ext != null){
-            api.getFeedback_Admin_Item(Number(ext))
+            api.getAdmin.feedbackItem(Number(ext))
                 .then(data=>{
                     if (data.result == "FAIL"){
                         setExtraData(prev=>({
@@ -413,17 +413,17 @@ function Admin() {
     }, [location]);
 
     useEffect(()=>{
-        api.getFeedback_Admin("stand",selectFilter,(standCurrentPage - 1) * 10,10)
+        api.getAdmin.feedback("stand",selectFilter,(standCurrentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
     },[standCurrentPage,selectFilter])
 
     useEffect(()=>{
-        api.getFeedback_Admin("deleted",deleteSelectFilter,(deleteCurrentPage - 1) * 10,10)
+        api.getAdmin.feedback("deleted",deleteSelectFilter,(deleteCurrentPage - 1) * 10,10)
             .then(data=>setFeedbackDeleted(data.data))
     },[deleteCurrentPage,deleteSelectFilter])
 
     useEffect(()=>{
-        api.getSearchFeedback_Admin("stand",searchFilter,search,(searchPage - 1) * 10,10)
+        api.getAdmin.searchFeedback("stand",searchFilter,search,(searchPage - 1) * 10,10)
             .then(data=>setFeedbackSearch(data.data))
     },[searchPage,searchFilter])
 

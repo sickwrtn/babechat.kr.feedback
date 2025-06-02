@@ -64,7 +64,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     const [isCommentEditShow,setIsCommentEditShow] = useState<boolean>(false);
 
     const likeEvent = (id: number) => {
-        api.getLike(id)
+        api.get.like(id)
             .then(data=>{
                 if (data.result == "FAIL" && data.data == "already"){
                     return alert("한번만 가능합니다.");
@@ -75,7 +75,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const dislikeEvent = (id:number) => {
-        api.getDislike(id)
+        api.get.dislike(id)
             .then(data=>{
                 if (data.result == "FAIL" && data.data == "already"){
                     return alert("한번만 가능합니다.");
@@ -86,7 +86,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const badgeEvent = (id: number, bage: string[]) => {
-        api.putBage(id,bage)
+        api.putAdmin.badge(id,bage)
             .then(data=> {
                 if (data.result == "SUCCESS"){
                     alert("수정되었습니다.");
@@ -101,7 +101,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const absorptionEvent = (id: number,absorptionEdit: number) => {
-        api.postAbsorption(id,absorptionEdit)
+        api.postAdmin.absorption(id,absorptionEdit)
             .then(data => {
                 if (data.result == "FAIL"){
                     return alert("실패 " + data.data);
@@ -112,7 +112,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const absorptionDeleteEvent = (id: number, data: number) => {
-        api.deleteAbsorption(id,data)
+        api.deleteAdmin.absorption(id,data)
             .then(data => {
                 if (data.result == "FAIL"){
                     return alert("실패 " + data.data);
@@ -124,7 +124,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
 
     const banEvent = (userId: string,ip: string,ban: string) => {
         const reason = prompt("차단 사유를 입력해주세요.");
-        api.postBan(userId,ip,reason,banTime(ban))
+        api.postAdmin.ban(userId,ip,reason,banTime(ban))
             .then(data=>{
                 if (data.result == "SUCCESS"){
                     alert("차단 되었습니다.");
@@ -139,7 +139,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const commentEvent = (id: number, comment: string) => {
-        api.postComment(id,comment)
+        api.postAdmin.comment(id,comment)
             .then(data => {
                 if (data.result == "FAIL"){
                     return alert("권한이 없습니다.");
@@ -152,7 +152,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const progressEvent = (id: number) => {
-        api.putProgress_Admin(id)
+        api.putAdmin.progress(id)
             .then(data=>{
                 if (data.result == "SUCCESS"){
                     alert("진행중 탭으로 이동되었습니다.");
@@ -169,7 +169,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const completedEvent = (id: number) => {
-        api.putCompeleted_Admin(id)
+        api.putAdmin.compeleted(id)
             .then(data => {
                 if (data.result == "SUCCESS"){
                     alert("완료 탭으로 이동되었습니다.");
@@ -186,7 +186,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }  
 
     const clearEvent = (id: number) => {
-        api.putClear_Admin(id)
+        api.putAdmin.clear(id)
             .then(data=>{
                 if (data.result == "SUCCESS"){
                     alert("대기중 탭으로 이동되었습니다.");
@@ -203,7 +203,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const recoverEvent = (id: number) => {
-        api.putRecover_Admin(id)
+        api.putAdmin.recover(id)
             .then(data => {
                 if (data.result == "SUCCESS"){
                     alert("복구되었습니다.");
@@ -220,7 +220,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
     }
 
     const deleteAdminEvent = (id: number) => {
-        api.delete_Admin(id)
+        api.deleteAdmin.feedback(id)
             .then(data => {
                 if (data.result == "SUCCESS"){
                     alert("삭제되었습니다.");
@@ -244,7 +244,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         if (!modalTitleEditValid || !modalContentEditValid){
             return alert("잘못된 양식입니다.");
         }
-        api.putEdit_Admin(id,title,content,category)
+        api.putAdmin.edit(id,title,content,category)
             .then(data => {
                 if (data.result == "SUCCESS"){
                     alert("편집되었습니다.");
@@ -265,7 +265,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         if (!modalPasswordValid){
             return alert("잘못된 양식입니다.");
         }
-        api.delete(id,password)
+        api.delete.feedback(id,password)
             .then(data => {
                 if (data.result == "SUCCESS"){
                     alert("삭제되었습니다.");
@@ -291,7 +291,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         if (!modalPasswordValid || !modalTitleEditValid || !modalContentEditValid){
             return alert("잘못된 양식입니다.");
         }
-        api.putEdit(id,title,content,category,password)
+        api.put.edit(id,title,content,category,password)
             .then(data => {
                 if (data.result == "SUCCESS"){
                     alert("편집되었습니다.");

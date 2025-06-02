@@ -113,14 +113,14 @@ function Index() {
     const [searchPage,setSearchPage] = useState<number>(1);
 
     const searchEvent = (keyword: string,filter: IFilter) => {
-        api.getSearchFeedback("stand", filter, keyword, 0, 10)
+        api.get.searchFeedback("stand", filter, keyword, 0, 10)
             .then(data =>{ 
                     if (data.result == "FAIL"){
                         return alert("실패 " + data.data);
                     }
                     setFeedbackSearch(data.data);
                 })
-        api.getSearchFeedback_Count("stand", keyword)
+        api.get.searchFeedbackCount("stand", keyword)
             .then(data => {
                 if (data.result == "FAIL"){
                         return alert("실패 " + data.data);
@@ -132,30 +132,30 @@ function Index() {
     const searchPageOnChange = (e: number) => setSearchPage(e);
 
     const resetFeedback = () => {
-        api.getFeedback("stand",selectFilter,(currentPage - 1) * 10,10)
+        api.get.feedback("stand",selectFilter,(currentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
-        api.getFeedback("stand","likeCount",0,10)
+        api.get.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
-        api.getFeedback("progress","likeCount",0,100)
+        api.get.feedback("progress","likeCount",0,100)
             .then(data=>setFeedbackProgress(data.data))
-        api.getFeedback("completed","likeCount",0,100)
+        api.get.feedback("completed","likeCount",0,100)
             .then(data=>setFeedbackCompleted(data.data))
-        api.getFeedback("notification","likeCount",0,100)
+        api.get.feedback("notification","likeCount",0,100)
             .then(data=>setFeedbackNotification(data.data))
-        api.getFeedback_Count("stand")
+        api.get.feedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
     }
 
     useEffect(()=>{
-        api.getFeedback("stand","likeCount",0,10)
+        api.get.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
-        api.getFeedback("progress","likeCount",0,100)
+        api.get.feedback("progress","likeCount",0,100)
             .then(data=>setFeedbackProgress(data.data))
-        api.getFeedback("completed","likeCount",0,100)
+        api.get.feedback("completed","likeCount",0,100)
             .then(data=>setFeedbackCompleted(data.data))
-        api.getFeedback("notification","likeCount",0,100)
+        api.get.feedback("notification","likeCount",0,100)
             .then(data=>setFeedbackNotification(data.data))
-        api.getFeedback_Count("stand")
+        api.get.feedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
     },[])
 
@@ -169,7 +169,7 @@ function Index() {
                 isLoading:true
             }))
             setShow(true);
-            api.getFeedback_Item(Number(id))
+            api.get.feedbackItem(Number(id))
                 .then(data => {
                     if (data.result == "FAIL"){
                         setModalData(prev=>({
@@ -201,7 +201,7 @@ function Index() {
                 })
         }
         if (ext != null){
-            api.getFeedback_Admin_Item(Number(ext))
+            api.get.feedbackItem(Number(ext))
                 .then(data=>{
                     if (data.result == "FAIL"){
                         setExtraData(prev=>({
@@ -233,12 +233,12 @@ function Index() {
     }, [location]);
 
     useEffect(()=>{
-        api.getFeedback("stand",selectFilter,(currentPage - 1) * 10,10)
+        api.get.feedback("stand",selectFilter,(currentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
     },[currentPage,selectFilter])
 
     useEffect(()=>{
-        api.getSearchFeedback("stand",searchFilter,search,(searchPage - 1) * 10,10)
+        api.get.searchFeedback("stand",searchFilter,search,(searchPage - 1) * 10,10)
             .then(data=>setFeedbackSearch(data.data))
     },[searchPage,searchFilter])
 
