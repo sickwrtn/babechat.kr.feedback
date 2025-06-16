@@ -167,8 +167,6 @@ function Index() {
     useEffect(()=>{
         api.get.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
-        api.get.feedback("representative","likeCount",0,10)
-            .then(data=>setFeedbackRepresentative(data.data))
         api.get.feedback("progress","likeCount",0,100)
             .then(data=>setFeedbackProgress(data.data))
         api.get.feedback("completed","likeCount",0,100)

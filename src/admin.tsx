@@ -345,8 +345,6 @@ function Admin() {
             .then(data=>setFeedbackCompleted(data.data))
         api.getAdmin.feedback("notification","likeCount",0,100)
             .then(data=>setFeedbackNotification(data.data))
-        api.getAdmin.feedback("representative","likeCount",0,10)
-            .then(data=>setFeedbackRepresentative(data.data))
         api.getAdmin.ban()
             .then(data=>setBan(data.data))
         api.getAdmin.FeedbackCount("stand")
