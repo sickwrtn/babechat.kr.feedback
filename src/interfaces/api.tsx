@@ -1,6 +1,6 @@
 export type IFilter = "likeCount" | "latest" | "oldest";
 
-export type ITab = "stand" | "progress" | "completed" | "notification" | "deleted";
+export type ITab = "stand" | "progress" | "completed" | "notification" | "representative" | "deleted";
 
 export type ICategory = 1 | 2 | 3;
 

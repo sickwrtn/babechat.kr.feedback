@@ -194,6 +194,10 @@ function Admin() {
 
     const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
 
+    const [feedbackRepresentative,setFeedbackRepresentative] = useState<IFeedback[]>([]);
+
+    const [feedbackRepresentativeCount,setFeedbackRepresentativeCount] = useState<number>(0);
+
     const [feedbackDeleted,setFeedbackDeleted] = useState<IFeedback[]>([]);
 
     const [feedbackDeletedCount, setFeedbackDeletedCount] = useState<number>(0);
@@ -263,9 +267,13 @@ function Admin() {
 
     const [searchFilter, setSearchFilter] = useState<IFilter>("likeCount");
 
+    const [representativeFilter, setRepresentativeFilter] = useState<IFilter>("likeCount");
+
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
     const deleteSelectFilterOnChange = (val: any) => setDeleteSelectFilter(val.target.value);
+
+    const representativeFilterOnChange = (val: any) => setRepresentativeFilter(val.target.value);
 
     const searchFilterOnChange = (val: any) => setSearchFilter(val.target.value);
 
@@ -276,6 +284,8 @@ function Admin() {
     const [ban,setBan] = useState<IBan[]>([]);
 
     const [standCurrentPage,setStandCurrentPage] = useState<number>(1);
+
+    const [representativeCurrentPage,setRepresentativeCurrentPage] = useState<number>(1);
 
     const [deleteCurrentPage,setDeleteCurrentPage] = useState<number>(1);
 
@@ -303,6 +313,8 @@ function Admin() {
     const resetFeedback = () => {
         api.getAdmin.feedback("stand",selectFilter,(standCurrentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
+        api.getAdmin.feedback("representative",representativeFilter,(representativeCurrentPage - 1) * 10,10)
+            .then(data=>setFeedbackRepresentative(data.data))
         api.getAdmin.feedback("deleted",deleteSelectFilter,(deleteCurrentPage - 1) * 10,10)
             .then(data=>setFeedbackDeleted(data.data))
         api.getAdmin.feedback("progress","likeCount",0,100)
@@ -313,6 +325,8 @@ function Admin() {
             .then(data=>setFeedbackNotification(data.data))
         api.getAdmin.FeedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
+        api.getAdmin.FeedbackCount("representative")
+            .then(data=>setFeedbackRepresentativeCount(data.data))
         api.getAdmin.FeedbackCount("deleted")
             .then(data=>setFeedbackDeletedCount(data.data))
     }
@@ -331,10 +345,14 @@ function Admin() {
             .then(data=>setFeedbackCompleted(data.data))
         api.getAdmin.feedback("notification","likeCount",0,100)
             .then(data=>setFeedbackNotification(data.data))
+        api.getAdmin.feedback("representative","likeCount",0,10)
+            .then(data=>setFeedbackRepresentative(data.data))
         api.getAdmin.ban()
             .then(data=>setBan(data.data))
         api.getAdmin.FeedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
+        api.getAdmin.FeedbackCount("representative")
+            .then(data=>setFeedbackRepresentativeCount(data.data))
         api.getAdmin.FeedbackCount("deleted")
             .then(data=>setFeedbackDeletedCount(data.data))
     },[])
@@ -420,6 +438,11 @@ function Admin() {
         api.getAdmin.feedback("stand",selectFilter,(standCurrentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
     },[standCurrentPage,selectFilter])
+
+    useEffect(()=>{
+        api.getAdmin.feedback("representative",representativeFilter,(representativeCurrentPage - 1) * 10,10)
+            .then(data=>setFeedbackRepresentative(data.data))
+    },[representativeCurrentPage,representativeFilter])
 
     useEffect(()=>{
         api.getAdmin.feedback("deleted",deleteSelectFilter,(deleteCurrentPage - 1) * 10,10)
@@ -594,6 +617,26 @@ function Admin() {
                                 totalPages={Math.ceil(feedbackCount / 10)}
                                 currentPage={standCurrentPage}
                                 onPageChange={(e:any)=>setStandCurrentPage(e)}
+                            />
+                    </div>
+                </Tab>
+                <Tab eventKey="representative" title="통합의견">
+                    <div className='tab-container d-flex'>
+                        <h3>통합의견</h3>
+                        <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={representativeFilterOnChange}>
+                            <option value="likeCount">추천순</option>
+                            <option value="latest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                        </Form.Select>
+                    </div>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackRepresentative} isAdmin={false} />
+                    </ul>
+                    <div className='mt-5'>
+                        <MyPaginationComponent
+                                totalPages={Math.ceil(feedbackRepresentativeCount / 10)}
+                                currentPage={representativeCurrentPage}
+                                onPageChange={(e:any)=>setRepresentativeCurrentPage(e)}
                             />
                     </div>
                 </Tab>

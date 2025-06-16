@@ -43,9 +43,13 @@ function Index() {
 
     const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
 
+    const [feedbackRepresentative,setFeedbackRepresentative] = useState<IFeedback[]>([]);
+
     const [feedbackTop, setFeedbackTop] = useState<IFeedback[]>([])
 
     const [feedbackSearch, setFeedbackSearch] = useState<IFeedback[]>([]);
+
+    const [feedbackRepresentativeCount,setFeedbackRepresentativeCount] = useState<number>(0);
 
     const [feedbackSearchCount, setFeedbackSearchCount] =useState<number>(0);
     
@@ -104,6 +108,10 @@ function Index() {
 
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
+    const [representativeFilter, setRepresentativeFilter] = useState<IFilter>("likeCount");
+
+    const representativeFilterOnChange = (val: any) => setRepresentativeFilter(val.target.value);
+
     const [searchFilter, setSearchFilter] = useState<IFilter>("likeCount");
 
     const searchFilterOnChange = (val: any) => setSearchFilter(val.target.value);
@@ -111,6 +119,10 @@ function Index() {
     const [currentPage,setCurrentPage] = useState<number>(1);
 
     const currentPageOnChange = (e:number) => setCurrentPage(e); 
+
+    const [representativeCurrentPage,setRepresentativeCurrentPage] = useState<number>(1);
+
+    const representativeCurrentPageOnChange = (e:number) => setRepresentativeCurrentPage(e);
 
     const [searchPage,setSearchPage] = useState<number>(1);
 
@@ -136,6 +148,8 @@ function Index() {
     const resetFeedback = () => {
         api.get.feedback("stand",selectFilter,(currentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
+        api.get.feedback("representative",representativeFilter,(representativeCurrentPage - 1) * 10,10)
+            .then(data=>setFeedback(data.data))
         api.get.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
         api.get.feedback("progress","likeCount",0,100)
@@ -146,11 +160,15 @@ function Index() {
             .then(data=>setFeedbackNotification(data.data))
         api.get.feedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
+        api.get.feedbackCount("representative")
+            .then(data=>setFeedbackRepresentativeCount(data.data))
     }
 
     useEffect(()=>{
         api.get.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
+        api.get.feedback("representative","likeCount",0,10)
+            .then(data=>setFeedbackRepresentative(data.data))
         api.get.feedback("progress","likeCount",0,100)
             .then(data=>setFeedbackProgress(data.data))
         api.get.feedback("completed","likeCount",0,100)
@@ -159,6 +177,8 @@ function Index() {
             .then(data=>setFeedbackNotification(data.data))
         api.get.feedbackCount("stand")
             .then(data=>setFeedbackCount(data.data))
+        api.get.feedbackCount("representative")
+            .then(data=>setFeedbackRepresentativeCount(data.data))
     },[])
 
     useEffect(() => {
@@ -240,6 +260,11 @@ function Index() {
         api.get.feedback("stand",selectFilter,(currentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
     },[currentPage,selectFilter])
+
+    useEffect(()=>{
+        api.get.feedback("representative",representativeFilter,(representativeCurrentPage - 1) * 10,10)
+            .then(data=>setFeedbackRepresentative(data.data))
+    },[representativeCurrentPage,representativeFilter])
 
     useEffect(()=>{
         api.get.searchFeedback("stand",searchFilter,search,(searchPage - 1) * 10,10)
@@ -343,6 +368,26 @@ function Index() {
                             totalPages={Math.ceil(feedbackCount / 10)}
                             currentPage={currentPage}
                             onPageChange={currentPageOnChange}
+                        />
+                    </div>
+                </Tab>
+                <Tab eventKey="representative" title="통합의견">
+                    <div className='tab-container d-flex'>
+                        <h3>통합의견</h3>
+                        <Form.Select className="tab-select" defaultValue={"likecount"} onChange={representativeFilterOnChange}>
+                            <option value="likeCount">추천순</option>
+                            <option value="latest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                        </Form.Select>
+                    </div>
+                    <ul className="list-group mt-3">
+                        <Feedback data={feedbackRepresentative}/>
+                    </ul>
+                    <div className='mt-5'>
+                        <MyPaginationComponent
+                            totalPages={Math.ceil(feedbackRepresentativeCount / 10)}
+                            currentPage={representativeCurrentPage}
+                            onPageChange={representativeCurrentPageOnChange}
                         />
                     </div>
                 </Tab>
