@@ -10,8 +10,11 @@ import { IModalData } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MyPaginationComponent from './page';
 import { sillo } from './sdk';
+import { useTranslation } from 'react-i18next';
 
 function Index() {
+    const { t } = useTranslation();
+    
     setStrict(()=>{})
     if (localStorage.getItem("auth_token") == null){
         fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
@@ -130,14 +133,14 @@ function Index() {
         api.get.searchFeedback("stand", filter, keyword, 0, 10)
             .then(data =>{ 
                     if (data.result == "FAIL"){
-                        return alert("실패 " + data.data);
+                        return alert(`${t("alert.searchFeedback")}  ${data.data}`);
                     }
                     setFeedbackSearch(data.data);
                 })
         api.get.searchFeedbackCount("stand", keyword)
             .then(data => {
                 if (data.result == "FAIL"){
-                        return alert("실패 " + data.data);
+                        return alert(`${t("alert.searchFeedbackCount")}  ${data.data}`);
                     }
                 setFeedbackSearchCount(data.data);
             })
@@ -197,7 +200,7 @@ function Index() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert("잘못된 ID 입니다.");
+                        return alert(t("alert.feedbackItem"));
                     }
                     if (data.data.absorption != null){
                         navigate(`/?id=${data.data.absorption}&ext=${id}`,{replace:false});
@@ -230,7 +233,7 @@ function Index() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert("잘못된 EXTRA ID 입니다.");
+                        return alert(t("alert.feedbackItemExtra"));
                     }
                     setExtraData(prev=>({
                         ...prev,
@@ -293,10 +296,10 @@ function Index() {
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
                     {absorption &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}로 병합됨</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}{t("accordionItem.absorption")}</Badge>
                     }
                     {(absorptionList?.length != 0) &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} 통합의견</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} {t("accordionItem.representative")}</Badge>
                     }
                     </div>
                     <div className="text-muted form-text">
@@ -331,31 +334,31 @@ function Index() {
         </div>
         <div id="feed">
             <Tabs defaultActiveKey="main" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="main" title="메인">
-                    <h3>공지사항</h3>
+                <Tab eventKey="main" title={t("tab.main")}>
+                    <h3>{t("tab.notification")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackNotification}/>
                     </ul>
-                    <h3 className="mt-4 d-inline-flex">진행중</h3>
+                    <h3 className="mt-4 d-inline-flex">{t("tab.progress")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackProgress}/>
                     </ul>
-                    <h3 className="mt-4 d-inline-flex">완료됨</h3>
+                    <h3 className="mt-4 d-inline-flex">{t("tab.completed")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackCompleted}/>
                     </ul>
-                        <h3 className='mt-4'>대기중</h3>
+                        <h3 className='mt-4'>{t("tab.stand")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackTop}/>
                     </ul>
                 </Tab>
-                <Tab eventKey="stand" title="대기중">
+                <Tab eventKey="stand" title={t("tab.stand")}>
                     <div className='tab-container d-flex'>
-                        <h3>대기중</h3>
+                        <h3>{t("tab.stand")}</h3>
                         <Form.Select className="tab-select" defaultValue={"latest"} onChange={selectFilterOnChange}>
-                            <option value="likeCount">추천순</option>
-                            <option value="latest">최신순</option>
-                            <option value="oldest">오래된순</option>
+                            <option value="likeCount">{t("desc.likeCount")}</option>
+                            <option value="latest">{t("desc.latest")}</option>
+                            <option value="oldest">{t("desc.oldest")}</option>
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
@@ -369,13 +372,13 @@ function Index() {
                         />
                     </div>
                 </Tab>
-                <Tab eventKey="representative" title="통합의견">
+                <Tab eventKey="representative" title={t("tab.representative")}>
                     <div className='tab-container d-flex'>
-                        <h3>통합의견</h3>
+                        <h3>{t("tab.representative")}</h3>
                         <Form.Select className="tab-select" defaultValue={"likecount"} onChange={representativeFilterOnChange}>
-                            <option value="likeCount">추천순</option>
-                            <option value="latest">최신순</option>
-                            <option value="oldest">오래된순</option>
+                            <option value="likeCount">{t("desc.likeCount")}</option>
+                            <option value="latest">{t("desc.latest")}</option>
+                            <option value="oldest">{t("desc.oldest")}</option>
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
@@ -389,22 +392,22 @@ function Index() {
                         />
                     </div>
                 </Tab>
-                <Tab eventKey="search" title="검색">
+                <Tab eventKey="search" title={t("tab.search")}>
                     <div className='tab-container d-flex'>
                         <InputGroup className="search">
-                            <Form.Control placeholder="검색할 내용을 입력해주세요." onKeyDown={(e)=>{
+                            <Form.Control placeholder={t("search.search_placeholder")} onKeyDown={(e)=>{
                                 if (e.key == "Enter"){
                                     searchEvent(search,searchFilter);
                                 }
                             }} value={search} onChange={searchOnChange}/>
                             <Button variant="outline-secondary" id="button-addon2" onClick={()=>searchEvent(search,searchFilter)}>
-                            검색
+                            {t("search.search")}
                             </Button>
                         </InputGroup>
                         <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={searchFilterOnChange}>
-                            <option value="likeCount">추천순</option>
-                            <option value="latest">최신순</option>
-                            <option value="oldest">오래된순</option>
+                            <option value="likeCount">{t("desc.likeCount")}</option>
+                            <option value="latest">{t("desc.latest")}</option>
+                            <option value="oldest">{t("desc.oldest")}</option>
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">

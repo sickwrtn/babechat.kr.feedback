@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './app'
 import chalk from 'chalk';
+import './locales/i18n';
 
 const logo = chalk.rgb(246,55,90).bgRgb(53,53,53).underline(`
 ██████╗  █████╗ ██████╗ ███████╗ ██████╗██╗  ██╗ █████╗ ████████╗
@@ -18,8 +19,6 @@ const context = chalk.black(`
 사실 이건 이스터에그 입니다. 개발하다보면 이런것도 넣고싶어지더라구요
 ===================================================================
 `)
-
-console.log(logo+context);
 
 createRoot(document.getElementById('main')!).render(
     <App />,
