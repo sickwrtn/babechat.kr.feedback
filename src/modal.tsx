@@ -571,7 +571,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                             {isAdmin &&
                             <div className='mt-3 d-flex justify-content-center'>
                                 <FormControl className="AES me-2" type="text" placeholder={t("modal.absorptionTo_placeholder")} value={absorptionEdit} onChange={absorptionEditOnChange}/>
-                                <Button variant="outline-success" size='sm' onClick={()=>absorptionEvent(modalData.id,Number(absorptionEdit))}>{t("modal.ban")}</Button>
+                                <Button variant="outline-success" size='sm' onClick={()=>absorptionEvent(modalData.id,Number(absorptionEdit))}>{t("modal._absorption")}</Button>
                             </div>
                             }
                         </div>
