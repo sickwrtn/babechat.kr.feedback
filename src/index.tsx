@@ -14,13 +14,15 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * 메인페이지
+ * [작성자의 말]
  * 클린코드 ㅈ까 ㅋㅋ
- * 주석만 쓰면 그냥 감지덕지 하게 처받아야지 ㄹㅇ
  */
 
 function Index() {
+
+    //i18n 선언
     const { t } = useTranslation();
-    
+
     setStrict(()=>{})
     // auth_token 이 localStorage에 없을시 발급
     if (localStorage.getItem("auth_token") == null){

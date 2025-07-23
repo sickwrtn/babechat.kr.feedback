@@ -13,57 +13,126 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit,handleClose,resetFeedback,isAdmin,modalUserId,modalIp}:IFeedbakModal){
-
+    // i18n
     const { t } = useTranslation();
 
+    // sdk 선언
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
+    // navigate 선언
     const navigate = useNavigate();
     
+    /**
+     * 피드백 제목 (편집)
+     */
     const [modalTitleEdit, setModalTitleEdit] = useState<string>("");
 
+    /**
+     * 피드백 내용 (편집)
+     */
     const [modalContentEdit, setModalContentEdit] = useState<string>("");
 
+    /**
+     * 피드백 제목 (편집) onChange
+     */
     const modalTitleEditOnChange = (e:any) => setModalTitleEdit(e.target.value);
 
+    /**
+     * 피드백 내용 (편집) onChange
+     */
     const modalContentEditOnChange = (e:any) => setModalContentEdit(e.target.value);
 
+    /**
+     * 피드백 제목 (편집) 유효성
+     */
     const [modalTitleEditIsVaild, setModalTitleEditIsVaild] = useState<boolean>(false);
 
+    /**
+     * 피드백 내용 (편집) 유효성
+     */
     const [ModalContentEditIsVaild, setModalContentEditIsVaild] = useState<boolean>(false);
 
+    /**
+     * 피드백 카테고리 (편집)
+     */
     const [categoryEdit, setCategoryEdit] = useState<ICategory>(1);
 
+    // 이게 뭐지?
     useEffect(()=>setCategoryEdit(modalData.category),[modalData.category]);
     
+    /**
+     * 피드백 카테고리 (편집) onChange
+     */
     const categoryEditOnChange = (val: any) => setCategoryEdit(val);
 
+    /**
+     * 비밀번호
+     */
     const [modalPassword,setModalPassword] = useState<string>("");
 
+    /**
+     * 댓글 (편집)
+     */
     const [modalCommentEdit,setModalCommentEdit] = useState<string>("");
 
+    /**
+     * 댓글 (편집) onChange
+     */
     const modalCommentEditOnChange = (e: any) => setModalCommentEdit(e.target.value);
 
+    /**
+     * 비밀번호 유효성
+     */
     const [modalPasswordIsVaild,setModalPasswordIsVaild] = useState<boolean>(false);
 
+    /**
+     * 비밀번호 onChange
+     */
     const modalPasswordOnChange = (e: any) => setModalPassword(e.target.value);
 
+    /**
+     * 뱃지 편집기 열렸는지 여부
+     */
     const [isBageEditShow, setIsBageEditShow] = useState<boolean>(false);
 
+    /**
+     * 뱃지 (편집)
+     */
     const [bageEdit,setBageEdit] = useState<string>("");
 
+    /**
+     * 뱃지 (편집) onChange
+     */
     const bageEditOnChange = (e:any) => setBageEdit(e.target.value); 
 
+    /**
+     * 병합 편집기 열렀는지 여부
+     */
     const [isAbsorptionEditShow, setIsAbsorptionEditShow] = useState<boolean>(false);
 
+    /**
+     * 병합 (편집)
+     */
     const [absorptionEdit,setAbsorptionEdit] = useState<string>("");
 
+    /**
+     * 병합 (편집) onchange
+     */
     const absorptionEditOnChange = (e:any) => setAbsorptionEdit(e.target.value);
 
+    /**
+     * 차단 기간 (selectBox)
+     */
     const [ban,setban] = useState<string>("1Hour");
 
+    /**
+     * 차단 기간 (selectBox) onChange
+     */
     const banOnChange = (e:any) =>setban(e.target.value);
 
+    /**
+     * 댓글 편집기가 열렸는지 여부
+     */
     const [isCommentEditShow,setIsCommentEditShow] = useState<boolean>(false);
 
     const likeEvent = (id: number) => {
