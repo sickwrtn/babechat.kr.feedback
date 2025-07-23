@@ -1,5 +1,7 @@
 import { ICategory } from "./api"
 
+export type event = (e:any)=>void;
+
 export interface IFeedbakModal{
     modalData: IModalData,
     extraData: IModalData,

@@ -8,9 +8,9 @@ import { setStrict } from './strict';
 import {IFeedback,IResponse,IFilter,ICategory, IBan} from './interfaces'
 import { IModalData } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
-import MyPaginationComponent from './page';
 import { sillo } from './sdk';
 import { useTranslation } from 'react-i18next';
+import { Taeho } from './component';
 
 function compressIPv6(ipv6Address:string):string {
    return ipv6Address.split(":").slice(3,7).join(":");
@@ -615,7 +615,7 @@ function Admin() {
                         <Feedback data={feedback} isAdmin={false} />
                     </ul>
                     <div className='mt-5'>
-                        <MyPaginationComponent
+                        <Taeho._Pagination
                                 totalPages={Math.ceil(feedbackCount / 10)}
                                 currentPage={standCurrentPage}
                                 onPageChange={(e:any)=>setStandCurrentPage(e)}
@@ -635,7 +635,7 @@ function Admin() {
                         <Feedback data={feedbackRepresentative} isAdmin={false} />
                     </ul>
                     <div className='mt-5'>
-                        <MyPaginationComponent
+                        <Taeho._Pagination
                                 totalPages={Math.ceil(feedbackRepresentativeCount / 10)}
                                 currentPage={representativeCurrentPage}
                                 onPageChange={(e:any)=>setRepresentativeCurrentPage(e)}
@@ -655,7 +655,7 @@ function Admin() {
                         <Feedback data={feedbackDeleted} isAdmin={true} />
                     </ul>
                     <div className='mt-5'>
-                        <MyPaginationComponent
+                        <Taeho._Pagination
                             totalPages={Math.ceil(feedbackDeletedCount / 10)}
                             currentPage={deleteCurrentPage}
                             onPageChange={(e:any)=>setDeleteCurrentPage(e)}
@@ -684,7 +684,7 @@ function Admin() {
                         <Feedback data={feedbackSearch} isAdmin={false} />
                     </ul>
                     <div className='mt-5'>
-                        <MyPaginationComponent
+                        <Taeho._Pagination
                             totalPages={Math.ceil(feedbackSearchCount / 10)}
                             currentPage={searchPage}
                             onPageChange={searchPageOnChange}

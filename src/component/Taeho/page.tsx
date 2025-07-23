@@ -1,6 +1,6 @@
 import { Pagination } from "react-bootstrap";
 
-export default function MyPaginationComponent({ totalPages, currentPage, onPageChange }:{totalPages:number,currentPage:number,onPageChange:(e:any)=>void}) {
+export function _Pagination({ totalPages, currentPage, onPageChange }:{totalPages:number,currentPage:number,onPageChange:(e:any)=>void}) {
         let items = [];
         // 'First' 버튼
         items.push(

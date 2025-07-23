@@ -1,16 +1,16 @@
 import './main.css'
-import {Form, Badge, Tab, Tabs, InputGroup, Button} from 'react-bootstrap';
+import {Form, Tab, Tabs, InputGroup, Button} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
-import {IFeedback,IFilter,ICategory} from './interfaces'
+import {IFeedback,IFilter} from './interfaces'
 import { IModalData } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
-import MyPaginationComponent from './page';
 import { sillo } from './sdk';
 import { useTranslation } from 'react-i18next';
+import { Taeho } from './component';
 
 /**
  * 메인페이지
@@ -309,6 +309,7 @@ function Index() {
          * 현재 보여지는 extra 피드백 id
          */
         const ext = params.get('ext');
+        
         if (id != null){
             setModalData(prev=>({
                 ...prev,
@@ -409,65 +410,6 @@ function Index() {
      * @param badge 뱃지
      * @param isNotification 공지인지 아닌지
      */
-    function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number,absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isNotification: boolean){
-        return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/?id=${id}`,{replace:false})}>
-                {!isNotification && 
-                    <>
-                        { category == 1 &&
-                        <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/2024-blurple-dev.png" />
-                        }
-                        { category == 2 &&
-                            <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/4156-blurple-flame.png" />
-                        }
-                        { category == 3 &&
-                            <img src="https://raw.githubusercontent.com/sickwrtn/babechat.multi/refs/heads/main/7100-blurple-heart.png" />
-                        }
-                    </>
-                }
-                {isNotification &&
-                    <img src="https://babechat.ai/assets/svgs/notices.svg" />
-                }
-                <div className="ms-2 me-auto overflow-hidden">
-                    <div className="fw-bold">{title} {badge.map((data)=>(
-                        <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
-                    ))}
-                    {absorption &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}{t("accordionItem.absorption")}</Badge>
-                    }
-                    {(absorptionList?.length != 0) &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} {t("accordionItem.representative")}</Badge>
-                    }
-                    </div>
-                    <div className="text-muted form-text">
-                    {content}
-                    </div>
-                </div>
-                <div className="badge border">
-                    {(likeCount - dislikeCount) >= 0 && 
-                    <div style={{color:"green"}}>{likeCount - dislikeCount}</div>
-                    }
-                    {(likeCount - dislikeCount) < 0 && 
-                    <div style={{color:"red"}}>{likeCount - dislikeCount}</div>
-                    }
-                </div>
-            </li>
-        </>)
-    }
-
-    /**
-     * 피드백 리스트를 jsx 아코디언 화
-     * @param param0 data 속에 피드백 리스트 넣기
-     */
-    function Feedback({data}:{data:IFeedback[]}) {
-        return (
-            <>
-                {data.map(data =>{
-                    return (accordionItem(data.id,data.title,data.content,data.likeCount,data.dislikeCount,data.absorption,data.absorptionList,data.category,data.badge,data.isNotification))
-                })}
-            </>
-        )
-    }
     
     return (<>
         <div id="sumbit" className='border rounded'>
@@ -478,35 +420,31 @@ function Index() {
                 <Tab eventKey="main" title={t("tab.main")}>
                     <h3>{t("tab.notification")}</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackNotification}/>
+                        <Taeho.Feedback data={feedbackNotification}/>
                     </ul>
                     <h3 className="mt-4 d-inline-flex">{t("tab.progress")}</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackProgress}/>
+                        <Taeho.Feedback data={feedbackProgress}/>
                     </ul>
                     <h3 className="mt-4 d-inline-flex">{t("tab.completed")}</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackCompleted}/>
+                        <Taeho.Feedback data={feedbackCompleted}/>
                     </ul>
                         <h3 className='mt-4'>{t("tab.stand")}</h3>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackTop}/>
+                        <Taeho.Feedback data={feedbackTop}/>
                     </ul>
                 </Tab>
                 <Tab eventKey="stand" title={t("tab.stand")}>
                     <div className='tab-container d-flex'>
                         <h3>{t("tab.stand")}</h3>
-                        <Form.Select className="tab-select" defaultValue={"latest"} onChange={selectFilterOnChange}>
-                            <option value="likeCount">{t("desc.likeCount")}</option>
-                            <option value="latest">{t("desc.latest")}</option>
-                            <option value="oldest">{t("desc.oldest")}</option>
-                        </Form.Select>
+                        <Taeho.Desc onChange={selectFilterOnChange}/>
                     </div>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedback}/>
+                        <Taeho.Feedback data={feedback}/>
                     </ul>
                     <div className='mt-5'>
-                        <MyPaginationComponent
+                        <Taeho._Pagination
                             totalPages={Math.ceil(feedbackCount / 10)}
                             currentPage={currentPage}
                             onPageChange={currentPageOnChange}
@@ -516,17 +454,13 @@ function Index() {
                 <Tab eventKey="representative" title={t("tab.representative")}>
                     <div className='tab-container d-flex'>
                         <h3>{t("tab.representative")}</h3>
-                        <Form.Select className="tab-select" defaultValue={"likecount"} onChange={representativeFilterOnChange}>
-                            <option value="likeCount">{t("desc.likeCount")}</option>
-                            <option value="latest">{t("desc.latest")}</option>
-                            <option value="oldest">{t("desc.oldest")}</option>
-                        </Form.Select>
+                        <Taeho.Desc onChange={representativeFilterOnChange}/>
                     </div>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackRepresentative}/>
+                        <Taeho.Feedback data={feedbackRepresentative}/>
                     </ul>
                     <div className='mt-5'>
-                        <MyPaginationComponent
+                        <Taeho._Pagination
                             totalPages={Math.ceil(feedbackRepresentativeCount / 10)}
                             currentPage={representativeCurrentPage}
                             onPageChange={representativeCurrentPageOnChange}
@@ -545,17 +479,13 @@ function Index() {
                             {t("search.search")}
                             </Button>
                         </InputGroup>
-                        <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={searchFilterOnChange}>
-                            <option value="likeCount">{t("desc.likeCount")}</option>
-                            <option value="latest">{t("desc.latest")}</option>
-                            <option value="oldest">{t("desc.oldest")}</option>
-                        </Form.Select>
+                        <Taeho.Desc onChange={searchFilterOnChange}/>
                     </div>
                     <ul className="list-group mt-3">
-                        <Feedback data={feedbackSearch}/>
+                        <Taeho.Feedback data={feedbackSearch}/>
                     </ul>
                     <div className='mt-5'>
-                        <MyPaginationComponent
+                        <Taeho._Pagination
                             totalPages={Math.ceil(feedbackSearchCount / 10)}
                             currentPage={searchPage}
                             onPageChange={searchPageOnChange}
