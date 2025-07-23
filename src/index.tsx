@@ -262,7 +262,7 @@ function Index() {
         api.get.feedback("stand",selectFilter,(currentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
         api.get.feedback("representative",representativeFilter,(representativeCurrentPage - 1) * 10,10)
-            .then(data=>setFeedback(data.data))
+            .then(data=>setFeedbackRepresentative(data.data))
         api.get.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
         api.get.feedback("progress","likeCount",0,100)
