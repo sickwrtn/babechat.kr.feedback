@@ -199,13 +199,13 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         api.postAdmin.ban(userId,ip,reason,banTime(ban))
             .then(data=>{
                 if (data.result == "SUCCESS"){
-                    alert("alert.banEvent.success");
+                    alert(t("alert.banEvent.success"));
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
                     return alert(t("alert.banEvent.auth"));
                 }
                 else {
-                    return alert(`${"alert.banEvent.error"} ${data.data}`);
+                    return alert(`${t("alert.banEvent.error")} ${data.data}`);
                 }
             })
     }
