@@ -11,3 +11,7 @@ export * from "./FooterDeleteButton";
 export * from "./Recommend";
 export * from "./Absorption";
 export * from "./AbsorptionList";
+
+/*
+모달용 컴포넌트 모음 
+*/
