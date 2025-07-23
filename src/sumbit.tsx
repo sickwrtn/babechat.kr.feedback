@@ -103,8 +103,8 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         else if (data.result == "FAIL") {
             return alert(`${t("alert.formOnClick.error")} : ${data.data}`);
         }
-        if (isAdmin) alert(t("alert.formOnClick.success"));
-        else alert("alert.formOnClick.successAdmin");
+        if (isAdmin) alert(t("alert.formOnClick.successAdmin"));
+        else alert(t("alert.formOnClick.success"));
         resetRecaptcha();
         resetFeedback();
         setTitle("");
