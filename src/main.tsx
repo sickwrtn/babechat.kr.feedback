@@ -19,7 +19,7 @@ const context = chalk.black(`
 사실 이건 이스터에그 입니다. 개발하다보면 이런것도 넣고싶어지더라구요
 ===================================================================
 `)
-
+console.log(logo + context);
 createRoot(document.getElementById('main')!).render(
     <App />,
 )

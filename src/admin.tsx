@@ -10,6 +10,7 @@ import { IModalData } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MyPaginationComponent from './page';
 import { sillo } from './sdk';
+import { useTranslation } from 'react-i18next';
 
 function compressIPv6(ipv6Address:string):string {
    return ipv6Address.split(":").slice(3,7).join(":");
@@ -152,6 +153,9 @@ const parseJwt = (token: string) => {
 
 function Admin() {
     setStrict(()=>{})
+
+    const { t } = useTranslation();
+
     if (localStorage.getItem("auth_token") == null || !parseJwt(localStorage.getItem("auth_token") as string).admin){
         const [adminPassword,setAdminPassword] = useState<string>("");
         const adminPasswordOnChange = (e: any) => setAdminPassword(e.target.value)
@@ -167,9 +171,9 @@ function Admin() {
         }
         return(<>
         <Form.Group style={{marginLeft:"5%",marginTop:"1%"}}>
-            <Form.Label>비밀번호</Form.Label>
-            <FormControl type="text" className='mb-3' style={{width:"40%"}} placeholder="관리자 비밀키를 입력해주세요." value={adminPassword} onChange={adminPasswordOnChange}/>
-            <Button variant="success" id="button-addon1" onClick={()=>adminFormOnClick(adminPassword)}>제출</Button>
+            <Form.Label>{t("admin.password")}</Form.Label>
+            <FormControl type="text" className='mb-3' style={{width:"40%"}} placeholder={t("admin.password_placeholder")} value={adminPassword} onChange={adminPasswordOnChange}/>
+            <Button variant="success" id="button-addon1" onClick={()=>adminFormOnClick(adminPassword)}>{t("admin.sumbit")}</Button>
         </Form.Group>
         </>)
     }
@@ -297,14 +301,14 @@ function Admin() {
         api.getAdmin.searchFeedback("stand", filter, keyword, 0, 10)
         .then(data =>{ 
                 if (data.result == "FAIL"){
-                    return alert("실패 " + data.data);
+                    return alert(`${t("alert.searchFeedback")} ${data.data}`);
                 }
                 setFeedbackSearch(data.data);
             })
         api.getAdmin.searchFeedbackCount("stand", keyword)
             .then(data => {
                 if (data.result == "FAIL"){
-                        return alert("실패 " + data.data);
+                        return alert(`${t("alert.searchFeedbackCount")} ${data.data}`);
                     }
                 setFeedbackSearchCount(data.data);
             })
@@ -373,7 +377,7 @@ function Admin() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert("잘못된 ID 입니다.");
+                        return alert(t("alert.feedbackItem"));
                     }
                     if (data.data.absorption != null){
                         navigate(`/sick/admin?id=${data.data.absorption}&ext=${id}`,{replace:false});
@@ -408,7 +412,7 @@ function Admin() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert("잘못된 EXTRA ID 입니다.");
+                        return alert(t("alert.feedbackItemExtra"));
                     }
                     setExtraData(prev=>({
                         ...prev,
@@ -476,10 +480,10 @@ function Admin() {
                         <Badge className="ms-1 badge" text="white" bg="secondary">{data}</Badge>
                     ))}
                     {absorption &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}로 병합됨</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}{t("accordionItem.absorption")}</Badge>
                     }
                     {(absorptionList?.length != 0) &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} 통합의견</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} {t("accordionItem.representative")}</Badge>
                     }
                     <Badge className="ms-1 badge" text="white" bg="info">IP : { isIPv6(ip) && compressIPv6(ip)}{!isIPv6(ip) && ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary">ID : {id}</Badge>
@@ -523,16 +527,16 @@ function Admin() {
                     <div className="fw-bold">{title} {badge.map((data)=>(
                         <Badge className="ms-1 badge" text="white" bg="secondary" >{data}</Badge>
                     ))}
-                    <Badge className="ms-1 badge" text="white" bg="danger" >삭제됨</Badge>
-                    {isProgress && <Badge className="ms-1 badge" text="white" bg="secondary" >진행중 탭</Badge>}
-                    {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" >완료됨 탭</Badge>}
-                    {isNotification && <Badge className="ms-1 badge" text="white" bg="secondary" >공지사항 탭</Badge>}
-                    {(!isProgress && !isCompleted && !isNotification) && <Badge className="ms-1 badge" text="white" bg="secondary" >대기중 탭</Badge>}
+                    <Badge className="ms-1 badge" text="white" bg="danger" >{t("tab.deleted")}</Badge>
+                    {isProgress && <Badge className="ms-1 badge" text="white" bg="secondary" >{t("accordionItem.tab.progress")}</Badge>}
+                    {isCompleted && <Badge className="ms-1 badge" text="white" bg="secondary" >{t("accordionItem.tab.completed")}</Badge>}
+                    {isNotification && <Badge className="ms-1 badge" text="white" bg="secondary" >{t("accordionItem.tab.notification")}</Badge>}
+                    {(!isProgress && !isCompleted && !isNotification) && <Badge className="ms-1 badge" text="white" bg="secondary" >{t("accordionItem.tab.stand")}</Badge>}
                     {absorption &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}와 병합됨</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="secondary">⇄ #{absorption}{t("accordionItem.absorption")}</Badge>
                     }
                     {(absorptionList?.length != 0) &&
-                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} 통합의견</Badge>
+                        <Badge className="ms-1" style={{cursor:"default"}} bg="primary">#{id} {t("accordionItem.representative")}</Badge>
                     }
                     <Badge className="ms-1 badge" text="white" bg="info">IP : {isIPv6(ip) && compressIPv6(ip)}{!isIPv6(ip) && ip}</Badge>
                     <Badge className="ms-1 badge" text="white" bg="primary" >ID : {id}</Badge>
@@ -580,31 +584,31 @@ function Admin() {
         </div>
         <div id="feed">
             <Tabs defaultActiveKey="main" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="main" title="메인">
-                    <h3>공지사항</h3>
+                <Tab eventKey="main" title={t("tab.main")}>
+                    <h3>{t("tab.notification")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackNotification} isAdmin={false} />
                     </ul>
-                    <h3 className="mt-4 d-inline-flex">진행중</h3>
+                    <h3 className="mt-4 d-inline-flex">{t("tab.progress")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackProgress} isAdmin={false} />
                     </ul>
-                    <h3 className="mt-4 d-inline-flex">완료됨</h3>
+                    <h3 className="mt-4 d-inline-flex">{t("tab.completed")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackCompleted} isAdmin={false} />
                     </ul>
-                    <h3 className='mt-4'>대기중</h3>
+                    <h3 className='mt-4'>{t("tab.stand")}</h3>
                     <ul className="list-group mt-3">
                         <Feedback data={feedbackTop} isAdmin={false} />
                     </ul>
                 </Tab>
-                <Tab eventKey="stand" title="대기중">
+                <Tab eventKey="stand" title={t("tab.stand")}>
                     <div className='tab-container d-flex'>
-                        <h3>대기중</h3>
+                        <h3>{t("tab.stand")}</h3>
                         <Form.Select className="tab-select" defaultValue={"latest"} onChange={selectFilterOnChange}>
-                            <option value="likeCount">추천순</option>
-                            <option value="latest">최신순</option>
-                            <option value="oldest">오래된순</option>
+                            <option value="likeCount">{t("desc.likeCount")}</option>
+                            <option value="latest">{t("desc.latest")}</option>
+                            <option value="oldest">{t("desc.oldest")}</option>
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
@@ -618,13 +622,13 @@ function Admin() {
                             />
                     </div>
                 </Tab>
-                <Tab eventKey="representative" title="통합의견">
+                <Tab eventKey="representative" title={t("tab.representative")}>
                     <div className='tab-container d-flex'>
-                        <h3>통합의견</h3>
+                        <h3>{t("tab.representative")}</h3>
                         <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={representativeFilterOnChange}>
-                            <option value="likeCount">추천순</option>
-                            <option value="latest">최신순</option>
-                            <option value="oldest">오래된순</option>
+                            <option value="likeCount">{t("desc.likeCount")}</option>
+                            <option value="latest">{t("desc.latest")}</option>
+                            <option value="oldest">{t("desc.oldest")}</option>
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
@@ -638,13 +642,13 @@ function Admin() {
                             />
                     </div>
                 </Tab>
-                <Tab eventKey="deleted" title="삭제됨">
+                <Tab eventKey="deleted" title={t("tab.deleted")}>
                     <div className='tab-container d-flex'>
-                        <h3>삭제됨</h3>
+                        <h3>{t("tab.deleted")}</h3>
                         <Form.Select className="tab-select" defaultValue={"latest"} onChange={deleteSelectFilterOnChange}>
-                            <option value="latest">최신순</option>
-                            <option value="likeCount">추천순</option>
-                            <option value="oldest">오래된순</option>
+                            <option value="likeCount">{t("desc.likeCount")}</option>
+                            <option value="latest">{t("desc.latest")}</option>
+                            <option value="oldest">{t("desc.oldest")}</option>
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
@@ -658,22 +662,22 @@ function Admin() {
                         />
                     </div>
                 </Tab>
-                <Tab eventKey="search" title="검색">
+                <Tab eventKey="search" title={t("tab.search")}>
                     <div className='tab-container d-flex'>
                         <InputGroup className="search">
-                            <Form.Control placeholder="검색할 내용을 입력해주세요." onKeyDown={(e)=>{
+                            <Form.Control placeholder={t("search.search_placeholder")} onKeyDown={(e)=>{
                                 if (e.key == "Enter"){
                                     searchEvent(search,searchFilter)
                                 }
                             }} value={search} onChange={searchOnChange}/>
                             <Button variant="outline-secondary" id="button-addon2" onClick={()=>searchEvent(search,searchFilter)}>
-                            검색
+                            {t("search.search")}
                             </Button>
                         </InputGroup>
                         <Form.Select className="tab-select" defaultValue={"likeCount"} onChange={searchFilterOnChange}>
-                            <option value="latest">최신순</option>
-                            <option value="likeCount">추천순</option>
-                            <option value="oldest">오래된순</option>
+                            <option value="likeCount">{t("desc.likeCount")}</option>
+                            <option value="latest">{t("desc.latest")}</option>
+                            <option value="oldest">{t("desc.oldest")}</option>
                         </Form.Select>
                     </div>
                     <ul className="list-group mt-3">
@@ -687,17 +691,17 @@ function Admin() {
                         />
                     </div>
                 </Tab>
-                <Tab eventKey="banList" title="차단관리">
-                    <h3>차단 목록</h3>
+                <Tab eventKey="banList" title={t("tab.ban")}>
+                    <h3>{t("ban.banList")}</h3>
                     <Table className="mt-4" striped bordered>
                         <thead>
                             <tr>
                             <th>#</th>
                             <th>IP</th>
-                            <th>Reason</th>
-                            <th>ExpiredAt</th>
-                            <th>CreatedAt</th>
-                            <th>Do</th>
+                            <th>{t("ban.reason")}</th>
+                            <th>{t("ban.expiredAt")}</th>
+                            <th>{t("ban.createdAt")}</th>
+                            <th>{t("ban.do")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -713,14 +717,14 @@ function Admin() {
                                             .then(res => res.json())
                                             .then((data: IResponse<string>)=> {
                                                 if (data.result == "SUCCESS"){
-                                                    alert("차단을 해제했습니다.");
+                                                    alert(t("alert.unBanEvent.success"));
                                                     resetBan();
                                                 }
                                                 else{
-                                                    alert("권한이 없습니다.");
+                                                    alert(t("alert.unBanEvent.auth"));
                                                 }
                                             })
-                                    }}>차단 해제</Button></td>
+                                    }}>{t("ban.unBan")}</Button></td>
                                 </tr>
                             ))}
                         </tbody>

@@ -2,6 +2,11 @@
     "header" : {
         "title" : "베이비챗 건의함"
     },
+    "admin" : {
+        "password" : "비밀번호",
+        "password_placeholder" : "관리자 비밀키를 입력해주세요.",
+        "sumbit" : "제출"
+    },
     "tab" : {
         "main" : "메인",
         "stand" : "대기중",
@@ -11,7 +16,16 @@
         "deleted" : "삭제됨",
         "search" : "검색",
         "ban" : "차단관리",
+        "deleted" : "삭제됨",
         "notification": "공지사항"
+    },
+    "ban" : {
+      "banList" : "차단 목록",
+      "reason" : "사유",
+      "expiredAt" : "해제 시각",
+      "createdAt" : "생성 시각",
+      "do" : "실행",
+      "unBan" : "차단 해제"
     },
     "search" : {
         "search_placeholder" : "검색할 내용을 입력해주세요.",
@@ -35,7 +49,14 @@
     },
     "accordionItem" : {
         "absorption" : "로 병합됨",
-        "representative" : "통합의견"
+        "representative" : "통합의견",
+        "tab" : {
+            "deleted" : "삭제됨",
+            "progress" : "진행중 탭",
+            "completed": "완료됨 탭",
+            "notification" : "공지사항 탭",
+            "stand" : "대기중 탭"
+        }
     },
     "dateTime": {
         "hour" : "시간",
@@ -182,6 +203,10 @@
             "success" : "편집되었습니다.",
             "wrongPassword" : "잘못된 비밀번호 입니다.",
             "error" : "오류"
+        },
+        "unBanEvent" : {
+            "success" : "차단을 해제했습니다.",
+            "auth" : "권한이 없습니다."
         }
     }
 }

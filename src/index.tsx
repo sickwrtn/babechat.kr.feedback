@@ -12,10 +12,17 @@ import MyPaginationComponent from './page';
 import { sillo } from './sdk';
 import { useTranslation } from 'react-i18next';
 
+/**
+ * 메인페이지
+ * 클린코드 ㅈ까 ㅋㅋ
+ * 주석만 쓰면 그냥 감지덕지 하게 처받아야지 ㄹㅇ
+ */
+
 function Index() {
     const { t } = useTranslation();
     
     setStrict(()=>{})
+    // auth_token 이 localStorage에 없을시 발급
     if (localStorage.getItem("auth_token") == null){
         fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
             .then(res=>res.json())
@@ -23,43 +30,94 @@ function Index() {
                 localStorage.setItem("auth_token",data.data);
             })
     }
-
+    // sdk 선언
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
+    // modal 이 열려있는지
     const [show, setShow] = useState(false);
+    
+    //navigate 선언
     const navigate = useNavigate();
+
+    //location 선언
     const location = useLocation();
+
+    /**
+     * modal 닫을시 이벤트
+     */
     const handleClose = () => {
         navigate('/',{replace:false});
         setShow(false)
     };
 
+    /**
+     * 피드백 편집기가 열려있는지
+     */
     const [isEdit,setIsEdit] = useState(false);
 
+    /**
+     * 피드백 리스트 (대기중/stand)
+     */
     const [feedback, setFeedback] = useState<IFeedback[]>([]);
 
+    /**
+     * 대기중 피드백 개수 (페이지네이션)
+     */
     const [feedbackCount,setFeedbackCount] = useState<number>(0);
 
+    /**
+     * 피드백 리스트 (진행중/progress)
+     */
     const [feedbackProgress,setFeedbackProgress] = useState<IFeedback[]>([]);
 
+    /**
+     * 피드백 리스트 (완료됨/completed)
+     */
     const [feedbackCompleted,setFeedbackCompleted] = useState<IFeedback[]>([]);
 
+    /**
+     * 피드백 리스트 (공지사항/notification)
+     */
     const [feedbackNotification,setFeedbackNotification] = useState<IFeedback[]>([]);
 
+    /**
+     * 피드백 리스트 (통합의견/representative)
+     */
     const [feedbackRepresentative,setFeedbackRepresentative] = useState<IFeedback[]>([]);
 
+    /**
+     * 피드백 리스트 (대기중/stand) (추천순/likeCount)
+     */
     const [feedbackTop, setFeedbackTop] = useState<IFeedback[]>([])
 
+    /**
+     * 검색된 피드백 리스트 
+     */
     const [feedbackSearch, setFeedbackSearch] = useState<IFeedback[]>([]);
 
+    /**
+     * 통합의견 피드백 개수 (페이지 네이션)
+     */
     const [feedbackRepresentativeCount,setFeedbackRepresentativeCount] = useState<number>(0);
 
+    /**
+     * 검색된 피드백 개수 (페이지 네이션)
+     */
     const [feedbackSearchCount, setFeedbackSearchCount] =useState<number>(0);
     
+    /**
+     * 검색 쿼리
+     */
     const [search, setSearch] = useState<string>("");
 
+    /**
+     * 검색 쿼리 onChange
+     */
     const searchOnChange = (e: any) => setSearch(e.target.value);
 
+    /**
+     * modal에 들어갈 내용 
+     */
     const [modalData, setModalData] = useState<IModalData>({
         id: 0,
         title: "",
@@ -75,6 +133,9 @@ function Index() {
         createdAt: ""
     });
 
+    /**
+     * modal중 Extra에 표시될 내용
+     */
     const [extraData, setExtraData] = useState<IModalData>({
         id: 0,
         title: "",
@@ -90,6 +151,9 @@ function Index() {
         createdAt: ""
     });
 
+    /**
+     * modal 중 Extra 내용 초기화
+     */
     const initalExtra = ()=>{
         setExtraData(prev=>({
             ...prev,
@@ -107,28 +171,66 @@ function Index() {
         }))
     }
 
+    /**
+     * 피드백 리스트 필터 (대기중/stand)
+     */
     const [selectFilter, setSelectFilter] = useState<IFilter>("latest");
 
+    /**
+     * 피드백 리스트 필터 (대기중/stand) onChange
+     */
     const selectFilterOnChange = (val: any) => setSelectFilter(val.target.value);
 
+    /**
+     * 피드백 리스트 필터 (통합의견/representative)
+     */
     const [representativeFilter, setRepresentativeFilter] = useState<IFilter>("likeCount");
 
+    /**
+     * 피드백 리스트 필터 (통합의견/representative) onChange
+     */
     const representativeFilterOnChange = (val: any) => setRepresentativeFilter(val.target.value);
 
+    /**
+     * 검색된 피드백 리스트 필터
+     */
     const [searchFilter, setSearchFilter] = useState<IFilter>("likeCount");
 
+    /**
+     * 검색된 피드백 리스트 필터 onChange
+     */
     const searchFilterOnChange = (val: any) => setSearchFilter(val.target.value);
 
+    /**
+     * 대기중 탭의 현재 페이지 (페이지네이션)
+     */
     const [currentPage,setCurrentPage] = useState<number>(1);
 
+    /**
+     * 대기중 탭의 현재 페이지 (페이지네이션) onChange
+     */
     const currentPageOnChange = (e:number) => setCurrentPage(e); 
 
+    /**
+     * 통합의견 탭의 현재 페이지 (페이지네이션)
+     */
     const [representativeCurrentPage,setRepresentativeCurrentPage] = useState<number>(1);
 
+    /**
+     * 통합의견 탭의 현재 페이지 (페이지네이션) onChange
+     */
     const representativeCurrentPageOnChange = (e:number) => setRepresentativeCurrentPage(e);
 
+    /**
+     * 검색 탭의 현재 페이지 (페이지네이션)
+     */
     const [searchPage,setSearchPage] = useState<number>(1);
 
+    /**
+     * 검색 이벤트 
+     * @param keyword 검색할 키워드
+     * @param filter 필터
+     */
     const searchEvent = (keyword: string,filter: IFilter) => {
         api.get.searchFeedback("stand", filter, keyword, 0, 10)
             .then(data =>{ 
@@ -146,8 +248,14 @@ function Index() {
             })
     }
 
+    /**
+     * 검색 탭의 현재 페이지 (페이지네이션) onChange 
+     */
     const searchPageOnChange = (e: number) => setSearchPage(e);
 
+    /**
+     * 모든 피드백 리스트 새로 고침
+     */
     const resetFeedback = () => {
         api.get.feedback("stand",selectFilter,(currentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
@@ -167,6 +275,7 @@ function Index() {
             .then(data=>setFeedbackRepresentativeCount(data.data))
     }
 
+    // 모든 피드백 리스트 초기화
     useEffect(()=>{
         api.get.feedback("stand","likeCount",0,10)
             .then(data=>setFeedbackTop(data.data))
@@ -182,9 +291,21 @@ function Index() {
             .then(data=>setFeedbackRepresentativeCount(data.data))
     },[])
 
+    /*
+    설명하기가 좀 힘든데
+    일단 get 파라미터 상에서 id ext를 정하고 그에 따라 피드백 내용을 표시하기위한?
+    그런 기능
+    */
     useEffect(() => {
+        // 현재 url 상에서 파라미터 얻기
         const params = new URLSearchParams(location.search);
+        /**
+         * 현재 보여지는 피드백 id
+         */
         const id = params.get('id');
+        /**
+         * 현재 보여지는 extra 피드백 id
+         */
         const ext = params.get('ext');
         if (id != null){
             setModalData(prev=>({
@@ -257,6 +378,7 @@ function Index() {
         }
     }, [location]);
 
+    // 필터 혹은 페이지가 바뀌었을 경우 피드백 리스트 조회 범위 변경 n ~ n + 10
     useEffect(()=>{
         api.get.feedback("stand",selectFilter,(currentPage - 1) * 10,10)
             .then(data=>setFeedback(data.data))
@@ -272,6 +394,19 @@ function Index() {
             .then(data=>setFeedbackSearch(data.data))
     },[searchPage,searchFilter])
 
+    /**
+     * 피드백이 표시되는 아코디언 컴포넌트
+     * @param id 피드백 id
+     * @param title 피드백 제목
+     * @param content 피드백 내용
+     * @param likeCount 피드백 좋아요수
+     * @param dislikeCount 피드백 싫어요수
+     * @param absorption 이 피드백이 병합된 피드백 id
+     * @param absorptionList 이 피드백에 병합된 피드백 목록
+     * @param category 카테고리 (improvement,bug,extra)
+     * @param badge 뱃지
+     * @param isNotification 공지인지 아닌지
+     */
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number,absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isNotification: boolean){
         return (<>
             <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/?id=${id}`,{replace:false})}>
@@ -318,6 +453,10 @@ function Index() {
         </>)
     }
 
+    /**
+     * 피드백 리스트를 jsx 아코디언 화
+     * @param param0 data 속에 피드백 리스트 넣기
+     */
     function Feedback({data}:{data:IFeedback[]}) {
         return (
             <>
