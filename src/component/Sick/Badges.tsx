@@ -1,5 +1,5 @@
 import { Badge, Button, FormControl } from "react-bootstrap";
-import { event, IModalData } from "../../interfaces";
+import { IModalData } from "../../interfaces";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { sillo } from "../../sdk";

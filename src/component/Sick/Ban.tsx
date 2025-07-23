@@ -1,6 +1,5 @@
 import { Button, Form } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
-import { event } from "../../interfaces";
 import { useState } from "react";
 import { sillo } from "../../sdk";
 
