@@ -98,7 +98,7 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         }
         const data = await res2.json()
         if (data.result == "FAIL" && data.data == "ban"){
-            return alert(`${t("alert.formOnClick.Banned.content")} ${t("alert.formOnClick.Banned.reason")} : ${data.reason} ${t("alert.formOnClick.banned.expiredAt")} : ${data.expiredAt}`);
+            return alert(`${t("alert.formOnClick.Banned.content")} ${t("alert.formOnClick.Banned.reason")} : ${data.reason} ${t("alert.formOnClick.Banned.expiredAt")} : ${data.expiredAt}`);
         }
         else if (data.result == "FAIL") {
             return alert(`${t("alert.formOnClick.error")} : ${data.data}`);
