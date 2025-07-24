@@ -1,187 +1,217 @@
 {
-    "header" : {
-        "title" : "베이비챗 건의함"
+  "header": {
+    "title": "ベビーチャット提案箱"
+  },
+  "language" : {
+        "ko" : "韓国語",
+        "jp" : "日本語",
+        "en" : "英語"
+  },
+  "admin": {
+    "password": "パスワード",
+    "password_placeholder": "管理者秘密鍵を入力してください",
+    "submit": "送信"
+  },
+  "tab": {
+    "main": "メイン",
+    "stand": "待機中",
+    "representative": "統合意見",
+    "completed": "完了",
+    "progress": "進行中",
+    "deleted": "削除済み",
+    "search": "検索",
+    "ban": "ブロック管理",
+    "notification": "お知らせ"
+  },
+  "ban": {
+    "banList": "ブロックリスト",
+    "reason": "理由",
+    "expiredAt": "解除時刻",
+    "createdAt": "作成時刻",
+    "do": "実行",
+    "unBan": "ブロック解除"
+  },
+  "search": {
+    "search_placeholder": "検索する内容を入力してください",
+    "search": "検索"
+  },
+  "sumbit": {
+    "darkMode": "ダークモード",
+    "notification": "お知らせ",
+    "title": "タイトル",
+    "title_placeholder": "タイトルは直感的に作成してください",
+    "content": "内容",
+    "content_placeholder": "提案事項を具体的に書いてください。マークダウンをサポートします！[](画像リンク)",
+    "password": "パスワード",
+    "password_placeholder": "パスワードは修正と削除に使用されます。",
+    "category": {
+      "improvement": "改善",
+      "bug": "バグ",
+      "extra": "その他"
     },
-    "tab" : {
-        "main" : "메인",
-        "stand" : "대기중",
-        "representative" : "통합의견",
-        "completed" : "완료됨",
-        "progress" : "진행중",
-        "deleted" : "삭제됨",
-        "search" : "검색",
-        "ban" : "차단관리",
-        "notification": "공지사항"
-    },
-    "search" : {
-        "search_placeholder" : "검색할 내용을 입력해주세요.",
-        "search" : "검색"
-    },
-    "sumbit" : {
-        "darkMode" : "다크 모드",
-        "notification" : "공지사항",
-        "title" : "제목",
-        "title_placeholder" : "제목은 직과적이게 작성해주세요.",
-        "content" : "내용",
-        "content_placeholder" : "건의사항을 구체적으로 적어주세요. 마크다운을 지원합니다 ![](이미지링크)",
-        "password" : "비밀번호",
-        "password_placeholder" : "비밀번호는 수정 및 삭제에 사용됩니다.",
-        "category" : {
-            "improvement" : "개선",
-            "bug" : "버그",
-            "extra" : "기타"
-        },
-        "sumbit" : "제출"
-    },
-    "accordionItem" : {
-        "absorption" : "로 병합됨",
-        "representative" : "통합의견"
-    },
-    "dateTime": {
-        "hour" : "시간",
-        "day" : "일",
-        "month" : "개월",
-        "year" : "년"
-    },
-    "modal" : {
-        "title" : "제목",
-        "createdAt" : "작성 시간",
-        "recommend" : "추천",
-        "not_recommend" : "비추천",
-        "password_placeholder" : "비밀번호",
-        "editer" : {
-            "editer" : "편집기",
-            "title" : "제목",
-            "title_placeholder" : "제목은 직관적이게 작성해주세요.",
-            "content" : "내용",
-            "content_placeholder" : "건의사항을 구체적으로 적어주세요. 마크다운을 지원합니다! ![](이미지링크)",
-            "category" : {
-                "improvement" : "개선",
-                "bug" : "버그",
-                "extra" : "기타"
-            }
-        },
-        "bageEdit" : {
-            "bageEdit" : "배지 수정",
-            "placeholder" : "수정",
-            "sumbit" : "등록"
-        },
-        "absorption" : "과 병합됨",
-        "_absorption" : "병합",
-        "absorptionEdit" : "병합 수정",
-        "absorptionEdit_close" : "닫기",
-        "absorptionTo_placeholder" : "병합될 게시물 ID를 입력해주세요.",
-        "ban" : "차단",
-        "comment" : "운영팀의 코멘트",
-        "_comment" : "댓글",
-        "commentEdit" : "수정",
-        "commentEdit_sumbit" : "등록",
-        "commentEdit_close" : "닫기",
-        "footer" : {
-            "toProgress" : "진행중 탭으로 이동",
-            "toCompeleted" : "완료 탭으로 이동",
-            "toStand" : "대기중 탭으로 이동",
-            "edit" : "편집",
-            "recover" : "복구",
-            "delete" : "삭제",
-            "close" : "닫기",
-            "sumbit" : "제출"
-        }
-    },
-    "desc": {
-        "latest" : "최신순",
-        "oldest" : "오래된순",
-        "likeCount" : "추천순"
-    },
-    "alert": {
-        "searchFeedback" : "실패",
-        "searchFeedbackCount" : "실패",
-        "feedbackItem" : "잘못된 ID 입니다.",
-        "feedbackItemExtra" : "잘못된 EXTRA ID 입니다.",
-        "formOnClick" : {
-            "vaild" : "잘못된 양식입니다.",
-            "reCaptcha" : "캡챠 인증 실패..",
-            "Banned" : {
-                "content" : "차단되었습니다.",
-                "reason" : "사유",
-                "expiredAt" : "해제시간"
-            },
-            "error" : "에러",
-            "success" : "건의사항 등록 성공!",
-            "successAdmin" : "공지사항 등록 성공!"
-        },
-        "likeEvent" : {
-            "once" : "한번만 가능합니다.",
-            "success" : "추천되었습니다."
-        },
-        "dislikeEvent" : {
-            "once" : "한번만 가능합니다.",
-            "success" : "비추천되었습니다."
-        },
-        "bageEvent" : {
-            "success" : "수정되었습니다.",
-            "error" : "오류"
-        },
-        "absorptionEvent" : {
-            "error" : "오류",
-            "success" : "병합 되었습니다."
-        },
-        "absorptionDeleteEvent" : {
-            "error" : "오류",
-            "success" : "병합 해제되었습니다!"
-        },
-        "banEvent" : {
-            "reason" : "차단 사유를 입력해주세요.",
-            "success" : "차단 되었습니다.",
-            "auth" : "권한이 없습니다.",
-            "error" : "오류"
-        },
-        "commentEvent" : {
-            "auth" : "권한이 없습니다.",
-            "success" : "댓글 등록 성공!"
-        },
-        "progressEvent" : {
-            "success" : "진행중 탭으로 이동되었습니다.",
-            "auth" : "권한이 없습니다.",
-            "error" : "오류"
-        },
-        "completedEvent" : {
-            "success" : "완료 탭으로 이동되었습니다.",
-            "auth" : "권한이 없습니다.",
-            "error" : "오류"
-        },
-        "clearEvent" : {
-            "success" : "대기중 탭으로 이동되었습니다.",
-            "auth" : "권한이 없습니다.",
-            "error" : "오류"
-        },
-        "recoverEvent" : {
-            "success" : "복구되었습니다.",
-            "auth" : "권한이 없습니다.",
-            "error" : "오류"
-        },
-        "deleteAdminEvent" : {
-            "success" : "삭제되었습니다.",
-            "auth" : "권한이 없습니다.",
-            "error" : "오류"
-        },
-        "editAdminEvent" : {
-            "vaild" : "편집되었습니다.",
-            "success" : "편집되었습니다.",
-            "auth" : "권한이 없습니다.",
-            "error" : "오류"
-        },
-        "deleteEvent" : {
-            "vaild" : "잘못된 양식입니다.",
-            "success" : "삭제되었습니다.",
-            "wrongPassword" : "잘못된 비밀번호 입니다.",
-            "error" : "오류"
-        },
-        "editEvent" : {
-            "vaild" : "잘못된 양식입니다.",
-            "success" : "편집되었습니다.",
-            "wrongPassword" : "잘못된 비밀번호 입니다.",
-            "error" : "오류"
-        }
+    "sumbit": "提出"
+  },
+  "accordionItem": {
+    "absorption": "に統合された",
+    "representative": "統合意見",
+    "tab": {
+      "deleted": "削除済み",
+      "progress": "進行中のタブ",
+      "completed": "完了したタブ",
+      "notification": "お知らせタブ",
+      "stand": "待機中タブ"
     }
+  },
+  "dateTime": {
+    "hour": "時間",
+    "day": "日",
+    "month": "ヶ月",
+    "year": "年"
+  },
+  "modal": {
+    "title": "タイトル",
+    "createdAt": "作成時間",
+    "recommend": "おすすめ",
+    "not_recommend": "非推薦",
+    "password_placeholder": "パスワード",
+    "editer": {
+      "editor": "エディタ",
+      "title": "タイトル",
+      "title_placeholder": "タイトルは直感的に作成してください",
+      "content": "内容",
+      "content_placeholder": "提案事項を具体的に書いてください。マークダウンをサポートします！[](画像リンク)",
+      "category": {
+        "improvement": "改善",
+        "bug": "バグ",
+        "extra": "その他"
+      }
+    },
+    "bageEdit": {
+      "bageEdit": "バッジの修正",
+      "placeholder": "修正",
+      "sumbit": "登録"
+    },
+    "absorption": "吸収",
+    "_absorption": "統合",
+    "absorptionEdit": "マージの修正",
+    "_absorptionEdit": "修正",
+    "absorptionEdit_close": "閉じる",
+    "absorptionTo_placeholder": "マージされる投稿IDを入力してください",
+    "ban": "ブロック",
+    "comment": "運営チームのコメント",
+    "_comment": "コメント",
+    "commentEdit": "修正",
+    "commentEdit_sumbit": "登録",
+    "commentEdit_close": "閉じる",
+    "footer": {
+      "toProgress": "進行中のタブに移動",
+      "toCompleleted": "完了タブに移動",
+      "toStand": "待機中タブに移動",
+      "edit": "編集",
+      "recover": "回復",
+      "delete": "削除",
+      "close": "閉じる",
+      "sumbit": "送信"
+    }
+  },
+  "desc": {
+    "latest": "最新順",
+    "oldest": "古い順",
+    "likeCount": "推薦順"
+  },
+  "alert": {
+    "searchFeedback": "失敗",
+    "searchFeedbackCount": "失敗",
+    "feedbackItem": "間違ったIDです",
+    "feedbackItemExtra": "間違ったEXTRA IDです。",
+    "formOnClick": {
+      "vaild": "間違ったフォームです。",
+      "reCaptcha": "キャプチャ認証に失敗しました...",
+      "Banned": {
+        "content": "ブロックされました。",
+        "reason": "理由",
+        "expiredAt": "解除時間"
+      },
+      "error": "エラー",
+      "success": "提案事項登録成功！",
+      "successAdmin": "お知らせ登録成功!"
+    },
+    "likeEvent": {
+      "once": "一度だけ可能です。",
+      "success": "推薦されました。"
+    },
+    "dislikeEvent": {
+      "once": "一度だけ可能です。",
+      "success": "非推薦されました。"
+    },
+    "bageEvent": {
+      "success": "修正されました",
+      "error": "エラー"
+    },
+    "absorptionEvent": {
+      "error": "エラー",
+      "success": "統合されました。"
+    },
+    "absorptionDeleteEvent": {
+      "error": "エラー",
+      "success": "吸収が解除されました!"
+    },
+    "banEvent": {
+      "reason": "ブロックの理由を入力してください",
+      "success": "ブロックされました",
+      "auth": "権限がありません",
+      "error": "エラー"
+    },
+    "commentEvent": {
+      "auth": "権限がありません。",
+      "success": "コメント登録成功!"
+    },
+    "progressEvent": {
+      "success": "進行中タブに移動しました。",
+      "auth": "権限がありません",
+      "error": "エラー"
+    },
+    "completedEvent": {
+      "success": "完了タブに移動しました。",
+      "auth": "権限がありません",
+      "error": "エラー"
+    },
+    "clearEvent": {
+      "success": "待機中タブに移動しました。",
+      "auth": "権限がありません",
+      "error": "エラー"
+    },
+    "recoverEvent": {
+      "success": "復旧しました。",
+      "auth": "権限がありません",
+      "error": "エラー"
+    },
+    "deleteAdminEvent": {
+      "success": "削除されました。",
+      "auth": "権限がありません",
+      "error": "エラー"
+    },
+    "editAdminEvent": {
+      "vaild": "編集されました。",
+      "success": "編集されました",
+      "auth": "権限がありません",
+      "error": "エラー"
+    },
+    "deleteEvent": {
+      "vaild": "間違ったフォームです。",
+      "success": "削除されました",
+      "wrongPassword": "間違ったパスワードです",
+      "error": "エラー"
+    },
+    "editEvent": {
+      "vaild": "間違ったフォームです。",
+      "success": "編集されました",
+      "wrongPassword": "間違ったパスワードです",
+      "error": "エラー"
+    },
+    "unBanEvent": {
+      "success": "ブロックを解除しました",
+      "auth": "権限がありません。"
+    }
+  }
 }

@@ -2,6 +2,11 @@
     "header" : {
         "title" : "베이비챗 건의함"
     },
+    "language" : {
+        "ko" : "한국어",
+        "jp" : "일본어",
+        "en" : "영어"
+    },
     "admin" : {
         "password" : "비밀번호",
         "password_placeholder" : "관리자 비밀키를 입력해주세요.",

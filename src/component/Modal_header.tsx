@@ -1,8 +1,8 @@
 import { Modal } from "react-bootstrap";
-import { IModalData } from "../interfaces";
+import { IHeader } from "../interfaces";
 import { useTranslation } from "react-i18next";
 
-export function Header({modalData,isEdit,modalUserId,isAdmin}:{modalData:IModalData,isEdit:boolean,modalUserId:string,isAdmin:boolean}){
+export function Header({modalData,isEdit,modalUserId,isAdmin}:IHeader){
     
     const { t } = useTranslation();
     

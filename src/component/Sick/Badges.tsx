@@ -1,11 +1,11 @@
 import { Badge, Button, FormControl } from "react-bootstrap";
-import { IModalData } from "../../interfaces";
+import { IModalData, voidEvent } from "../../interfaces";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { sillo } from "../../sdk";
 
 
-export function Badges({modalData,resetFeedback,handleClose}:{modalData:IModalData,resetFeedback:()=>void,handleClose:()=>void}){
+export function Badges({modalData,resetFeedback,handleClose}:{modalData:IModalData,resetFeedback:voidEvent,handleClose:voidEvent}){
 
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
