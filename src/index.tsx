@@ -21,7 +21,7 @@ import { Taeho } from './component';
 function Index() {
 
     //i18n 선언
-    const { t,i18n } = useTranslation();
+    const { t } = useTranslation();
 
     setStrict(()=>{})
     // auth_token 이 localStorage에 없을시 발급
