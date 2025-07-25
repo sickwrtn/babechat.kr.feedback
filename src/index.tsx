@@ -21,7 +21,7 @@ import { Taeho } from './component';
 function Index() {
 
     //i18n 선언
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     setStrict(()=>{})
     // auth_token 이 localStorage에 없을시 발급
@@ -411,7 +411,8 @@ function Index() {
      * @param isNotification 공지인지 아닌지
      */
     
-    return (<>
+    return (
+    <div lang={i18n.language}>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={false}/>
         </div>
@@ -496,7 +497,7 @@ function Index() {
         </div>
         <div id="footer"></div>
         <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIp=''/>
-    </>)
+    </div>)
 }
 
 export default Index
