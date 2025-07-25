@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void,isAdmin:boolean}){
     
-    const { t } = useTranslation();
+    const { t,i18n } = useTranslation();
     
     const [title,setTitle] = useState("");
 
@@ -122,8 +122,6 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         }                              
     }, [isDarkmode]);
 
-
-    /*
     const [language,setLanguage] = useState(i18n.language);
 
     const languageOnChange = (val: any) => setLanguage(val);
@@ -131,10 +129,9 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
     useEffect(()=>{
         i18n.changeLanguage(language);
     },[language])
-    */
+
     return (
         <Form.Group className="m-4">
-        {/*
         <ToggleButtonGroup className="d-inline-flex mt-2 mb-3" type="radio" name="options2" defaultValue={i18n.language} value={language} onChange={languageOnChange}>
             <ToggleButton id="tbg-btn-1" variant='outline-secondary' value={"ko"}>
                 {t("language.ko")}
@@ -146,7 +143,6 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
                 {t("language.en")}
             </ToggleButton>
         </ToggleButtonGroup>
-        */}
         <Form.Check // prettier-ignore
             type="switch"
             className='mb-3'
