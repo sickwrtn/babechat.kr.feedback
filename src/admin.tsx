@@ -155,7 +155,16 @@ function Admin() {
     setStrict(()=>{})
 
     const { t } = useTranslation();
-
+    useEffect(()=>{
+        if (localStorage.getItem("auth_token") != null)
+        fetch("https://babe-api.fastwrtn.com/adminAuth",{method:"GET",headers :{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string}})
+        .then(res=>res.json())
+        .then(data => {
+            if (data.result == "FAIL") {
+                localStorage.removeItem("auth_token");
+            }
+        })
+    },[])
     if (localStorage.getItem("auth_token") == null || !parseJwt(localStorage.getItem("auth_token") as string).admin){
         const [adminPassword,setAdminPassword] = useState<string>("");
         const adminPasswordOnChange = (e: any) => setAdminPassword(e.target.value)

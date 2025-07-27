@@ -133,13 +133,13 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
     return (
         <Form.Group className="m-4">
         <ToggleButtonGroup className="d-inline-flex mt-2 mb-3" type="radio" name="options2" defaultValue={i18n.language} value={language} onChange={languageOnChange}>
-            <ToggleButton id="tbg-btn-1" variant='outline-secondary' value={"ko"}>
+            <ToggleButton id="language-3" variant='outline-secondary' value={"ko"}>
                 {t("language.ko")}
             </ToggleButton>
-            <ToggleButton id="tbg-btn-3" variant='outline-secondary' value={"jp"}>
+            <ToggleButton id="language-1" variant='outline-secondary' value={"jp"}>
                 {t("language.jp")}
             </ToggleButton>
-            <ToggleButton id="tbg-btn-2" variant='outline-secondary' value={"en"}>
+            <ToggleButton id="language-2" variant='outline-secondary' value={"en"}>
                 {t("language.en")}
             </ToggleButton>
         </ToggleButtonGroup>
