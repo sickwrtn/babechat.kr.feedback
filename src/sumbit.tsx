@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void,isAdmin:boolean}){
     
-    const { t,i18n } = useTranslation();
+    const { t } = useTranslation();
     
     const [title,setTitle] = useState("");
 
@@ -122,27 +122,32 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         }                              
     }, [isDarkmode]);
 
-    const [language,setLanguage] = useState(i18n.language);
+    //const [language,setLanguage] = useState(i18n.language);
 
-    const languageOnChange = (val: any) => setLanguage(val);
-    
+    //const languageOnChange = (val: any) => setLanguage(val);
+    /*
     useEffect(()=>{
         i18n.changeLanguage(language);
     },[language])
+    */
 
     return (
         <Form.Group className="m-4">
-        <ToggleButtonGroup className="d-inline-flex mt-2 mb-3" type="radio" name="options2" defaultValue={i18n.language} value={language} onChange={languageOnChange}>
-            <ToggleButton id="language-3" variant='outline-secondary' value={"ko"}>
-                {t("language.ko")}
-            </ToggleButton>
-            <ToggleButton id="language-1" variant='outline-secondary' value={"jp"}>
-                {t("language.jp")}
-            </ToggleButton>
-            <ToggleButton id="language-2" variant='outline-secondary' value={"en"}>
-                {t("language.en")}
-            </ToggleButton>
-        </ToggleButtonGroup>
+        {
+            /*
+            <ToggleButtonGroup className="d-inline-flex mt-2 mb-3" type="radio" name="options2" defaultValue={i18n.language} value={language} onChange={languageOnChange}>
+                <ToggleButton id="language-3" variant='outline-secondary' value={"ko"}>
+                    {t("language.ko")}
+                </ToggleButton>
+                <ToggleButton id="language-1" variant='outline-secondary' value={"jp"}>
+                    {t("language.jp")}
+                </ToggleButton>
+                <ToggleButton id="language-2" variant='outline-secondary' value={"en"}>
+                    {t("language.en")}
+                </ToggleButton>
+            </ToggleButtonGroup>
+            */
+        }
         <Form.Check // prettier-ignore
             type="switch"
             className='mb-3'
