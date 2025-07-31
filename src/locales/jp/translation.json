@@ -105,7 +105,7 @@
     "commentEdit_close": "閉じる",
     "footer": {
       "toProgress": "進行中のタブに移動",
-      "toCompleleted": "完了タブに移動",
+      "toCompeleted": "完了タブに移動",
       "toStand": "待機中タブに移動",
       "edit": "編集",
       "recover": "回復",

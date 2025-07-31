@@ -154,7 +154,7 @@ const parseJwt = (token: string) => {
 function Admin() {
     setStrict(()=>{})
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     useEffect(()=>{
         if (localStorage.getItem("auth_token") != null)
         fetch("https://babe-api.fastwrtn.com/adminAuth",{method:"GET",headers :{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string}})
@@ -587,7 +587,8 @@ function Admin() {
         )
     }
     
-    return (<>
+    return (
+    <div lang={i18n.language}>
         <div id="sumbit" className='border rounded'>
             <Sumbit resetFeedback={resetFeedback} isAdmin={true}/>
         </div>
@@ -743,7 +744,7 @@ function Admin() {
         </div>
         <div id="footer"></div>
         <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIp={modalIp}/>
-    </>)
+    </div>)
 }
 
 export default Admin

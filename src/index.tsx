@@ -396,20 +396,6 @@ function Index() {
         api.get.searchFeedback("stand",searchFilter,search,(searchPage - 1) * 10,10)
             .then(data=>setFeedbackSearch(data.data))
     },[searchPage,searchFilter])
-
-    /**
-     * 피드백이 표시되는 아코디언 컴포넌트
-     * @param id 피드백 id
-     * @param title 피드백 제목
-     * @param content 피드백 내용
-     * @param likeCount 피드백 좋아요수
-     * @param dislikeCount 피드백 싫어요수
-     * @param absorption 이 피드백이 병합된 피드백 id
-     * @param absorptionList 이 피드백에 병합된 피드백 목록
-     * @param category 카테고리 (improvement,bug,extra)
-     * @param badge 뱃지
-     * @param isNotification 공지인지 아닌지
-     */
     
     return (
     <div lang={i18n.language}>
