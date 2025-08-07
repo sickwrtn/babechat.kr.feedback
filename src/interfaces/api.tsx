@@ -32,7 +32,7 @@ export interface IFeedback {
 }
 
 export interface IBan {
-    id: Number,
+    id: number,
     userId: string,
     reason: string,
     ip: string,

@@ -8,7 +8,7 @@ import { setStrict } from './strict';
 import {IFeedback,IFilter} from './interfaces'
 import { IModalData } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { sillo } from './sdk';
+import { Auth, sillo, Vaild } from './sdk';
 import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
 
@@ -27,21 +27,17 @@ function Index() {
     // auth_token 이 localStorage에 없을시 발급
     useEffect(()=>{
         if (localStorage.getItem("auth_token") == null){
-        fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
-            .then(res=>res.json())
-            .then(data => {
+            Auth().then(data => {
                 localStorage.setItem("auth_token",data.data);
             })
         }
         else {
-            fetch("https://babe-api.fastwrtn.com/valid",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-                .then(res=>res.json())
-                .then(data => {
-                    if (data.result == "FAIL"){
+            Vaild().then(data => {
+                if (data.result == "FAIL"){
                         localStorage.removeItem("auth_token");
                         window.location.reload();
                     }
-                })
+            })
         }
     },[])
     // sdk 선언

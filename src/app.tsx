@@ -5,12 +5,14 @@ import Admin from './admin';
 import './main.css'
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
+import { env } from './env';
 
 export function App() {
     
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     useEffect(()=>{
+        i18n.changeLanguage(env.language);
         const title = document.head.getElementsByTagName("title")[0]
         title.innerHTML = t("header.title");
     },[])

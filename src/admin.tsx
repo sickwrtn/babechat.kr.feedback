@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
 import { setStrict } from './strict';
-import {IFeedback,IResponse,IFilter,ICategory, IBan} from './interfaces'
+import {IFeedback,IFilter,ICategory, IBan} from './interfaces'
 import { IModalData } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { sillo } from './sdk';
+import { AdminAuth, AdminLogin, sillo } from './sdk';
 import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
 
@@ -156,25 +156,25 @@ function Admin() {
 
     const { t, i18n } = useTranslation();
     useEffect(()=>{
-        if (localStorage.getItem("auth_token") != null)
-        fetch("https://babe-api.fastwrtn.com/adminAuth",{method:"GET",headers :{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string}})
-        .then(res=>res.json())
-        .then(data => {
-            if (data.result == "FAIL") {
-                localStorage.removeItem("auth_token");
-            }
-        })
+        if (localStorage.getItem("auth_token") != null){
+            AdminAuth().then(data => {
+                if (data.result == "FAIL") {
+                    localStorage.removeItem("auth_token");
+                }
+            })
+        }
     },[])
     if (localStorage.getItem("auth_token") == null || !parseJwt(localStorage.getItem("auth_token") as string).admin){
         const [adminPassword,setAdminPassword] = useState<string>("");
         const adminPasswordOnChange = (e: any) => setAdminPassword(e.target.value)
         const adminFormOnClick = (adminPassword: string) => {
-            fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-                password:adminPassword
-            })})
-            .then(res=>res.json())
-            .then(data => {
-                localStorage.setItem("auth_token",data.data);
+            AdminLogin(adminPassword).then(data => {
+                if (data.result == "SUCCESS") {
+                    localStorage.setItem("auth_token",data.data);
+                }
+                if (data.result == "FAIL") {
+                    alert("로그인 실패");
+                }
                 window.location.reload();
             })
         }
@@ -723,17 +723,15 @@ function Admin() {
                                     <td>{data.expiredAt}</td>
                                     <td>{data.createdAt}</td>
                                     <td><Button size='sm' onClick={()=>{
-                                        fetch(`https://babe-api.fastwrtn.com/admin/ban?id=${data.id}`,{method:"DELETE",headers:{"Authorization":localStorage.getItem("auth_token") as string}})
-                                            .then(res => res.json())
-                                            .then((data: IResponse<string>)=> {
-                                                if (data.result == "SUCCESS"){
-                                                    alert(t("alert.unBanEvent.success"));
-                                                    resetBan();
-                                                }
-                                                else{
-                                                    alert(t("alert.unBanEvent.auth"));
-                                                }
-                                            })
+                                        api.deleteAdmin.ban(data.id).then(data => {
+                                            if (data.result == "SUCCESS"){
+                                                alert(t("alert.unBanEvent.success"));
+                                                resetBan();
+                                            }
+                                            else{
+                                                alert(t("alert.unBanEvent.auth"));
+                                            }
+                                        })
                                     }}>{t("ban.unBan")}</Button></td>
                                 </tr>
                             ))}

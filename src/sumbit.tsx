@@ -4,11 +4,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useTranslation } from 'react-i18next';
+import { sillo } from './sdk';
+import { ICategory } from './interfaces';
 
 export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void,isAdmin:boolean}){
     
     const { t } = useTranslation();
-    
+
+    const api = new sillo(localStorage.getItem("auth_token") as string);
+
     const [title,setTitle] = useState("");
 
     const [content,setContent] = useState("");
@@ -27,7 +31,7 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
 
     const [passwordIsVaild,setPasswordVaild] = useState(false);
 
-    const [category, setCategory] = useState<1 | 2 | 3>(1);
+    const [category, setCategory] = useState<ICategory>(1);
 
     const categoryOnChange = (val: any) => setCategory(val);
 
@@ -60,7 +64,7 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         }
     };
 
-    async function formOnClick(title:string,content:string,category: number, password:string,recaptchaToken: string | null){
+    async function formOnClick(title:string,content:string,category: ICategory, password:string,recaptchaToken: string | null){
         const titleValid = title.trim().length > 0;
         const contentValid = content.trim().length > 0;
         const passwordValid = password.trim().length > 0;
@@ -81,27 +85,16 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
             return alert(t("alert.formOnClick.reCaptcha"));
         }
         if (isAdmin){
-            var res2 = await fetch("https://babe-api.fastwrtn.com/admin/notification",{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-                title:title,
-                content:content,
-                category:category,
-                password:password
-            })})
+            var res2: any = await api.postAdmin.feedback(title,content,category,password);
         }
         else {
-            var res2 = await fetch("https://babe-api.fastwrtn.com/feedback",{method:"POST",headers:{"Content-Type" : "application/json","Authorization":localStorage.getItem("auth_token") as string},body:JSON.stringify({
-                title:title,
-                content:content,
-                category:category,
-                password:password
-            })})
+            var res2: any = await api.post.feedback(title,content,category,password);
         }
-        const data = await res2.json()
-        if (data.result == "FAIL" && data.data == "ban"){
-            return alert(`${t("alert.formOnClick.Banned.content")} ${t("alert.formOnClick.Banned.reason")} : ${data.reason} ${t("alert.formOnClick.Banned.expiredAt")} : ${data.expiredAt}`);
+        if (res2.result == "FAIL" && res2.data == "ban"){
+            return alert(`${t("alert.formOnClick.Banned.content")} ${t("alert.formOnClick.Banned.reason")} : ${res2.reason} ${t("alert.formOnClick.Banned.expiredAt")} : ${res2.expiredAt}`);
         }
-        else if (data.result == "FAIL") {
-            return alert(`${t("alert.formOnClick.error")} : ${data.data}`);
+        else if (res2.result == "FAIL") {
+            return alert(`${t("alert.formOnClick.error")} : ${res2.data}`);
         }
         if (isAdmin) alert(t("alert.formOnClick.successAdmin"));
         else alert(t("alert.formOnClick.success"));
