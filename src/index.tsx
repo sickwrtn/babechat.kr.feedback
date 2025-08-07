@@ -25,13 +25,25 @@ function Index() {
 
     setStrict(()=>{})
     // auth_token 이 localStorage에 없을시 발급
-    if (localStorage.getItem("auth_token") == null){
+    useEffect(()=>{
+        if (localStorage.getItem("auth_token") == null){
         fetch("https://babe-api.fastwrtn.com/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})})
             .then(res=>res.json())
             .then(data => {
                 localStorage.setItem("auth_token",data.data);
             })
-    }
+        }
+        else {
+            fetch("https://babe-api.fastwrtn.com/valid",{headers:{"Authorization":localStorage.getItem("auth_token") as string}})
+                .then(res=>res.json())
+                .then(data => {
+                    if (data.result == "FAIL"){
+                        localStorage.removeItem("auth_token");
+                        window.location.reload();
+                    }
+                })
+        }
+    },[])
     // sdk 선언
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
