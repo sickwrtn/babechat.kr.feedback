@@ -21,16 +21,18 @@ import { getCookie } from './cookie';
  */
 
 function Index() {
-    if (getCookie("bc__session_refresh") != undefined){
-        const jwt = (getCookie("bc__session_refresh") as string).split(".")[1];
-        const userId = JSON.parse(atob(jwt)).userId;
-        channelTalk.boot({
-            "memberId": userId,
-        })
-    }
-    else {
-        channelTalk.boot({})
-    }
+    useEffect(()=>{
+        if (getCookie("bc__session_refresh") != undefined){
+            const jwt = (getCookie("bc__session_refresh") as string).split(".")[1];
+            const userId = JSON.parse(atob(jwt)).userId;
+            channelTalk.boot({
+                "memberId": userId,
+            })
+        }
+        else {
+            channelTalk.boot({})
+        }
+    },[])
     //i18n 선언
     const { t, i18n } = useTranslation();
 
