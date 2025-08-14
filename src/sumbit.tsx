@@ -41,6 +41,8 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
 
     const recaptchaRef = useRef(null as any);
     
+    const recaptchaKey = import.meta.env.VITE_APP_RECAPCHA_API_KEY;
+
     const [isDarkmode,setIsDarkmode] = useState<boolean>((():boolean =>{
             if (localStorage.getItem("them") == null){
                 localStorage.setItem("them","light");
@@ -160,7 +162,7 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
         <Form.Text className="text-muted text-end d-block">{password.length}/12</Form.Text>
         <div className='recaptcha-container'>
             <ReCAPTCHA
-                sitekey="6LcMp0QrAAAAAIlT_zQPHX3RAGEbrm6pDSOTycau"
+                sitekey={recaptchaKey}
                 onChange={recaptchaOnChange}
                 ref={recaptchaRef}
                 className='racaptcha'

@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth, sillo, Vaild } from './sdk';
 import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
+import channelTalk from './channelTalk';
 
 /**
  * 메인페이지
@@ -19,7 +20,9 @@ import { Taeho } from './component';
  */
 
 function Index() {
-
+    channelTalk.boot(
+        {}
+    )
     //i18n 선언
     const { t, i18n } = useTranslation();
 

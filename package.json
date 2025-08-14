@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@channel.io/channel-web-sdk-loader": "^2.0.0",
     "bootstrap": "^5.3.6",
     "chalk": "^5.4.1",
     "chroma-js": "^3.1.2",
