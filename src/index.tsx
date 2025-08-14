@@ -11,6 +11,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth, sillo, Vaild } from './sdk';
 import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
+import channelTalk from './channelTalk';
+import { getCookie } from './cookie';
 
 /**
  * 메인페이지
@@ -19,11 +21,13 @@ import { Taeho } from './component';
  */
 
 function Index() {
-    /*
-    channelTalk.boot(
-        {}
-    )
-        */
+    if (getCookie("bc__session_refresh") != undefined){
+        const jwt = (getCookie("bc__session_refresh") as string).split(".")[1];
+        const userId = JSON.parse(atob(jwt)).userId;
+        channelTalk.boot({
+            "memberId": userId,
+        })
+    }
     //i18n 선언
     const { t, i18n } = useTranslation();
 
