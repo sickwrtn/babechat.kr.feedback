@@ -9,7 +9,7 @@ export function AccordionItem({id,title,content,likeCount,dislikeCount,absorptio
     const { t } = useTranslation();
     
     return (<>
-        <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/?id=${id}`,{replace:false})}>
+        <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate( location.pathname + `?id=${id}`,{replace:false})}>
             {!isNotification && 
                 <>
                     { category == 1 &&

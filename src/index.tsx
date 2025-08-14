@@ -348,7 +348,7 @@ function Index() {
                         return alert(t("alert.feedbackItem"));
                     }
                     if (data.data.absorption != null){
-                        navigate(`/?id=${data.data.absorption}&ext=${id}`,{replace:false});
+                        navigate(location.pathname + `?id=${data.data.absorption}&ext=${id}`,{replace:false});
                         return
                     }
                     setModalData(prev=>({

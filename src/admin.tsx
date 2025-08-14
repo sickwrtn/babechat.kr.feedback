@@ -389,7 +389,7 @@ function Admin() {
                         return alert(t("alert.feedbackItem"));
                     }
                     if (data.data.absorption != null){
-                        navigate(`/sick/admin?id=${data.data.absorption}&ext=${id}`,{replace:false});
+                        navigate(location.pathname + `?id=${data.data.absorption}&ext=${id}`,{replace:false});
                         return;
                     }
                     setModalData(prev=>({
@@ -467,7 +467,7 @@ function Admin() {
 
     function accordionItem(id: number, title: string, content: string, likeCount: number, dislikeCount: number, absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isNotification: boolean,ip: string){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/sick/admin?id=${id}`,{replace:false})}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(location.pathname + `?id=${id}`,{replace:false})}>
                 {!isNotification && 
                     <>
                         { category == 1 &&
@@ -515,7 +515,7 @@ function Admin() {
 
     function accordionItemAdmin(id: number, title: string, content: string, likeCount: number, dislikeCount: number, absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isProgress:boolean,isCompleted:boolean,isNotification:boolean,ip: string){
         return (<>
-            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(`/sick/admin?id=${id}`,{replace:false})}>
+            <li className="list-group-item d-flex justify-content-between align-items-start" onClick={()=>navigate(location.pathname + `?id=${id}`,{replace:false})}>
                 {!isNotification && 
                     <>
                         { category == 1 &&
