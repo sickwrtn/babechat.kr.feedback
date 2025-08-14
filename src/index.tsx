@@ -28,6 +28,9 @@ function Index() {
             "memberId": userId,
         })
     }
+    else {
+        channelTalk.boot({})
+    }
     //i18n 선언
     const { t, i18n } = useTranslation();
 
