@@ -50,7 +50,8 @@
             "bug" : "버그",
             "extra" : "기타"
         },
-        "sumbit" : "제출"
+        "sumbit" : "제출",
+        "noti" : "*1:1 문의는 채널톡을 이용해주세요!*"
     },
     "accordionItem" : {
         "absorption" : "로 병합됨",
