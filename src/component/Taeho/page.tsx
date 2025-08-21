@@ -1,5 +1,9 @@
 import { Pagination } from "react-bootstrap";
 
+
+/**
+ * 페이지 네이션
+ */
 export function _Pagination({ totalPages, currentPage, onPageChange }:{totalPages:number,currentPage:number,onPageChange:(e:any)=>void}) {
         let items = [];
         // 'First' 버튼

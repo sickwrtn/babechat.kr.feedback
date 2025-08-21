@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { ICategory } from '../../interfaces';
 import { Badge } from 'react-bootstrap';
 
+
+/**
+ * 피드백 Accordion Item
+ */
 export function AccordionItem({id,title,content,likeCount,dislikeCount,absorption,absorptionList,category,badge,isNotification}:{id: number, title: string, content: string, likeCount: number, dislikeCount: number,absorption: number | null, absorptionList: string[] | null, category: ICategory, badge: string[],isNotification: boolean}){
     const navigate = useNavigate();
 

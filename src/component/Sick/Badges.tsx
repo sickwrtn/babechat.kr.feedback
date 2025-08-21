@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { sillo } from "../../sdk";
 
-
+/**
+ * Modal Bage 리스트
+ */
 export function Badges({modalData,resetFeedback,handleClose}:{modalData:IModalData,resetFeedback:voidEvent,handleClose:voidEvent}){
 
     const api = new sillo(localStorage.getItem("auth_token") as string);

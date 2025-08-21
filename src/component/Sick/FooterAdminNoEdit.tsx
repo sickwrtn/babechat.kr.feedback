@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next";
 import { event, IModalData, voidEvent } from "../../interfaces";
 import { sillo } from "../../sdk";
 
+/**
+ * Modal Footer관리자 
+ */
 export function FooterAdminNoEdit({modalData,setIsEdit,setModalTitleEdit,setModalContentEdit,resetFeedback,handleClose}:{modalData:IModalData,setIsEdit:event,setModalTitleEdit:event,setModalContentEdit:event,resetFeedback:voidEvent,handleClose:voidEvent}) {
     
     const api = new sillo(localStorage.getItem("auth_token") as string);

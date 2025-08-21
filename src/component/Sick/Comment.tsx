@@ -1,6 +1,9 @@
 import { Comment_ } from "./Comment_"
 import { CommentEdit_ } from "./CommentEdit_"
 
+/**
+ * Modal 댓글
+ */
 export function Comment({modalData,isAdmin,isEdit}:{modalData:any,isAdmin:any,isEdit:any}){
 
     return (<>

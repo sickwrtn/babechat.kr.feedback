@@ -5,6 +5,9 @@ import remarkBreaks from "remark-breaks";
 import { IModalData } from "../../interfaces";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Modal 댓글
+ */
 export function Comment_({modalData}:{modalData:IModalData}) {
 
     const { t } = useTranslation();

@@ -2,6 +2,9 @@ import { Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next"
 import { event, ICategory, IModalData } from "../../interfaces";
 
+/**
+ * Modal 편집기 Footer
+ */
 export function FooterEdit({modalData,setIsEdit,editEvent,modalTitleEdit,modalContentEdit,categoryEdit,modalPassword}:{modalData:IModalData,setIsEdit:event,editEvent:(id: number, title: string, content: string, category: ICategory, password: string) => void,modalTitleEdit:string,modalContentEdit:string,categoryEdit:ICategory,modalPassword:string}) {
     const { t } = useTranslation();
     return (<>

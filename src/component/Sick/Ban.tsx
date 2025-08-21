@@ -46,6 +46,9 @@ function banTime(ban: string): [number,number,number]{
     return answord
 }
 
+/**
+ * Modal 유저 차단
+ */
 export function Ban({modalUserId,modalIp}:{modalIp: string,modalUserId: string}) {
 
     const api = new sillo(localStorage.getItem("auth_token") as string);

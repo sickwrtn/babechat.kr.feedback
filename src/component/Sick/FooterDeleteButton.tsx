@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next";
 import { event, IModalData, voidEvent } from "../../interfaces";
 import { sillo } from "../../sdk";
 
+/**
+ * Modal Footer 삭제
+ */
 export function FooterDeleteButton({modalData,modalPassword,setModalPasswordIsVaild,resetFeedback,handleClose}:{modalData:IModalData,modalPassword: string,setModalPasswordIsVaild:event,resetFeedback:voidEvent,handleClose:voidEvent}) {
     
     const api = new sillo(localStorage.getItem("auth_token") as string);

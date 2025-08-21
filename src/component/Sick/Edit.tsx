@@ -2,6 +2,9 @@ import { Form, FormControl, ToggleButton, ToggleButtonGroup } from "react-bootst
 import { useTranslation } from "react-i18next"
 import { event, ICategory } from "../../interfaces";
 
+/**
+ * Modal 편집기
+ */
 export function Edit({modalTitleEdit,categoryEdit,modalTitleEditOnChange,modalTitleEditIsVaild,modalContentEdit,modalContentEditOnChange,ModalContentEditIsVaild,categoryEditOnChange}:{modalTitleEdit: string,categoryEdit: ICategory,modalTitleEditOnChange: event,modalTitleEditIsVaild: boolean,modalContentEdit: string,modalContentEditOnChange: event,ModalContentEditIsVaild: boolean,categoryEditOnChange:event}) {
 
     const { t } = useTranslation();

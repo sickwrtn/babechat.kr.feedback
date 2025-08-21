@@ -11,6 +11,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AdminAuth, AdminLogin, sillo } from './sdk';
 import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
+import { getCookie } from './cookie';
+import channelTalk from './channelTalk';
 
 function compressIPv6(ipv6Address:string):string {
    return ipv6Address.split(":").slice(3,7).join(":");
@@ -153,6 +155,20 @@ const parseJwt = (token: string) => {
 
 function Admin() {
     setStrict(()=>{})
+    
+    //채널톡 부트
+    useEffect(()=>{
+        if (getCookie("bc__session_refresh") != undefined){
+            const jwt = (getCookie("bc__session_refresh") as string).split(".")[1];
+            const userId = JSON.parse(atob(jwt)).userId;
+            channelTalk.boot({
+                "memberId": userId,
+            })
+        }
+        else {
+            channelTalk.boot({})
+        }
+    },[])
 
     const { t, i18n } = useTranslation();
     useEffect(()=>{

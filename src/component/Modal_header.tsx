@@ -2,6 +2,9 @@ import { Modal } from "react-bootstrap";
 import { IHeader } from "../interfaces";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Modal Header
+ */
 export function Header({modalData,isEdit,modalUserId,isAdmin}:IHeader){
     
     const { t } = useTranslation();

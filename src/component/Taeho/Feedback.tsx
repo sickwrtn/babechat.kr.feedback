@@ -2,6 +2,9 @@
 import { IFeedback } from '../../interfaces'
 import { AccordionItem } from './accordion'
 
+/**
+ * 피드백 map
+ */
 export function Feedback({data}:{data:IFeedback[]}) {
     return (
         <>

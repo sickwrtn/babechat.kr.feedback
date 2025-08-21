@@ -5,6 +5,9 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 
+/**
+ * Modal 병합 내용
+ */
 export function Extra({extraData}:{extraData:IModalData}) {
     
     const { t } = useTranslation();

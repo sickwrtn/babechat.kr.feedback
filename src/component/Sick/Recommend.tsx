@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next"
 import { sillo } from "../../sdk";
 import { IModalData } from "../../interfaces";
 
+/**
+ * Modal 추천/비추천
+ */
 export function Recommend({modalData}:{modalData:IModalData}) {
 
     const api = new sillo(localStorage.getItem("auth_token") as string);

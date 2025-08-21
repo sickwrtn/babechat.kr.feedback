@@ -1,6 +1,9 @@
 import { Form } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 
+/**
+ * 패드백 정렬 순서 SelectBox
+ */
 export function Desc({onChange}:{onChange:(v:any)=>void}) {
     const { t } = useTranslation()
     return <>

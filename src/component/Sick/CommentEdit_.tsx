@@ -6,6 +6,9 @@ import { IModalData } from "../../interfaces";
 import { sillo } from "../../sdk";
 import { useState } from "react";
 
+/**
+ * Modal 댓글 수정
+ */
 export function CommentEdit_({modalData}:{modalData: IModalData}) {
     
     const api = new sillo(localStorage.getItem("auth_token") as string);

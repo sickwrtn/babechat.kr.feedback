@@ -21,6 +21,8 @@ import { getCookie } from './cookie';
  */
 
 function Index() {
+
+    //채널톡 부트
     useEffect(()=>{
         if (getCookie("bc__session_refresh") != undefined){
             const jwt = (getCookie("bc__session_refresh") as string).split(".")[1];
@@ -33,6 +35,7 @@ function Index() {
             channelTalk.boot({})
         }
     },[])
+    
     //i18n 선언
     const { t, i18n } = useTranslation();
 
@@ -69,7 +72,7 @@ function Index() {
      * modal 닫을시 이벤트
      */
     const handleClose = () => {
-        navigate('/',{replace:false});
+        navigate(location.pathname,{replace:false});
         setShow(false)
     };
 

@@ -40,7 +40,7 @@
         "darkMode" : "다크 모드",
         "notification" : "공지사항",
         "title" : "제목",
-        "title_placeholder" : "제목은 직과적이게 작성해주세요.",
+        "title_placeholder" : "제목은 직관적으로 작성해주세요.",
         "content" : "내용",
         "content_placeholder" : "건의사항을 구체적으로 적어주세요. 마크다운을 지원합니다 ![](이미지링크)",
         "password" : "비밀번호",

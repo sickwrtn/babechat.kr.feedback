@@ -5,6 +5,9 @@ import { sillo } from "../../sdk";
 import { IModalData } from "../../interfaces";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Modal 병합 리스트
+ */
 export function AbsorptionList({modalData,extraData,isAdmin}:{modalData:IModalData,extraData:IModalData,isAdmin:boolean}){
     
     const api = new sillo(localStorage.getItem("auth_token") as string);

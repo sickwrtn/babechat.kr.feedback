@@ -4,6 +4,9 @@ import { useTranslation } from "react-i18next"
 import { IModalData } from "../../interfaces";
 import { sillo } from "../../sdk";
 
+/**
+ * Modal 병합 편집
+ */
 export function Absorption({modalData}:{modalData:IModalData}) {
     
     const api = new sillo(localStorage.getItem("auth_token") as string);
