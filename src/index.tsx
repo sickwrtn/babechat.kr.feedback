@@ -21,7 +21,6 @@ import { getCookie } from './cookie';
  */
 
 function Index() {
-
     //채널톡 부트
     useEffect(()=>{
         if (getCookie("bc__session_refresh") != undefined){
@@ -35,7 +34,6 @@ function Index() {
             channelTalk.boot({})
         }
     },[])
-    
     //i18n 선언
     const { t, i18n } = useTranslation();
 
@@ -301,6 +299,7 @@ function Index() {
             .then(data=>setFeedbackRepresentativeCount(data.data))
     }
 
+
     // 모든 피드백 리스트 초기화
     useEffect(()=>{
         api.get.feedback("stand","likeCount",0,10)
@@ -507,7 +506,8 @@ function Index() {
         </div>
         <div id="footer"></div>
         <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIp=''/>
-    </div>)
+    </div>
+    )
 }
 
 export default Index
