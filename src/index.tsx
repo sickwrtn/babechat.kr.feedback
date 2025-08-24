@@ -21,6 +21,10 @@ import { getCookie } from './cookie';
  */
 
 function Index() {
+
+    ()=>{
+        console.log("why?");
+    }
     //채널톡 부트
     useEffect(()=>{
         if (getCookie("bc__session_refresh") != undefined){
