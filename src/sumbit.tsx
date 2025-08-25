@@ -193,7 +193,6 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
                 </ToggleButtonGroup>
                 <Button disabled={!recaptchaToken} className="sumbit-btn mt-3" variant="success" id="button-addon1" onClick={()=>formOnClick(title,content,category,password,recaptchaToken)}>{t("sumbit.sumbit")}</Button>
                 <span className="text-muted text-end d-block mt-3" style={{fontSize:"14px"}}>{t("sumbit.noti")}</span>
-                {/** 여기 모달 */}
             </Form.Group>
             <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
                 <Modal.Header closeButton>
