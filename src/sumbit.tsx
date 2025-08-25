@@ -1,5 +1,5 @@
 import './main.css'
-import { FormControl, Button, Form ,ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import { FormControl, Button, Form ,ToggleButton, ToggleButtonGroup, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -9,6 +9,12 @@ import { ICategory } from './interfaces';
 
 export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void,isAdmin:boolean}){
     
+    const [ show , setShow ] = useState(false);
+    
+    const handleClose = () => {
+        setShow(false)
+    }
+
     const { t } = useTranslation();
 
     const api = new sillo(localStorage.getItem("auth_token") as string);
@@ -127,60 +133,105 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
     },[language])
     */
     return (
-        <Form.Group className="m-4">
-        {
-            /*
-            <ToggleButtonGroup className="d-inline-flex mt-2 mb-3" type="radio" name="options2" defaultValue={i18n.language} value={language} onChange={languageOnChange}>
-                <ToggleButton id="language-3" variant='outline-secondary' value={"ko"}>
-                    {t("language.ko")}
-                </ToggleButton>
-                <ToggleButton id="language-1" variant='outline-secondary' value={"jp"}>
-                    {t("language.jp")}
-                </ToggleButton>
-                <ToggleButton id="language-2" variant='outline-secondary' value={"en"}>
-                    {t("language.en")}
-                </ToggleButton>
-            </ToggleButtonGroup>
-            */
-        }
-        <Form.Check // prettier-ignore
-            type="switch"
-            className='mb-3'
-            label={t("sumbit.darkMode")}
-            checked={isDarkmode}
-            onChange={isDarkmodeOnChange}
-        />
-        {isAdmin && <h2>{t("sumbit.notification")}</h2>}
-        <Form.Label>{t("sumbit.title")}</Form.Label>
-        <FormControl type="text" placeholder={t("sumbit.title_placeholder")}  maxLength={20} value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
-        <Form.Text className="text-muted text-end d-block">{title.length}/20</Form.Text>
-        <Form.Label>{t("sumbit.content")}</Form.Label>
-        <FormControl type="text" placeholder={t("sumbit.content_placeholder")} maxLength={65000} as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
-        <Form.Text className="text-muted text-end d-block">{content.length}/65000</Form.Text>
-        <Form.Label>{t("sumbit.password")}</Form.Label>
-        <FormControl type="text" placeholder={t("sumbit.password_placeholder")} maxLength={12} value={password} onChange={passwordOnChange} isInvalid={passwordIsVaild}/>
-        <Form.Text className="text-muted text-end d-block">{password.length}/12</Form.Text>
-        <div className='recaptcha-container'>
-            <ReCAPTCHA
-                sitekey={recaptchaKey}
-                onChange={recaptchaOnChange}
-                ref={recaptchaRef}
-                className='racaptcha'
-            />
-        </div>
-        <ToggleButtonGroup className="d-inline-flex mt-3" type="radio" name="options" defaultValue={1} value={category} onChange={categoryOnChange}>
-            <ToggleButton id="tbg-btn-1" variant='outline-secondary' value={1}>
-                {t("sumbit.category.improvement")}
-            </ToggleButton>
-            <ToggleButton id="tbg-btn-2" variant='outline-secondary' value={2}>
-                {t("sumbit.category.bug")}
-            </ToggleButton>
-            <ToggleButton id="tbg-btn-3" variant='outline-secondary' value={3}>
-                {t("sumbit.category.extra")}
-            </ToggleButton>
-        </ToggleButtonGroup>
-        <Button disabled={!recaptchaToken} className="sumbit-btn mt-3" variant="success" id="button-addon1" onClick={()=>formOnClick(title,content,category,password,recaptchaToken)}>{t("sumbit.sumbit")}</Button>
-        <span className="text-muted text-end d-block mt-3" style={{fontSize:"14px"}}>{t("sumbit.noti")}</span>
-    </Form.Group>
+        <>
+            <Form.Group className="m-4">
+                {
+                    /*
+                    <ToggleButtonGroup className="d-inline-flex mt-2 mb-3" type="radio" name="options2" defaultValue={i18n.language} value={language} onChange={languageOnChange}>
+                        <ToggleButton id="language-3" variant='outline-secondary' value={"ko"}>
+                            {t("language.ko")}
+                        </ToggleButton>
+                        <ToggleButton id="language-1" variant='outline-secondary' value={"jp"}>
+                            {t("language.jp")}
+                        </ToggleButton>
+                        <ToggleButton id="language-2" variant='outline-secondary' value={"en"}>
+                            {t("language.en")}
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                    */
+                }
+                <div className='d-flex'>
+                    <Form.Check // prettier-ignore
+                        type="switch"
+                        className='mb-3'
+                        label={t("sumbit.darkMode")}
+                        checked={isDarkmode}
+                        onChange={isDarkmodeOnChange}
+                    />
+                    <img style={{marginLeft:"auto", cursor:"pointer"}} width="20" height="20" src="https://babechat.ai/assets/svgs/menu/note.svg" onClick={()=>{
+                        setShow(true);
+                    }}></img>
+                </div>
+                {isAdmin && <h2>{t("sumbit.notification")}</h2>}
+                <Form.Label>{t("sumbit.title")}</Form.Label>
+                <FormControl type="text" placeholder={t("sumbit.title_placeholder")}  maxLength={20} value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
+                <Form.Text className="text-muted text-end d-block">{title.length}/20</Form.Text>
+                <Form.Label>{t("sumbit.content")}</Form.Label>
+                <FormControl type="text" placeholder={t("sumbit.content_placeholder")} maxLength={65000} as="textarea" rows={3} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
+                <Form.Text className="text-muted text-end d-block">{content.length}/65000</Form.Text>
+                <Form.Label>{t("sumbit.password")}</Form.Label>
+                <FormControl type="text" placeholder={t("sumbit.password_placeholder")} maxLength={12} value={password} onChange={passwordOnChange} isInvalid={passwordIsVaild}/>
+                <Form.Text className="text-muted text-end d-block">{password.length}/12</Form.Text>
+                <div className='recaptcha-container'>
+                    <ReCAPTCHA
+                        sitekey={recaptchaKey}
+                        onChange={recaptchaOnChange}
+                        ref={recaptchaRef}
+                        className='racaptcha'
+                    />
+                </div>
+                <ToggleButtonGroup className="d-inline-flex mt-3" type="radio" name="options" defaultValue={1} value={category} onChange={categoryOnChange}>
+                    <ToggleButton id="tbg-btn-1" variant='outline-secondary' value={1}>
+                        {t("sumbit.category.improvement")}
+                    </ToggleButton>
+                    <ToggleButton id="tbg-btn-2" variant='outline-secondary' value={2}>
+                        {t("sumbit.category.bug")}
+                    </ToggleButton>
+                    <ToggleButton id="tbg-btn-3" variant='outline-secondary' value={3}>
+                        {t("sumbit.category.extra")}
+                    </ToggleButton>
+                </ToggleButtonGroup>
+                <Button disabled={!recaptchaToken} className="sumbit-btn mt-3" variant="success" id="button-addon1" onClick={()=>formOnClick(title,content,category,password,recaptchaToken)}>{t("sumbit.sumbit")}</Button>
+                <span className="text-muted text-end d-block mt-3" style={{fontSize:"14px"}}>{t("sumbit.noti")}</span>
+            </Form.Group>
+            <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
+                <Modal.Header closeButton>
+                    <h4 className='fw-bold'>편집기</h4>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Label>{t("sumbit.title")}</Form.Label>
+                    <FormControl type="text" placeholder={t("sumbit.title_placeholder")}  maxLength={20} value={title} onChange={titleOnChange} isInvalid={titleIsVaild}/>
+                    <Form.Text className="text-muted text-end d-block">{title.length}/20</Form.Text>
+                    <Form.Label>{t("sumbit.content")}</Form.Label>
+                    <FormControl type="text" placeholder={t("sumbit.content_placeholder")} maxLength={65000} as="textarea" rows={15} value={content} onChange={contentOnChange} isInvalid={contentIsVaild}/> {/* 기본 3줄 높이 */}
+                    <Form.Text className="text-muted text-end d-block">{content.length}/65000</Form.Text>
+                    <Form.Label>{t("sumbit.password")}</Form.Label>
+                    <FormControl type="text" placeholder={t("sumbit.password_placeholder")} maxLength={12} value={password} onChange={passwordOnChange} isInvalid={passwordIsVaild}/>
+                    <Form.Text className="text-muted text-end d-block">{password.length}/12</Form.Text>
+                    <div className='recaptcha-container'>
+                        <ReCAPTCHA
+                            sitekey={recaptchaKey}
+                            onChange={recaptchaOnChange}
+                            ref={recaptchaRef}
+                            className='racaptcha'
+                        />
+                    </div>
+                    <ToggleButtonGroup className="d-inline-flex mt-3" type="radio" name="options" defaultValue={1} value={category} onChange={categoryOnChange}>
+                        <ToggleButton id="tbg-btn-1" variant='outline-secondary' value={1}>
+                            {t("sumbit.category.improvement")}
+                        </ToggleButton>
+                        <ToggleButton id="tbg-btn-2" variant='outline-secondary' value={2}>
+                            {t("sumbit.category.bug")}
+                        </ToggleButton>
+                        <ToggleButton id="tbg-btn-3" variant='outline-secondary' value={3}>
+                            {t("sumbit.category.extra")}
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button disabled={!recaptchaToken} className="sumbit-btn mt-3" variant="success" id="button-addon1" onClick={async ()=>{await formOnClick(title,content,category,password,recaptchaToken); handleClose()}}>{t("sumbit.sumbit")}</Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     )
 } 
