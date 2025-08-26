@@ -6,10 +6,8 @@ import './main.css'
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { env } from './env';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 export function App() {
-    const Query = new QueryClient();
 
     const { t, i18n } = useTranslation();
 
@@ -20,15 +18,13 @@ export function App() {
     },[])
 
     return (
-        <QueryClientProvider client={Query}>
-            <Router>
-                <Routes>
-                    <Route path="/" element={<Index/>} />
-                    <Route path="/sick/admin" element={<Admin />}/>
-                    <Route path="/*" element={<Error />} />
-                </Routes>
-            </Router>
-        </QueryClientProvider>
+        <Router>
+            <Routes>
+                <Route path="/" element={<Index/>} />
+                <Route path="/sick/admin" element={<Admin />}/>
+                <Route path="/*" element={<Error />} />
+            </Routes>
+        </Router>
     )
 }
 
