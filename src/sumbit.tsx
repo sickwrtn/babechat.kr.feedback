@@ -196,7 +196,7 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
             </Form.Group>
             <Modal show={show} onHide={handleClose} size='lg' contentClassName="b-modal">
                 <Modal.Header closeButton>
-                    <h4 className='fw-bold'>편집기</h4>
+                    <h4 className='fw-bold'>{t("sumbit.modal.title")}</h4>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Label>{t("sumbit.title")}</Form.Label>

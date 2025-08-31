@@ -420,7 +420,6 @@ function Index() {
         api.get.searchFeedback("stand",searchFilter,search,(searchPage - 1) * 10,10)
             .then(data=>setFeedbackSearch(data.data))
     },[searchPage,searchFilter])
-    
     return (
     <div lang={i18n.language}>
         <div id="sumbit" className='border rounded'>
