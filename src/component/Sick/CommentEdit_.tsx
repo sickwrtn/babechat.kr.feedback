@@ -5,6 +5,7 @@ import { Button, Form } from "react-bootstrap";
 import { IModalData } from "../../interfaces";
 import { sillo } from "../../sdk";
 import { useState } from "react";
+import { _Alert } from "../../function";
 
 /**
  * Modal 댓글 수정
@@ -25,10 +26,10 @@ export function CommentEdit_({modalData}:{modalData: IModalData}) {
         api.postAdmin.comment(id,comment)
             .then(data => {
                 if (data.result == "FAIL"){
-                    return alert(t("alert.commentEvent.auth"));
+                    return _Alert(t("alert.commentEvent.auth"),"fail");
                 }
                 else if (data.result == "SUCCESS"){
-                    alert(t("alert.commentEvent.success"));
+                    _Alert(t("alert.commentEvent.success"),"success");
                     window.location.reload();
                 }
             })

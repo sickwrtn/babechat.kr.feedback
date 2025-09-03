@@ -1,6 +1,4 @@
-import './main.css'
 import {Form, Tab, Tabs, InputGroup, Button} from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import Sumbit from './sumbit';
 import FeedbackModal from './modal';
@@ -13,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
 import channelTalk from './channelTalk';
 import { getCookie } from './cookie';
+import { _Alert } from './function';
 
 /**
  * 메인페이지
@@ -348,7 +347,7 @@ function Index() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert(t("alert.feedbackItem"));
+                        return _Alert(t("alert.feedbackItem"),"fail");
                     }
                     if (data.data.absorption != null){
                         navigate(location.pathname + `?id=${data.data.absorption}&ext=${id}`,{replace:false});
@@ -381,7 +380,7 @@ function Index() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert(t("alert.feedbackItemExtra"));
+                        return _Alert(t("alert.feedbackItemExtra"),"fail");
                     }
                     setExtraData(prev=>({
                         ...prev,

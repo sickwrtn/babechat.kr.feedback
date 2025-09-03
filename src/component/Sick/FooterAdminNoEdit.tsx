@@ -2,6 +2,7 @@ import { Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { event, IModalData, voidEvent } from "../../interfaces";
 import { sillo } from "../../sdk";
+import { _Alert } from "../../function";
 
 /**
  * Modal Footer관리자 
@@ -16,15 +17,15 @@ export function FooterAdminNoEdit({modalData,setIsEdit,setModalTitleEdit,setModa
         api.putAdmin.progress(id)
             .then(data=>{
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.progressEvent.success"));
+                    _Alert(t("alert.progressEvent.success"),"success");
                     resetFeedback();
                     handleClose();
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.progressEvent.auth"));
+                    return _Alert(t("alert.progressEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.progressEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.progressEvent.error")} ${data.data}`,"fail");
                 }
             })
     }
@@ -33,15 +34,15 @@ export function FooterAdminNoEdit({modalData,setIsEdit,setModalTitleEdit,setModa
         api.putAdmin.compeleted(id)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.completedEvent.success"));
+                    _Alert(t("alert.completedEvent.success"),"success");
                     resetFeedback();
                     handleClose();
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.completedEvent.auth"));
+                    return _Alert(t("alert.completedEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.completedEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.completedEvent.error")} ${data.data}`,"fail");
                 }
             })
     }  
@@ -50,15 +51,15 @@ export function FooterAdminNoEdit({modalData,setIsEdit,setModalTitleEdit,setModa
         api.putAdmin.recover(id)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.recoverEvent.success"));
+                    _Alert(t("alert.recoverEvent.success"),"success");
                     resetFeedback();
                     handleClose();
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.recoverEvent.auth"));
+                    return _Alert(t("alert.recoverEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.recoverEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.recoverEvent.error")} ${data.data}`,"fail");
                 }
             })
     }
@@ -67,15 +68,15 @@ export function FooterAdminNoEdit({modalData,setIsEdit,setModalTitleEdit,setModa
         api.deleteAdmin.feedback(id)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.deleteAdminEvent.success"));
+                    _Alert(t("alert.deleteAdminEvent.success"),"success");
                     resetFeedback();
                     handleClose();
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.deleteAdminEvent.auth"));
+                    return _Alert(t("alert.deleteAdminEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.deleteAdminEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.deleteAdminEvent.error")} ${data.data}`,"fail");
                 }
             })
     }
@@ -84,15 +85,15 @@ export function FooterAdminNoEdit({modalData,setIsEdit,setModalTitleEdit,setModa
         api.putAdmin.clear(id)
             .then(data=>{
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.clearEvent.success"));
+                    _Alert(t("alert.clearEvent.success"),"success");
                     resetFeedback();
                     handleClose();
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.clearEvent.auth"));
+                    return _Alert(t("alert.clearEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.clearEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.clearEvent.error")} ${data.data}`,"fail");
                 }
             })
     }

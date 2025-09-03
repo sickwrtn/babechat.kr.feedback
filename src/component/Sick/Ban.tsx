@@ -2,6 +2,7 @@ import { Button, Form } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { useState } from "react";
 import { sillo } from "../../sdk";
+import { _Alert } from "../../function";
 
 function banTime(ban: string): [number,number,number]{
     let answord: [number,number,number] = [0,0,0];
@@ -64,13 +65,13 @@ export function Ban({modalUserId,modalIp}:{modalIp: string,modalUserId: string})
         api.postAdmin.ban(userId,ip,reason,banTime(ban))
             .then(data=>{
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.banEvent.success"));
+                    _Alert(t("alert.banEvent.success"),"success");
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.banEvent.auth"));
+                    return _Alert(t("alert.banEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.banEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.banEvent.error")} ${data.data}`,"fail");
                 }
             })
     }

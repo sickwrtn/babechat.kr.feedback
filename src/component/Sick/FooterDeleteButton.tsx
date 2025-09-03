@@ -2,6 +2,7 @@ import { Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { event, IModalData, voidEvent } from "../../interfaces";
 import { sillo } from "../../sdk";
+import { _Alert } from "../../function";
 
 /**
  * Modal Footer 삭제
@@ -16,20 +17,20 @@ export function FooterDeleteButton({modalData,modalPassword,setModalPasswordIsVa
         const modalPasswordValid = password.trim().length > 0;
         setModalPasswordIsVaild(!modalPasswordValid);
         if (!modalPasswordValid){
-            return alert(t("alert.deleteEvent.vaild"));
+            return _Alert(t("alert.deleteEvent.vaild"),"fail");
         }
         api.delete.feedback(id,password)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.deleteEvent.success"));
+                    _Alert(t("alert.deleteEvent.success"),"success");
                     resetFeedback();
                     handleClose();
                 }
                 else if (data.result == "FAIL" && data.data == "wrong password"){
-                    return alert(t("alert.deleteEvent.wrongPassword"));
+                    return _Alert(t("alert.deleteEvent.wrongPassword"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.deleteEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.deleteEvent.error")} ${data.data}`,"fail");
                 }
             })
     }

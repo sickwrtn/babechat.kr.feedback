@@ -11,6 +11,7 @@ import { ICategory, IFeedbakModal } from './interfaces';
 import { sillo } from './sdk';
 import { useTranslation } from 'react-i18next';
 import { Header, Loading, Sick } from './component';
+import { _Alert } from './function';
 
 export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit,handleClose,resetFeedback,isAdmin,modalUserId,modalIp}:IFeedbakModal){
     // i18n
@@ -85,19 +86,19 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         setModalTitleEditIsVaild(!modalTitleEditValid);
         setModalContentEditIsVaild(!modalContentEditValid);
         if (!modalPasswordValid || !modalTitleEditValid || !modalContentEditValid){
-            return alert(t("alert.editEvent.vaild"));
+            return _Alert(t("alert.editEvent.vaild"),"fail");
         }
         api.put.edit(id,title,content,category,password)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.editEvent.success"));
+                    _Alert(t("alert.editEvent.success"),"success");
                     window.location.reload()
                 }
                 else if (data.result == "FAIL" && data.data == "wrong password"){
-                    return alert(t("alert.editEvent.wrongPassword"));
+                    return _Alert(t("alert.editEvent.wrongPassword"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.editEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.editEvent.error")} ${data.data}`,"fail");
                 }
             })
     }
@@ -108,19 +109,19 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         setModalTitleEditIsVaild(!modalTitleEditValid);
         setModalContentEditIsVaild(!modalContentEditValid);
         if (!modalTitleEditValid || !modalContentEditValid){
-            return alert(t("alert.editAdminEvent.vaild"));
+            return _Alert(t("alert.editAdminEvent.vaild"),"fail");
         }
         api.putAdmin.edit(id,title,content,category)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.editAdminEvent.success"));
+                    _Alert(t("alert.editAdminEvent.success"),"success");
                     window.location.reload()
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.editAdminEvent.auth"));
+                    return _Alert(t("alert.editAdminEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.editAdminEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.editAdminEvent.error")} ${data.data}`,"fail");
                 }
             })
     }

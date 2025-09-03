@@ -6,9 +6,11 @@ import './main.css'
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { env } from './env';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export function App() {
-
     const { t, i18n } = useTranslation();
 
     useEffect(()=>{
@@ -18,13 +20,16 @@ export function App() {
     },[])
 
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Index/>} />
-                <Route path="/sick/admin" element={<Admin />}/>
-                <Route path="/*" element={<Error />} />
-            </Routes>
-        </Router>
+        <>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Index/>} />
+                    <Route path="/sick/admin" element={<Admin />}/>
+                    <Route path="/*" element={<Error />} />
+                </Routes>
+            </Router>
+            <ToastContainer/>
+        </>
     )
 }
 

@@ -3,6 +3,7 @@ import { Button, FormControl } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { IModalData } from "../../interfaces";
 import { sillo } from "../../sdk";
+import { _Alert } from "../../function";
 
 /**
  * Modal 병합 편집
@@ -21,9 +22,9 @@ export function Absorption({modalData}:{modalData:IModalData}) {
         api.postAdmin.absorption(id,absorptionEdit)
             .then(data => {
                 if (data.result == "FAIL"){
-                    return alert(`${t("alert.absorptionEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.absorptionEvent.error")} ${data.data}`,"fail");
                 }
-                alert(t("alert.absorptionEvent.success"));
+                _Alert(t("alert.absorptionEvent.success"),"success");
                 window.location.reload();
             })
     }

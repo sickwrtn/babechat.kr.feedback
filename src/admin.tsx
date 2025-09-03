@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
 import { getCookie } from './cookie';
 import channelTalk from './channelTalk';
+import { _Alert } from './function';
 
 function compressIPv6(ipv6Address:string):string {
    return ipv6Address.split(":").slice(3,7).join(":");
@@ -326,14 +327,14 @@ function Admin() {
         api.getAdmin.searchFeedback("stand", filter, keyword, 0, 10)
         .then(data =>{ 
                 if (data.result == "FAIL"){
-                    return alert(`${t("alert.searchFeedback")} ${data.data}`);
+                    return _Alert(`${t("alert.searchFeedback")} ${data.data}`,"fail");
                 }
                 setFeedbackSearch(data.data);
             })
         api.getAdmin.searchFeedbackCount("stand", keyword)
             .then(data => {
                 if (data.result == "FAIL"){
-                        return alert(`${t("alert.searchFeedbackCount")} ${data.data}`);
+                        return _Alert(`${t("alert.searchFeedbackCount")} ${data.data}`,"fail");
                     }
                 setFeedbackSearchCount(data.data);
             })
@@ -402,7 +403,7 @@ function Admin() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert(t("alert.feedbackItem"));
+                        return _Alert(t("alert.feedbackItem"),"fail");
                     }
                     if (data.data.absorption != null){
                         navigate(location.pathname + `?id=${data.data.absorption}&ext=${id}`,{replace:false});
@@ -437,7 +438,7 @@ function Admin() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert(t("alert.feedbackItemExtra"));
+                        return _Alert(t("alert.feedbackItemExtra"),"fail");
                     }
                     setExtraData(prev=>({
                         ...prev,

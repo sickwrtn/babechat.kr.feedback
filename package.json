@@ -25,6 +25,7 @@
     "react-i18next": "^15.6.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.3.0",
+    "react-toastify": "^11.0.5",
     "rehype-highlight": "^7.0.2",
     "rehype-raw": "^7.0.0",
     "remark-breaks": "^4.0.0"
