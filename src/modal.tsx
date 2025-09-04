@@ -1,5 +1,5 @@
 import './main.css'
-import { Modal, Form, Badge, Button} from 'react-bootstrap';
+import { Modal, Form, Badge} from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
@@ -175,9 +175,6 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                     }
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={()=>refreshModal()}>
-                        refresh
-                    </Button>
                     {!isAdmin &&
                         <Form.Control className="modalPassword" type="password" maxLength={12} placeholder={t("modal.password_placeholder")} value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
                     }
