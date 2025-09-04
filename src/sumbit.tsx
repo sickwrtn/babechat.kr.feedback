@@ -6,9 +6,10 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { useTranslation } from 'react-i18next';
 import { sillo } from './sdk';
 import { ICategory } from './interfaces';
+import { _Alert } from './function';
 
 export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void,isAdmin:boolean}){
-    
+
     const [ show , setShow ] = useState(false);
     
     const handleClose = () => {
@@ -99,13 +100,13 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
             var res2: any = await api.post.feedback(title,content,category,password);
         }
         if (res2.result == "FAIL" && res2.data == "ban"){
-            return alert(`${t("alert.formOnClick.Banned.content")} ${t("alert.formOnClick.Banned.reason")} : ${res2.reason} ${t("alert.formOnClick.Banned.expiredAt")} : ${res2.expiredAt}`);
+            return _Alert(`${t("alert.formOnClick.Banned.content")} ${t("alert.formOnClick.Banned.reason")} : ${res2.reason} ${t("alert.formOnClick.Banned.expiredAt")} : ${res2.expiredAt}`,"fail");
         }
         else if (res2.result == "FAIL") {
-            return alert(`${t("alert.formOnClick.error")} : ${res2.data}`);
+            return _Alert(`${t("alert.formOnClick.error")} : ${res2.data}`,"fail");
         }
-        if (isAdmin) alert(t("alert.formOnClick.successAdmin"));
-        else alert(t("alert.formOnClick.success"));
+        if (isAdmin) _Alert(t("alert.formOnClick.successAdmin"),"success");
+        else _Alert(t("alert.formOnClick.success"),"success");
         resetRecaptcha();
         resetFeedback();
         setTitle("");
@@ -122,36 +123,11 @@ export default function Sumbit({resetFeedback, isAdmin}:{resetFeedback: ()=>void
             document.documentElement.setAttribute('data-bs-theme', "light");
         }                              
     }, [isDarkmode]);
-
-    //const [language,setLanguage] = useState(i18n.language);
-
-    //const languageOnChange = (val: any) => setLanguage(val);
-
-    /*
-    useEffect(()=>{
-        i18n.changeLanguage(language);
-    },[language])
-    */
     return (
         <>
             <Form.Group className="m-4">
-                {
-                    /*
-                    <ToggleButtonGroup className="d-inline-flex mt-2 mb-3" type="radio" name="options2" defaultValue={i18n.language} value={language} onChange={languageOnChange}>
-                        <ToggleButton id="language-3" variant='outline-secondary' value={"ko"}>
-                            {t("language.ko")}
-                        </ToggleButton>
-                        <ToggleButton id="language-1" variant='outline-secondary' value={"jp"}>
-                            {t("language.jp")}
-                        </ToggleButton>
-                        <ToggleButton id="language-2" variant='outline-secondary' value={"en"}>
-                            {t("language.en")}
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    */
-                }
                 <div className='d-flex'>
-                    <Form.Check // prettier-ignore
+                    <Form.Check
                         type="switch"
                         className='mb-3'
                         label={t("sumbit.darkMode")}

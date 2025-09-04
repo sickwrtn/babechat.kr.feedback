@@ -4,11 +4,12 @@ import { useTranslation } from "react-i18next";
 import { sillo } from "../../sdk";
 import { IModalData } from "../../interfaces";
 import { useNavigate } from "react-router-dom";
+import { _Alert } from "../../function";
 
 /**
  * Modal 병합 리스트
  */
-export function AbsorptionList({modalData,extraData,isAdmin}:{modalData:IModalData,extraData:IModalData,isAdmin:boolean}){
+export function AbsorptionList({modalData,extraData,isAdmin,refreshModal}:{modalData:IModalData,extraData:IModalData,isAdmin:boolean,refreshModal:()=>void}){
     
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
@@ -22,10 +23,10 @@ export function AbsorptionList({modalData,extraData,isAdmin}:{modalData:IModalDa
         api.deleteAdmin.absorption(id,data)
             .then(data => {
                 if (data.result == "FAIL"){
-                    return alert(`${t("alert.absorptionDeleteEvent.error")} + data.data`);
+                    return _Alert(`${t("alert.absorptionDeleteEvent.error")} + data.data`,"fail");
                 }
-                alert(t("alert.absorptionDeleteEvent.success"));
-                window.location.reload();
+                _Alert(t("alert.absorptionDeleteEvent.success"),"success");
+                refreshModal()
             })
     }
 

@@ -3,6 +3,7 @@ import { IModalData, voidEvent } from "../../interfaces";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { sillo } from "../../sdk";
+import { _Alert } from "../../function";
 
 /**
  * Modal Bage 리스트
@@ -23,12 +24,12 @@ export function Badges({modalData,resetFeedback,handleClose}:{modalData:IModalDa
         api.putAdmin.badge(id,bage)
             .then(data=> {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.bageEvent.success"));
+                    _Alert(t("alert.bageEvent.success"),"success");
                     resetFeedback();
                     handleClose();
                 }
                 else {
-                    return alert(`${t("alert.bageEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.bageEvent.error")} ${data.data}`,"fail");
                 }
             })
         setIsBageEditShow(false)

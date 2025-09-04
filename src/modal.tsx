@@ -1,5 +1,5 @@
 import './main.css'
-import { Modal, Form, Badge} from 'react-bootstrap';
+import { Modal, Form, Badge, Button} from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
@@ -11,8 +11,9 @@ import { ICategory, IFeedbakModal } from './interfaces';
 import { sillo } from './sdk';
 import { useTranslation } from 'react-i18next';
 import { Header, Loading, Sick } from './component';
+import { _Alert } from './function';
 
-export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit,handleClose,resetFeedback,isAdmin,modalUserId,modalIp}:IFeedbakModal){
+export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit,handleClose,resetFeedback,isAdmin,modalUserId,modalIp,refreshModal}:IFeedbakModal){
     // i18n
     const { t } = useTranslation();
 
@@ -85,19 +86,19 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         setModalTitleEditIsVaild(!modalTitleEditValid);
         setModalContentEditIsVaild(!modalContentEditValid);
         if (!modalPasswordValid || !modalTitleEditValid || !modalContentEditValid){
-            return alert(t("alert.editEvent.vaild"));
+            return _Alert(t("alert.editEvent.vaild"),"fail");
         }
         api.put.edit(id,title,content,category,password)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.editEvent.success"));
-                    window.location.reload()
+                    _Alert(t("alert.editEvent.success"),"success");
+                    refreshModal()
                 }
                 else if (data.result == "FAIL" && data.data == "wrong password"){
-                    return alert(t("alert.editEvent.wrongPassword"));
+                    return _Alert(t("alert.editEvent.wrongPassword"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.editEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.editEvent.error")} ${data.data}`,"fail");
                 }
             })
     }
@@ -108,19 +109,19 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
         setModalTitleEditIsVaild(!modalTitleEditValid);
         setModalContentEditIsVaild(!modalContentEditValid);
         if (!modalTitleEditValid || !modalContentEditValid){
-            return alert(t("alert.editAdminEvent.vaild"));
+            return _Alert(t("alert.editAdminEvent.vaild"),"fail");
         }
         api.putAdmin.edit(id,title,content,category)
             .then(data => {
                 if (data.result == "SUCCESS"){
-                    alert(t("alert.editAdminEvent.success"));
-                    window.location.reload()
+                    _Alert(t("alert.editAdminEvent.success"),"success");
+                    refreshModal()
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
-                    return alert(t("alert.editAdminEvent.auth"));
+                    return _Alert(t("alert.editAdminEvent.auth"),"fail");
                 }
                 else {
-                    return alert(`${t("alert.editAdminEvent.error")} ${data.data}`);
+                    return _Alert(`${t("alert.editAdminEvent.error")} ${data.data}`,"fail");
                 }
             })
     }
@@ -152,28 +153,31 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                             </ReactMarkdown>
                         </div>
                         {(modalData.absorptionList?.length != 0) &&
-                            <Sick.AbsorptionList modalData={modalData} extraData={extraData} isAdmin={isAdmin} />
+                            <Sick.AbsorptionList modalData={modalData} extraData={extraData} isAdmin={isAdmin} refreshModal={refreshModal} />
                         }
                         {extraData.id != 0 &&
                             <Sick.Extra extraData={extraData}/>
                         }
                         <div className='b-footer mt-3'>
-                            <Sick.Recommend modalData={modalData}/>
+                            <Sick.Recommend modalData={modalData} refreshModal={refreshModal}/>
                             {isAdmin && 
                                 <Sick.Ban modalUserId={modalUserId} modalIp={modalIp}/>
                             }
                             {isAdmin &&
-                                <Sick.Absorption modalData={modalData}/>
+                                <Sick.Absorption modalData={modalData} refreshModal={refreshModal}/>
                             }
                         </div>
                     </>
                     }
-                    <Sick.Comment modalData={modalData} isAdmin={isAdmin} isEdit={isEdit} />
+                    <Sick.Comment modalData={modalData} isAdmin={isAdmin} isEdit={isEdit} refreshModal={refreshModal}/>
                     { isEdit &&
                         <Sick.Edit modalTitleEdit={modalTitleEdit} categoryEdit={categoryEdit} modalTitleEditOnChange={modalTitleEditOnChange} modalTitleEditIsVaild={modalTitleEditIsVaild} modalContentEdit={modalContentEdit} modalContentEditOnChange={modalContentEditOnChange} ModalContentEditIsVaild={ModalContentEditIsVaild} categoryEditOnChange={categoryEditOnChange}/>
                     }
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button onClick={()=>refreshModal()}>
+                        refresh
+                    </Button>
                     {!isAdmin &&
                         <Form.Control className="modalPassword" type="password" maxLength={12} placeholder={t("modal.password_placeholder")} value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
                     }
