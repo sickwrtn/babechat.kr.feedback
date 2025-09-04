@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Taeho } from './component';
 import { getCookie } from './cookie';
 import channelTalk from './channelTalk';
+import { _Alert } from './function';
 
 function compressIPv6(ipv6Address:string):string {
    return ipv6Address.split(":").slice(3,7).join(":");
@@ -208,6 +209,7 @@ function Admin() {
     const [show, setShow] = useState<boolean>(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const params = new URLSearchParams(location.search);
     const handleClose = () => {
         navigate('/sick/admin',{replace:false});
         setShow(false)
@@ -288,6 +290,101 @@ function Admin() {
         }))
     }
 
+    const initalModal = ()=>{
+        setModalData(prev=>({
+            ...prev,
+            id: 0,
+            title: "",
+            content: "",
+            comment: "",
+            category: 1,
+            likeCount: 0,
+            dislikeCount: 0,
+            absorptionList: null,
+            isDeleted: false,
+            badge: [],
+            isLoading: false,
+            createdAt: ""
+        }))
+    }
+
+    const refreshModal = ()=>{
+        initalExtra()
+        initalModal()
+        
+        const id = params.get('id');
+        const ext = params.get('ext');
+
+        if (id != null){
+            setModalData(prev=>({
+                ...prev,
+                isLoading:true
+            }))
+            setShow(true);
+            api.getAdmin.feedbackItem(Number(id))
+                .then(data=>{
+                    if (data.result == "FAIL"){
+                        setModalData(prev=>({
+                            ...prev,
+                            isLoading:false
+                        }))
+                        setShow(false);
+                        return _Alert(t("alert.feedbackItem"),"fail");
+                    }
+                    if (data.data.absorption != null){
+                        navigate(location.pathname + `?id=${data.data.absorption}&ext=${id}`,{replace:false});
+                        return;
+                    }
+                    setModalData(prev=>({
+                        ...prev,
+                        id:data.data.id,
+                        title:data.data.title,
+                        content:data.data.content,
+                        comment:data.data.comment,
+                        likeCount:data.data.likeCount,
+                        dislikeCount:data.data.dislikeCount,
+                        absorptionList:data.data.absorptionList,
+                        badge:data.data.badge,
+                        isDeleted:data.data.isDeleted,
+                        category:data.data.category,
+                        createdAt:data.data.createdAt,
+                        isLoading:false
+                    }))
+                    setModalUserId(data.data.userId as string);
+                    setModalIp(data.data.ip as string);
+                    setIsEdit(false);
+                })
+        }
+        if (ext != null){
+            api.getAdmin.feedbackItem(Number(ext))
+                .then(data=>{
+                    if (data.result == "FAIL"){
+                        setExtraData(prev=>({
+                            ...prev,
+                            isLoading:false
+                        }))
+                        setShow(false);
+                        return _Alert(t("alert.feedbackItemExtra"),"fail");
+                    }
+                    setExtraData(prev=>({
+                        ...prev,
+                        id:data.data.id,
+                        title:data.data.title,
+                        content:data.data.content,
+                        comment:data.data.comment,
+                        likeCount:data.data.likeCount,
+                        dislikeCount:data.data.dislikeCount,
+                        absorptionList:data.data.absorptionList,
+                        badge:data.data.badge,
+                        isDeleted:data.data.isDeleted,
+                        category:data.data.category,
+                        createdAt:data.data.createdAt,
+                        isLoading:false
+                    }))
+                })
+        }
+    }
+
     const [isEdit,setIsEdit] = useState<boolean>(false);
 
     const [selectFilter, setSelectFilter] = useState<IFilter>("latest");
@@ -326,14 +423,14 @@ function Admin() {
         api.getAdmin.searchFeedback("stand", filter, keyword, 0, 10)
         .then(data =>{ 
                 if (data.result == "FAIL"){
-                    return alert(`${t("alert.searchFeedback")} ${data.data}`);
+                    return _Alert(`${t("alert.searchFeedback")} ${data.data}`,"fail");
                 }
                 setFeedbackSearch(data.data);
             })
         api.getAdmin.searchFeedbackCount("stand", keyword)
             .then(data => {
                 if (data.result == "FAIL"){
-                        return alert(`${t("alert.searchFeedbackCount")} ${data.data}`);
+                        return _Alert(`${t("alert.searchFeedbackCount")} ${data.data}`,"fail");
                     }
                 setFeedbackSearchCount(data.data);
             })
@@ -385,7 +482,6 @@ function Admin() {
     },[])
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
         const id = params.get('id');
         const ext = params.get('ext');
         if (id != null){
@@ -402,7 +498,7 @@ function Admin() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert(t("alert.feedbackItem"));
+                        return _Alert(t("alert.feedbackItem"),"fail");
                     }
                     if (data.data.absorption != null){
                         navigate(location.pathname + `?id=${data.data.absorption}&ext=${id}`,{replace:false});
@@ -437,7 +533,7 @@ function Admin() {
                             isLoading:false
                         }))
                         setShow(false);
-                        return alert(t("alert.feedbackItemExtra"));
+                        return _Alert(t("alert.feedbackItemExtra"),"fail");
                     }
                     setExtraData(prev=>({
                         ...prev,
@@ -757,7 +853,7 @@ function Admin() {
             </Tabs>
         </div>
         <div id="footer"></div>
-        <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIp={modalIp}/>
+        <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={true} modalUserId={modalUserId} modalIp={modalIp} refreshModal={refreshModal}/>
     </div>)
 }
 

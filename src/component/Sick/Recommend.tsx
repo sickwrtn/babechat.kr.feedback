@@ -2,11 +2,12 @@ import { Button } from "react-bootstrap"
 import { useTranslation } from "react-i18next"
 import { sillo } from "../../sdk";
 import { IModalData } from "../../interfaces";
+import { _Alert } from "../../function";
 
 /**
  * Modal 추천/비추천
  */
-export function Recommend({modalData}:{modalData:IModalData}) {
+export function Recommend({modalData, refreshModal}:{modalData:IModalData,refreshModal:()=>void}) {
 
     const api = new sillo(localStorage.getItem("auth_token") as string);
     
@@ -16,10 +17,10 @@ export function Recommend({modalData}:{modalData:IModalData}) {
         api.get.dislike(id)
             .then(data=>{
                 if (data.result == "FAIL" && data.data == "already"){
-                    return alert(t("alert.dislikeEvent.once"));
+                    return _Alert(t("alert.dislikeEvent.once"),"fail");
                 }
-                alert(t("alert.dislikeEvent.success"));
-                window.location.reload()
+                _Alert(t("alert.dislikeEvent.success"),"success");
+                refreshModal()
             })
     }
 
@@ -27,10 +28,10 @@ export function Recommend({modalData}:{modalData:IModalData}) {
         api.get.like(id)
             .then(data=>{
                 if (data.result == "FAIL" && data.data == "already"){
-                    return alert(t("alert.likeEvent.once"));
+                    return _Alert(t("alert.likeEvent.once"),"fail");
                 } 
-                alert(t("alert.likeEvent.success"));
-                window.location.reload()
+                _Alert(t("alert.likeEvent.success"),"success");
+                refreshModal()
             })
     }
 
