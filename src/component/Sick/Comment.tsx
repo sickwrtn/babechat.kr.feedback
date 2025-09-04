@@ -4,7 +4,7 @@ import { CommentEdit_ } from "./CommentEdit_"
 /**
  * Modal 댓글
  */
-export function Comment({modalData,isAdmin,isEdit}:{modalData:any,isAdmin:any,isEdit:any}){
+export function Comment({modalData,isAdmin,isEdit,refreshModal}:{modalData:any,isAdmin:any,isEdit:any,refreshModal:()=>void}){
 
     return (<>
         { (!isAdmin && !isEdit) &&
@@ -15,7 +15,7 @@ export function Comment({modalData,isAdmin,isEdit}:{modalData:any,isAdmin:any,is
             </>
         }
         { (isAdmin && !isEdit) &&
-            <CommentEdit_ modalData={modalData}/>
+            <CommentEdit_ modalData={modalData} refreshModal={refreshModal}/>
         }
     </>)
 }

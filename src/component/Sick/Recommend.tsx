@@ -7,7 +7,7 @@ import { _Alert } from "../../function";
 /**
  * Modal 추천/비추천
  */
-export function Recommend({modalData}:{modalData:IModalData}) {
+export function Recommend({modalData, refreshModal}:{modalData:IModalData,refreshModal:()=>void}) {
 
     const api = new sillo(localStorage.getItem("auth_token") as string);
     
@@ -20,7 +20,7 @@ export function Recommend({modalData}:{modalData:IModalData}) {
                     return _Alert(t("alert.dislikeEvent.once"),"fail");
                 }
                 _Alert(t("alert.dislikeEvent.success"),"success");
-                window.location.reload()
+                refreshModal()
             })
     }
 
@@ -31,7 +31,7 @@ export function Recommend({modalData}:{modalData:IModalData}) {
                     return _Alert(t("alert.likeEvent.once"),"fail");
                 } 
                 _Alert(t("alert.likeEvent.success"),"success");
-                window.location.reload()
+                refreshModal()
             })
     }
 

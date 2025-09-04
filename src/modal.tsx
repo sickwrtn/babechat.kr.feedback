@@ -1,5 +1,5 @@
 import './main.css'
-import { Modal, Form, Badge} from 'react-bootstrap';
+import { Modal, Form, Badge, Button} from 'react-bootstrap';
 import ReactMarkdown from "react-markdown";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Header, Loading, Sick } from './component';
 import { _Alert } from './function';
 
-export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit,handleClose,resetFeedback,isAdmin,modalUserId,modalIp}:IFeedbakModal){
+export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit,handleClose,resetFeedback,isAdmin,modalUserId,modalIp,refreshModal}:IFeedbakModal){
     // i18n
     const { t } = useTranslation();
 
@@ -92,7 +92,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
             .then(data => {
                 if (data.result == "SUCCESS"){
                     _Alert(t("alert.editEvent.success"),"success");
-                    window.location.reload()
+                    refreshModal()
                 }
                 else if (data.result == "FAIL" && data.data == "wrong password"){
                     return _Alert(t("alert.editEvent.wrongPassword"),"fail");
@@ -115,7 +115,7 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
             .then(data => {
                 if (data.result == "SUCCESS"){
                     _Alert(t("alert.editAdminEvent.success"),"success");
-                    window.location.reload()
+                    refreshModal()
                 }
                 else if (data.result == "FAIL" && data.data == "auth"){
                     return _Alert(t("alert.editAdminEvent.auth"),"fail");
@@ -153,28 +153,31 @@ export default function FeedbackModal({modalData,extraData,show,isEdit,setIsEdit
                             </ReactMarkdown>
                         </div>
                         {(modalData.absorptionList?.length != 0) &&
-                            <Sick.AbsorptionList modalData={modalData} extraData={extraData} isAdmin={isAdmin} />
+                            <Sick.AbsorptionList modalData={modalData} extraData={extraData} isAdmin={isAdmin} refreshModal={refreshModal} />
                         }
                         {extraData.id != 0 &&
                             <Sick.Extra extraData={extraData}/>
                         }
                         <div className='b-footer mt-3'>
-                            <Sick.Recommend modalData={modalData}/>
+                            <Sick.Recommend modalData={modalData} refreshModal={refreshModal}/>
                             {isAdmin && 
                                 <Sick.Ban modalUserId={modalUserId} modalIp={modalIp}/>
                             }
                             {isAdmin &&
-                                <Sick.Absorption modalData={modalData}/>
+                                <Sick.Absorption modalData={modalData} refreshModal={refreshModal}/>
                             }
                         </div>
                     </>
                     }
-                    <Sick.Comment modalData={modalData} isAdmin={isAdmin} isEdit={isEdit} />
+                    <Sick.Comment modalData={modalData} isAdmin={isAdmin} isEdit={isEdit} refreshModal={refreshModal}/>
                     { isEdit &&
                         <Sick.Edit modalTitleEdit={modalTitleEdit} categoryEdit={categoryEdit} modalTitleEditOnChange={modalTitleEditOnChange} modalTitleEditIsVaild={modalTitleEditIsVaild} modalContentEdit={modalContentEdit} modalContentEditOnChange={modalContentEditOnChange} ModalContentEditIsVaild={ModalContentEditIsVaild} categoryEditOnChange={categoryEditOnChange}/>
                     }
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button onClick={()=>refreshModal()}>
+                        refresh
+                    </Button>
                     {!isAdmin &&
                         <Form.Control className="modalPassword" type="password" maxLength={12} placeholder={t("modal.password_placeholder")} value={modalPassword} onChange={modalPasswordOnChange} isInvalid={modalPasswordIsVaild} />
                     }

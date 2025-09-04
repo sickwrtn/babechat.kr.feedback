@@ -34,6 +34,7 @@ function Index() {
             channelTalk.boot({})
         }
     },[])
+    
     //i18n 선언
     const { t, i18n } = useTranslation();
 
@@ -65,6 +66,8 @@ function Index() {
 
     //location 선언
     const location = useLocation();
+
+    const params = new URLSearchParams(location.search);
 
     /**
      * modal 닫을시 이벤트
@@ -195,6 +198,99 @@ function Index() {
         }))
     }
 
+    const initalModal = ()=>{
+        setModalData(prev=>({
+            ...prev,
+            id: 0,
+            title: "",
+            content: "",
+            comment: "",
+            category: 1,
+            likeCount: 0,
+            dislikeCount: 0,
+            absorptionList: null,
+            isDeleted: false,
+            badge: [],
+            isLoading: false,
+            createdAt: ""
+        }))
+    }
+
+    const refreshModal = ()=>{
+        initalExtra()
+        initalModal()
+        
+        const id = params.get('id');
+        const ext = params.get('ext');
+
+        if (id != null){
+            setModalData(prev=>({
+                ...prev,
+                isLoading:true
+            }))
+            setShow(true);
+            api.get.feedbackItem(Number(id))
+                .then(data => {
+                    if (data.result == "FAIL"){
+                        setModalData(prev=>({
+                            ...prev,
+                            isLoading:false
+                        }))
+                        setShow(false);
+                        return _Alert(t("alert.feedbackItem"),"fail");
+                    }
+                    if (data.data.absorption != null){
+                        navigate(location.pathname + `?id=${data.data.absorption}&ext=${id}`,{replace:false});
+                        return
+                    }
+                    setModalData(prev=>({
+                        ...prev,
+                        id:data.data.id,
+                        title:data.data.title,
+                        content:data.data.content,
+                        comment:data.data.comment,
+                        likeCount:data.data.likeCount,
+                        dislikeCount:data.data.dislikeCount,
+                        absorptionList:data.data.absorptionList,
+                        badge:data.data.badge,
+                        isDeleted:data.data.isDeleted,
+                        category:data.data.category,
+                        createdAt:data.data.createdAt,
+                        isLoading:false
+                    }))
+                    setIsEdit(false);
+                })
+        }
+        if (ext != null){
+            api.get.feedbackItem(Number(ext))
+                .then(data=>{
+                    if (data.result == "FAIL"){
+                        setExtraData(prev=>({
+                            ...prev,
+                            isLoading:false
+                        }))
+                        setShow(false);
+                        return _Alert(t("alert.feedbackItemExtra"),"fail");
+                    }
+                    setExtraData(prev=>({
+                        ...prev,
+                        id:data.data.id,
+                        title:data.data.title,
+                        content:data.data.content,
+                        comment:data.data.comment,
+                        likeCount:data.data.likeCount,
+                        dislikeCount:data.data.dislikeCount,
+                        absorptionList:data.data.absorptionList,
+                        badge:data.data.badge,
+                        isDeleted:data.data.isDeleted,
+                        category:data.data.category,
+                        createdAt:data.data.createdAt,
+                        isLoading:false
+                    }))
+                })
+        }
+    }
+
     /**
      * 피드백 리스트 필터 (대기중/stand)
      */
@@ -323,7 +419,6 @@ function Index() {
     */
     useEffect(() => {
         // 현재 url 상에서 파라미터 얻기
-        const params = new URLSearchParams(location.search);
         /**
          * 현재 보여지는 피드백 id
          */
@@ -504,7 +599,7 @@ function Index() {
             </Tabs>
         </div>
         <div id="footer"></div>
-        <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIp=''/>
+        <FeedbackModal modalData={modalData} extraData={extraData} show={show} isEdit={isEdit} setIsEdit={setIsEdit} handleClose={handleClose} resetFeedback={resetFeedback} isAdmin={false} modalUserId='' modalIp='' refreshModal={refreshModal} />
     </div>
     )
 }

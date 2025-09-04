@@ -10,7 +10,7 @@ import { _Alert } from "../../function";
 /**
  * Modal 댓글 수정
  */
-export function CommentEdit_({modalData}:{modalData: IModalData}) {
+export function CommentEdit_({modalData, refreshModal}:{modalData: IModalData, refreshModal: ()=>void}) {
     
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
@@ -30,7 +30,7 @@ export function CommentEdit_({modalData}:{modalData: IModalData}) {
                 }
                 else if (data.result == "SUCCESS"){
                     _Alert(t("alert.commentEvent.success"),"success");
-                    window.location.reload();
+                    refreshModal();
                 }
             })
     }

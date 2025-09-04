@@ -8,7 +8,7 @@ import { _Alert } from "../../function";
 /**
  * Modal 병합 편집
  */
-export function Absorption({modalData}:{modalData:IModalData}) {
+export function Absorption({modalData,refreshModal}:{modalData:IModalData,refreshModal:()=>void}) {
     
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
@@ -25,7 +25,7 @@ export function Absorption({modalData}:{modalData:IModalData}) {
                     return _Alert(`${t("alert.absorptionEvent.error")} ${data.data}`,"fail");
                 }
                 _Alert(t("alert.absorptionEvent.success"),"success");
-                window.location.reload();
+                refreshModal();
             })
     }
 

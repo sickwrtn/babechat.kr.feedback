@@ -9,7 +9,7 @@ import { _Alert } from "../../function";
 /**
  * Modal 병합 리스트
  */
-export function AbsorptionList({modalData,extraData,isAdmin}:{modalData:IModalData,extraData:IModalData,isAdmin:boolean}){
+export function AbsorptionList({modalData,extraData,isAdmin,refreshModal}:{modalData:IModalData,extraData:IModalData,isAdmin:boolean,refreshModal:()=>void}){
     
     const api = new sillo(localStorage.getItem("auth_token") as string);
 
@@ -26,7 +26,7 @@ export function AbsorptionList({modalData,extraData,isAdmin}:{modalData:IModalDa
                     return _Alert(`${t("alert.absorptionDeleteEvent.error")} + data.data`,"fail");
                 }
                 _Alert(t("alert.absorptionDeleteEvent.success"),"success");
-                window.location.reload();
+                refreshModal()
             })
     }
 

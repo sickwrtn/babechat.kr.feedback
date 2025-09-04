@@ -14,7 +14,8 @@ export interface IFeedbakModal{
     resetFeedback: voidEvent,
     isAdmin: boolean,
     modalUserId: string,
-    modalIp: string
+    modalIp: string,
+    refreshModal: ()=>void
 }
 
 export interface IModalData{
