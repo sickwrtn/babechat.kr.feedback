@@ -437,7 +437,7 @@ function Index() {
                         <Taeho.Feedback data={feedbackProgress}/>
                     </ul>
                     <h3 className="mt-4 d-inline-flex">{t("tab.completed")}</h3>
-                    <ul className="list-group mt-3">
+                    <ul className="list-group mt-3" style={{overflowY:"auto",height:"500px"}}>
                         <Taeho.Feedback data={feedbackCompleted}/>
                     </ul>
                         <h3 className='mt-4'>{t("tab.stand")}</h3>
